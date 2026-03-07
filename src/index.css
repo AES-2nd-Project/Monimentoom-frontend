@@ -1,1 +1,16 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@theme {
+  /* 전역 색상 설정 */
+  --color-primary: #391790;
+  --color-secondary: #4f46e5;
+  --color-third: #818cf8;
+  --color-hover: #2d1275;
+  --color-button: #6366f1;
+  --color-disabled: #e0e0e0;
+  --color-purple-black: #1a1a2e;
+  --color-purple-white: #fbf7ff;
+  --color-point: #f43f5e;
+  --color-border: #e2e8f0;
+  --color-card-background: #e1dcf9;
+}
