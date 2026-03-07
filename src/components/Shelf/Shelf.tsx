@@ -1,10 +1,4 @@
-import type { Direction } from '../../types/room';
-
-interface ShelfProps {
-  direction: Direction;
-}
-
-const Shelf = ({ direction }: ShelfProps) => {
+const Shelf = () => {
   return <div></div>;
 };
 
