@@ -20,7 +20,9 @@ const Room = () => {
       {/* 메인 섹션 */}
       <main className={`mx-auto max-w-7xl min-w-[70vw]`}>
         <ProfileCard />
-        <RoomButton onClick={onClick} color='point-green' label='버튼' />
+        <RoomButton onClick={onClick} color='point-green' label='초록버튼' />
+        <RoomButton onClick={onClick} color='point-pink' label='핑크버튼' />
+        <RoomButton onClick={onClick} color='button' label='버튼' />
       </main>
     </div>
   );

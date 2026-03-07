@@ -11,13 +11,13 @@ const RoomButton = ({ onClick, color, label }: RoomButtonProps) => {
     <button
       onClick={onClick}
       className={clsx(
-        `flex items-center justify-center rounded-lg`,
+        `text-purple-white flex h-15 w-15 items-center justify-center rounded-lg p-4 transition-all hover:opacity-80 active:brightness-90`,
         color === `button` && `bg-button`,
         color === `point-pink` && `bg-point-pink`,
         color === `point-green` && `bg-point-green`
       )}
     >
-      <span>{label}</span>
+      <span className={``}>{label}</span>
     </button>
   );
 };
