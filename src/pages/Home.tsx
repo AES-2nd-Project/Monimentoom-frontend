@@ -2,7 +2,6 @@ import LoginForm from '../components/LoginForm/LoginForm';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
 
 const Home = () => {
-  const isHome = true;
   return (
     <div
       className={
@@ -11,7 +10,7 @@ const Home = () => {
     >
       <section className={`h-125 w-full`}>
         {/* 룸 이미지 섹션 */}
-        <RoomContainer isHome={isHome} />
+        <RoomContainer isHome={true} />
       </section>
 
       {/* 메인 섹션 */}
