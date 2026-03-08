@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import logo from '../../assets/logo.png';
 import Shelf from '../../components/Shelf/Shelf';
+import ShelfTest from '../../components/Shelf/ShelfTest';
 
 interface RoomContainerProps {
   isHome: Boolean;
@@ -28,8 +29,8 @@ const RoomContainer = ({ isHome }: RoomContainerProps) => {
       )}
       {/* 선반 포함한 룸 섹션 */}
       <main className={`z-10 flex max-w-7xl min-w-[70vw] justify-between`}>
-        <Shelf />
-        <Shelf />
+        <ShelfTest />
+        <ShelfTest />
       </main>
     </div>
   );
