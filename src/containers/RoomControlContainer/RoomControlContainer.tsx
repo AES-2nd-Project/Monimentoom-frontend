@@ -6,7 +6,7 @@ const RoomControlContainer = () => {
   };
 
   return (
-    <div className={'grid w-full grid-cols-3 items-center'}>
+    <div className={'grid w-full grid-cols-3 items-center px-25'}>
       <div className={'flex justify-start'}>
         <RoomButton
           onClick={onClick}
