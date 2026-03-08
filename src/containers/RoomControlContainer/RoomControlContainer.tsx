@@ -4,22 +4,30 @@ const RoomControlContainer = () => {
   const onClick = () => {
     return;
   };
-  return (
-    <div className={`flex w-full flex-row items-center justify-between`}>
-      <RoomButton
-        onClick={onClick}
-        color='point-green'
-        label='초록버튼'
-        visibility={true}
-      />
-      <RoomButton
-        onClick={onClick}
-        color='point-pink'
-        label='Like'
-        visibility={true}
-      />
 
-      <div className={`bg-card-background flex flex-row gap-4 rounded-lg p-4`}>
+  return (
+    <div className={'grid w-full grid-cols-3 items-center'}>
+      <div className={'flex justify-start'}>
+        <RoomButton
+          onClick={onClick}
+          color='point-green'
+          label='초록버튼'
+          visibility={true}
+        />
+      </div>
+      <div className={'flex justify-center'}>
+        <RoomButton
+          onClick={onClick}
+          color='point-pink'
+          label='Like'
+          visibility={true}
+        />
+      </div>
+      <div
+        className={
+          'bg-card-background flex w-fit flex-row gap-4 justify-self-end rounded-lg p-4'
+        }
+      >
         <RoomButton
           onClick={onClick}
           color='button'

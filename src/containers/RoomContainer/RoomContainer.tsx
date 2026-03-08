@@ -23,11 +23,14 @@ const RoomContainer = ({ isHome }: RoomContainerProps) => {
       {isHome && (
         <img
           src={logo}
-          className={`absolute w-100 items-center justify-center object-contain`}
+          className={`absolute z-0 w-100 items-center justify-center object-contain`}
         />
       )}
-      <Shelf />
-      <Shelf />
+      {/* 선반 포함한 룸 섹션 */}
+      <main className={`z-10 flex max-w-7xl min-w-[70vw] justify-between`}>
+        <Shelf />
+        <Shelf />
+      </main>
     </div>
   );
 };
