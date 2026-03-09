@@ -51,7 +51,7 @@ const Dividers = ({
                 <img
                   src={divider}
                   alt='divider'
-                  className='pointer-events-none h-full w-full object-fill'
+                  className={`pointer-events-none h-full w-full object-fill`}
                 />
               )}
             </div>

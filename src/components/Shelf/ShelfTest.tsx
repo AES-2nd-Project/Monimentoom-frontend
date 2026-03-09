@@ -29,7 +29,7 @@ const ShelfTest = () => {
       className={`h-130 w-125 shrink-0 bg-[url('/src/assets/shelf_front.png')] bg-cover bg-center bg-no-repeat px-14 pt-15 pb-21`}
     >
       <div
-        className='relative grid h-full w-full shrink-0 grid-cols-4 grid-rows-[1fr_auto_1fr_auto_1fr_auto_1fr] select-none'
+        className={`relative grid h-full w-full shrink-0 grid-cols-4 grid-rows-[1fr_auto_1fr_auto_1fr_auto_1fr] select-none`}
         onMouseLeave={handleMouseUp}
         onMouseUp={handleMouseUp}
       >

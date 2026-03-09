@@ -38,7 +38,9 @@ const BackSlots = ({
               )}
             >
               {!hideVisuals && (
-                <span className='text-purple-white group-hover:text-purple-black pointer-events-none transition-colors duration-200'>
+                <span
+                  className={`text-purple-white group-hover:text-purple-black pointer-events-none transition-colors duration-200`}
+                >
                   +
                 </span>
               )}
