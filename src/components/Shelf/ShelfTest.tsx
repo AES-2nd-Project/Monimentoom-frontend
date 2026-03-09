@@ -26,7 +26,7 @@ const ShelfTest = () => {
   const gridCols: Array<number> = Array.from({ length: 4 });
   const dividerRows: Array<number> = Array.from({ length: 3 });
 
-  const [isShrinked, setIsShrinked] = useState(true);
+  const [isShrinked, setIsShrinked] = useState(false);
 
   return (
     <div
