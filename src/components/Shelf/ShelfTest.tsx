@@ -56,6 +56,7 @@ const ShelfTest = () => {
           handleMouseEnter={handleMouseEnter}
           isCovered={isCovered}
           isPreviewed={isPreviewed}
+          isShrinked={isShrinked}
         />
 
         {/* 2. 디바이더 */}
@@ -79,6 +80,7 @@ const ShelfTest = () => {
           dragStart={dragStart}
           selection={selection}
           clearSelection={clearSelection}
+          isShrinked={isShrinked}
         />
       </div>
     </div>

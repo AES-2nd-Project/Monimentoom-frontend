@@ -8,6 +8,7 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
+  isShrinked: boolean;
 }
 
 const Preview = ({
@@ -16,10 +17,11 @@ const Preview = ({
   dragStart,
   selection,
   clearSelection,
+  isShrinked,
 }: PreviewProps) => {
   return (
     <>
-      {preview && (
+      {!isShrinked && preview && (
         <div
           style={getItemGridCoord(preview)}
           className={clsx(
