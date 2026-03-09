@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import divider from '../../assets/divider.png';
 import useShelfSelection from '../../hooks/useShelfSelection';
 import type { Bounds, Coordinate } from '../../types/room';
+import BackSlots from './BackSlots';
 
 const ShelfTest = () => {
   const {
@@ -19,8 +20,8 @@ const ShelfTest = () => {
   } = useShelfSelection();
 
   // 그리드 배열 생성 헬퍼
-  const gridRows = Array.from({ length: 4 });
-  const gridCols = Array.from({ length: 4 });
+  const gridRows: Array<number> = Array.from({ length: 4 });
+  const gridCols: Array<number> = Array.from({ length: 4 });
   const dividerRows = Array.from({ length: 3 });
 
   const getItemGridCoord = ({ r1, r2 = r1, c1, c2 = c1 }: Bounds) => ({
@@ -45,31 +46,15 @@ const ShelfTest = () => {
       onMouseUp={handleMouseUp}
     >
       {/* 1. 배경 빈 슬롯 */}
-      {gridRows.map((_, r) =>
-        gridCols.map((_, c) => {
-          const hideVisuals = isCovered({ r, c }) || isPreviewed({ r, c });
-
-          return (
-            <div
-              key={`bg-${r}-${c}`}
-              onMouseDown={() => handleMouseDown({ r, c })}
-              onMouseEnter={() => handleMouseEnter({ r, c })}
-              style={getItemGridCoord({ r1: r, r2: r, c1: c, c2: c })}
-              className={clsx(
-                'group z-10 mx-2 flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-center transition-colors duration-200',
-                !hideVisuals &&
-                  'border-border hover:bg-card-background border-2 border-dashed bg-transparent hover:border-transparent'
-              )}
-            >
-              {!hideVisuals && (
-                <span className='text-purple-white group-hover:text-purple-black pointer-events-none transition-colors duration-200'>
-                  +
-                </span>
-              )}
-            </div>
-          );
-        })
-      )}
+      <BackSlots
+        gridRows={gridRows}
+        gridCols={gridCols}
+        handleMouseDown={handleMouseDown}
+        handleMouseEnter={handleMouseEnter}
+        isCovered={isCovered}
+        isPreviewed={isPreviewed}
+        getItemGridCoord={getItemGridCoord}
+      />
 
       {/* 2. 디바이더 */}
       {dividerRows.map((_, r) =>
