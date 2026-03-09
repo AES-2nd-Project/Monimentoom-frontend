@@ -1,9 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-export interface RootState {
-  shelf: ShelfState;
-}
-
 interface ShelfState {
   isShrinked: boolean;
 }
