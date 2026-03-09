@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useSelector } from 'react-redux';
 import useShelfSelection from '../../hooks/useShelfSelection';
-import type { RootState } from '../../store/shelfSlice';
+import type { RootState } from '../../store';
 import BackSlots from './BackSlots';
 import Dividers from './Dividers';
 import Preview from './Preview';
