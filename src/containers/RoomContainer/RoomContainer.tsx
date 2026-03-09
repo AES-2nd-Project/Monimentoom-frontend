@@ -28,8 +28,8 @@ const RoomContainer = ({ isHome }: RoomContainerProps) => {
       )}
       {/* 선반 포함한 룸 섹션 */}
       <main className={`z-10 flex max-w-7xl min-w-[70vw] justify-between`}>
-        <Shelf />
-        <Shelf />
+        <Shelf isLeft={true} />
+        <Shelf isLeft={false} />
       </main>
     </div>
   );

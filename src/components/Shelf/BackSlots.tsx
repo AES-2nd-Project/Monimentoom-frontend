@@ -1,4 +1,6 @@
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 import type { Coordinate } from '../../types/room';
 import { getItemGridCoord } from './shelfUtils';
 
@@ -9,7 +11,6 @@ interface BackSlotsProps {
   handleMouseEnter: (coord: Coordinate) => void;
   isCovered: (coord: Coordinate) => boolean;
   isPreviewed: (coord: Coordinate) => boolean;
-  isShrinked: boolean;
 }
 
 const BackSlots = ({
@@ -19,8 +20,8 @@ const BackSlots = ({
   handleMouseEnter,
   isCovered,
   isPreviewed,
-  isShrinked,
 }: BackSlotsProps) => {
+  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
   return (
     <>
       {gridRows.map((_, r) =>

@@ -7,7 +7,11 @@ import Dividers from './Dividers';
 import Preview from './Preview';
 import ShelfItems from './ShelfItems';
 
-const Shelf = () => {
+interface ShelfProps {
+  isLeft: Boolean;
+}
+
+const Shelf = ({ isLeft }: ShelfProps) => {
   const {
     items,
     dragStart,
@@ -32,10 +36,12 @@ const Shelf = () => {
   return (
     <div
       className={clsx(
-        `bg-no-repeat transition-all shrink-0 bg-cover bg-center duration-700 ease-out transform-3d`,
+        `shrink-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-out transform-3d`,
         isShrinked
           ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side.png')] pt-15.5 pr-17 pb-6"
-          : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21"
+          : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21",
+
+        isShrinked && (isLeft ? '-scale-x-100' : '')
       )}
       style={{ perspective: '1000px' }}
     >
@@ -57,7 +63,6 @@ const Shelf = () => {
           handleMouseEnter={handleMouseEnter}
           isCovered={isCovered}
           isPreviewed={isPreviewed}
-          isShrinked={isShrinked}
         />
 
         {/* 2. 디바이더 */}
@@ -68,7 +73,6 @@ const Shelf = () => {
           preview={preview}
           isPreviewOverlapping={isPreviewOverlapping}
           isPreviewed={isPreviewed}
-          isShrinked={isShrinked}
         />
 
         {/* 3. 등록된 아이템 */}
@@ -81,7 +85,6 @@ const Shelf = () => {
           dragStart={dragStart}
           selection={selection}
           clearSelection={clearSelection}
-          isShrinked={isShrinked}
         />
       </div>
     </div>

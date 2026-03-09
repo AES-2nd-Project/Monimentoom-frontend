@@ -1,5 +1,7 @@
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
 import divider from '../../assets/divider.png';
+import type { RootState } from '../../store';
 import type { Bounds, Coordinate, Item } from '../../types/room';
 import { getDividerGridCoord } from './shelfUtils';
 
@@ -10,7 +12,6 @@ interface DividersProps {
   preview: Bounds | null;
   isPreviewOverlapping: boolean;
   isPreviewed: (coord: Coordinate) => boolean;
-  isShrinked: boolean;
 }
 
 const Dividers = ({
@@ -20,8 +21,8 @@ const Dividers = ({
   preview,
   isPreviewOverlapping,
   isPreviewed,
-  isShrinked,
 }: DividersProps) => {
+  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
   return (
     <>
       {dividerRows.map((_, r) =>

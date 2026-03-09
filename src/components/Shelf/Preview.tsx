@@ -1,4 +1,6 @@
 import clsx from 'clsx';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../store';
 import type { Bounds, Coordinate } from '../../types/room';
 import { getItemGridCoord } from './shelfUtils';
 
@@ -8,7 +10,6 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
-  isShrinked: boolean;
 }
 
 const Preview = ({
@@ -17,8 +18,8 @@ const Preview = ({
   dragStart,
   selection,
   clearSelection,
-  isShrinked,
 }: PreviewProps) => {
+  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
   return (
     <>
       {!isShrinked && preview && (
