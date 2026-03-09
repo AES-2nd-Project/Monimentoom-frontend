@@ -10,6 +10,7 @@ interface DividersProps {
   preview: Bounds | null;
   isPreviewOverlapping: boolean;
   isPreviewed: (coord: Coordinate) => boolean;
+  isShrinked: boolean;
 }
 
 const Dividers = ({
@@ -19,6 +20,7 @@ const Dividers = ({
   preview,
   isPreviewOverlapping,
   isPreviewed,
+  isShrinked,
 }: DividersProps) => {
   return (
     <>
@@ -43,8 +45,8 @@ const Dividers = ({
               style={getDividerGridCoord({ r, c })}
               className={clsx(
                 'flex h-4 items-start justify-center',
-                c === 0 && '-ml-7.5',
-                c === 3 && '-mr-7.25'
+                c === 0 && (isShrinked ? '-ml-1.5' : '-ml-7.5'),
+                c === 3 && (isShrinked ? '-mr-px' : '-mr-7.25')
               )}
             >
               {showDivider && (

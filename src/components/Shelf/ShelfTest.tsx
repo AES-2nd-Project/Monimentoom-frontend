@@ -66,6 +66,7 @@ const ShelfTest = () => {
           preview={preview}
           isPreviewOverlapping={isPreviewOverlapping}
           isPreviewed={isPreviewed}
+          isShrinked={isShrinked}
         />
 
         {/* 3. 등록된 아이템 */}
