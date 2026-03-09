@@ -38,10 +38,10 @@ const Shelf = ({ isLeft }: ShelfProps) => {
       className={clsx(
         `shrink-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-out transform-3d`,
         isShrinked
-          ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side.png')] pt-15.5 pr-17 pb-6"
-          : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21",
-
-        isShrinked && (isLeft ? '-scale-x-100' : '')
+          ? isLeft
+            ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_left.png')] pt-15.5 pb-6 pl-17"
+            : "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_right.png')] pt-15.5 pr-17 pb-6"
+          : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21"
       )}
       style={{ perspective: '1000px' }}
     >
@@ -49,7 +49,9 @@ const Shelf = ({ isLeft }: ShelfProps) => {
         className={clsx(
           `relative grid h-full w-full shrink-0 grid-cols-4 grid-rows-[1fr_auto_1fr_auto_1fr_auto_1fr] select-none`,
           isShrinked
-            ? 'transform-[translateZ(100px)_translateX(-4px)_skewY(13.8deg)_scale(0.7)]'
+            ? isLeft
+              ? 'transform-[translateZ(100px)_translateX(4px)_skewY(-13.8deg)_scale(0.7)]'
+              : 'transform-[translateZ(100px)_translateX(-4px)_skewY(13.8deg)_scale(0.7)]'
             : 'transform-[translateZ(0px)_rotateY(0deg)_rotateX(0deg)_scale(1.0)]'
         )}
         onMouseLeave={handleMouseUp}
