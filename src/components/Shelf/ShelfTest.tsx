@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import divider from '../../assets/divider.png';
 import useShelfSelection from '../../hooks/useShelfSelection';
 import type { Bounds, Coordinate } from '../../types/room';
 import BackSlots from './BackSlots';
+import Dividers from './Dividers';
 
 const ShelfTest = () => {
   const {
@@ -22,7 +22,7 @@ const ShelfTest = () => {
   // 그리드 배열 생성 헬퍼
   const gridRows: Array<number> = Array.from({ length: 4 });
   const gridCols: Array<number> = Array.from({ length: 4 });
-  const dividerRows = Array.from({ length: 3 });
+  const dividerRows: Array<number> = Array.from({ length: 3 });
 
   const getItemGridCoord = ({ r1, r2 = r1, c1, c2 = c1 }: Bounds) => ({
     // row는 divider가 끼어 있기 때문에 2배씩 건너뜀
@@ -57,42 +57,15 @@ const ShelfTest = () => {
       />
 
       {/* 2. 디바이더 */}
-      {dividerRows.map((_, r) =>
-        gridCols.map((_, c) => {
-          const coveringItem = items.find(
-            item => r >= item.r1 && r <= item.r2 && c >= item.c1 && c <= item.c2
-          );
-          const spansAcrossItem = coveringItem && coveringItem.r2 > r;
-
-          const isPreviewCovering = isPreviewed({ r, c });
-          const spansAcrossPreview =
-            preview && isPreviewCovering && preview.r2 > r;
-
-          const showDivider =
-            (coveringItem && !spansAcrossItem) ||
-            (isPreviewCovering && !spansAcrossPreview && !isPreviewOverlapping);
-
-          return (
-            <div
-              key={`divider-${r}-${c}`}
-              style={getDividerGridCoord({ r, c })}
-              className={clsx(
-                'flex h-4 items-start justify-center',
-                c === 0 && '-ml-7.5',
-                c === 3 && '-mr-7.25'
-              )}
-            >
-              {showDivider && (
-                <img
-                  src={divider}
-                  alt='divider'
-                  className='pointer-events-none h-full w-full object-fill'
-                />
-              )}
-            </div>
-          );
-        })
-      )}
+      <Dividers
+        dividerRows={dividerRows}
+        gridCols={gridCols}
+        items={items}
+        preview={preview}
+        isPreviewOverlapping={isPreviewOverlapping}
+        isPreviewed={isPreviewed}
+        getDividerGridCoord={getDividerGridCoord}
+      />
 
       {/* 3. 등록된 아이템 */}
       {items.map(item => (
