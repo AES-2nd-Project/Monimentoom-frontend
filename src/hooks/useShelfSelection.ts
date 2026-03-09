@@ -29,7 +29,7 @@ const useShelfSelection = () => {
 
       if (isInsideSelection) {
         if (!checkOverlap(selection)) {
-          setItems([...items, { id: Date.now(), ...selection }]);
+          setItems(prevItems => [...prevItems, { id: Date.now(), ...selection }]);
         }
         setSelection(null);
         return;
