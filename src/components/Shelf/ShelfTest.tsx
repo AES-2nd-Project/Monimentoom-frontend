@@ -3,6 +3,7 @@ import useShelfSelection from '../../hooks/useShelfSelection';
 import type { Bounds, Coordinate } from '../../types/room';
 import BackSlots from './BackSlots';
 import Dividers from './Dividers';
+import ShelfItems from './ShelfItems';
 
 const ShelfTest = () => {
   const {
@@ -68,15 +69,7 @@ const ShelfTest = () => {
       />
 
       {/* 3. 등록된 아이템 */}
-      {items.map(item => (
-        <div
-          key={item.id}
-          style={getItemGridCoord(item)}
-          className='pointer-events-none z-20 mx-2 flex items-center justify-center rounded-lg bg-gray-300 shadow-md'
-        >
-          {item.c2 - item.c1 + 1} x {item.r2 - item.r1 + 1}
-        </div>
-      ))}
+      <ShelfItems items={items} getItemGridCoord={getItemGridCoord} />
 
       {/* 4. 드래그 및 대기 중 미리보기 박스 */}
       {preview && (
