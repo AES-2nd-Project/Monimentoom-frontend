@@ -1,20 +1,5 @@
 import { useState } from 'react';
-
-export interface Coordinate {
-  r: number;
-  c: number;
-}
-
-export interface Bounds {
-  r1: number;
-  r2: number;
-  c1: number;
-  c2: number;
-}
-
-export interface Item extends Bounds {
-  id: number;
-}
+import type { Bounds, Coordinate, Item } from '../types/room';
 
 const useShelfSelection = () => {
   const [items, setItems] = useState<Item[]>([]);

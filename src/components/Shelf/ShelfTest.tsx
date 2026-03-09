@@ -1,9 +1,7 @@
 import clsx from 'clsx';
 import divider from '../../assets/divider.png';
-import useShelfSelection, {
-  type Bounds,
-  type Coordinate,
-} from '../../hooks/useShelfSelection';
+import useShelfSelection from '../../hooks/useShelfSelection';
+import type { Bounds, Coordinate } from '../../types/room';
 
 const ShelfTest = () => {
   const {
@@ -25,7 +23,7 @@ const ShelfTest = () => {
   const gridCols = Array.from({ length: 4 });
   const dividerRows = Array.from({ length: 3 });
 
-  const getItemGrid = ({ r1, r2 = r1, c1, c2 = c1 }: Bounds) => ({
+  const getItemGridCoord = ({ r1, r2 = r1, c1, c2 = c1 }: Bounds) => ({
     // row는 divider가 끼어 있기 때문에 2배씩 건너뜀
     gridRowStart: r1 * 2 + 1,
     gridRowEnd: r2 * 2 + 2,
@@ -33,7 +31,7 @@ const ShelfTest = () => {
     gridColumnEnd: c2 + 2,
   });
 
-  const getDividerGrid = ({ r, c }: Coordinate) => ({
+  const getDividerGridCoord = ({ r, c }: Coordinate) => ({
     gridRowStart: r * 2 + 2,
     gridRowEnd: r * 2 + 3,
     gridColumnStart: c + 1,
@@ -56,7 +54,7 @@ const ShelfTest = () => {
               key={`bg-${r}-${c}`}
               onMouseDown={() => handleMouseDown({ r, c })}
               onMouseEnter={() => handleMouseEnter({ r, c })}
-              style={getItemGrid({ r1: r, r2: r, c1: c, c2: c })}
+              style={getItemGridCoord({ r1: r, r2: r, c1: c, c2: c })}
               className={clsx(
                 'group z-10 mx-2 flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-center transition-colors duration-200',
                 !hideVisuals &&
@@ -92,7 +90,7 @@ const ShelfTest = () => {
           return (
             <div
               key={`divider-${r}-${c}`}
-              style={getDividerGrid({ r, c })}
+              style={getDividerGridCoord({ r, c })}
               className={clsx(
                 'flex h-4 items-start justify-center',
                 c === 0 && '-ml-7.5',
@@ -115,7 +113,7 @@ const ShelfTest = () => {
       {items.map(item => (
         <div
           key={item.id}
-          style={getItemGrid(item)}
+          style={getItemGridCoord(item)}
           className='pointer-events-none z-20 mx-2 flex items-center justify-center rounded-lg bg-gray-300 shadow-md'
         >
           {item.c2 - item.c1 + 1} x {item.r2 - item.r1 + 1}
@@ -125,7 +123,7 @@ const ShelfTest = () => {
       {/* 4. 드래그 및 대기 중 미리보기 박스 */}
       {preview && (
         <div
-          style={getItemGrid(preview)}
+          style={getItemGridCoord(preview)}
           className={clsx(
             'pointer-events-none relative z-30 mx-2 flex items-center justify-center rounded-lg border-2 shadow-md transition-all',
             isPreviewOverlapping
