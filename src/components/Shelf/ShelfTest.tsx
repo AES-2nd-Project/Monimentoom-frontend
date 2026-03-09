@@ -1,6 +1,7 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import useShelfSelection from '../../hooks/useShelfSelection';
+import type { RootState } from '../../store/shelfSlice';
 import BackSlots from './BackSlots';
 import Dividers from './Dividers';
 import Preview from './Preview';
@@ -21,12 +22,12 @@ const ShelfTest = () => {
     clearSelection,
   } = useShelfSelection();
 
+  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
+
   // 그리드 배열 생성 헬퍼
   const gridRows: Array<number> = Array.from({ length: 4 });
   const gridCols: Array<number> = Array.from({ length: 4 });
   const dividerRows: Array<number> = Array.from({ length: 3 });
-
-  const [isShrinked, setIsShrinked] = useState(false);
 
   return (
     <div

@@ -4,7 +4,7 @@ import Shelf from '../../components/Shelf/Shelf';
 import ShelfTest from '../../components/Shelf/ShelfTest';
 
 interface RoomContainerProps {
-  isHome: Boolean;
+  isHome: boolean;
 }
 
 const RoomContainer = ({ isHome }: RoomContainerProps) => {
