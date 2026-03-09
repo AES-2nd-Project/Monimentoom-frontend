@@ -36,11 +36,11 @@ const Shelf = ({ isLeft }: ShelfProps) => {
   return (
     <div
       className={clsx(
-        `shrink-0 bg-cover bg-center bg-no-repeat transition-all duration-700 ease-out transform-3d`,
+        `shrink-0 bg-cover bg-center bg-no-repeat pt-15.5 pb-6 transition-all duration-700 ease-out transform-3d`,
         isShrinked
           ? isLeft
-            ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_left.png')] pt-15.5 pb-6 pl-17"
-            : "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_right.png')] pt-15.5 pr-17 pb-6"
+            ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_left.png')] pl-17"
+            : "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side_right.png')] pr-17"
           : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21"
       )}
       style={{ perspective: '1000px' }}
