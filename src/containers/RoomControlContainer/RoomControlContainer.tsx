@@ -7,7 +7,6 @@ const RoomControlContainer = () => {
 
   const handleConfigClick = () => {
     dispatch(toggleIsShrinked());
-    console.log('편집 모드 시작: 선반 정면 전환');
   };
 
   const onClick = () => {
