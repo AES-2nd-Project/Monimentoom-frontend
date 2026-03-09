@@ -1,5 +1,6 @@
 import clsx from 'clsx';
-import type { Bounds, Coordinate } from '../../types/room';
+import type { Coordinate } from '../../types/room';
+import { getItemGridCoord } from './shelfUtils';
 
 interface BackSlotsProps {
   gridRows: Array<number>;
@@ -8,7 +9,6 @@ interface BackSlotsProps {
   handleMouseEnter: (coord: Coordinate) => void;
   isCovered: (coord: Coordinate) => boolean;
   isPreviewed: (coord: Coordinate) => boolean;
-  getItemGridCoord: (bounds: Bounds) => React.CSSProperties;
 }
 
 const BackSlots = ({
@@ -18,7 +18,6 @@ const BackSlots = ({
   handleMouseEnter,
   isCovered,
   isPreviewed,
-  getItemGridCoord,
 }: BackSlotsProps) => {
   return (
     <>

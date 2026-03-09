@@ -1,11 +1,11 @@
-import type { Bounds, Item } from '../../types/room';
+import type { Item } from '../../types/room';
+import { getItemGridCoord } from './shelfUtils';
 
 interface ShelfItemsProps {
   items: Item[];
-  getItemGridCoord: (bounds: Bounds) => React.CSSProperties;
 }
 
-const ShelfItems = ({ items, getItemGridCoord }: ShelfItemsProps) => {
+const ShelfItems = ({ items }: ShelfItemsProps) => {
   return (
     <>
       {items.map(item => (

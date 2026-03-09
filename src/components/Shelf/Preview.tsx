@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import type { Bounds, Coordinate } from '../../types/room';
+import { getItemGridCoord } from './shelfUtils';
 
 interface PreviewProps {
   preview: Bounds | null;
@@ -7,7 +8,6 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
-  getItemGridCoord: (bounds: Bounds) => React.CSSProperties;
 }
 
 const Preview = ({
@@ -16,7 +16,6 @@ const Preview = ({
   dragStart,
   selection,
   clearSelection,
-  getItemGridCoord,
 }: PreviewProps) => {
   return (
     <>
