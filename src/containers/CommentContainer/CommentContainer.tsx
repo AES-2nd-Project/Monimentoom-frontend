@@ -3,7 +3,7 @@ import Comment from '../../components/Comment/Comment';
 const CommentContainer = () => {
   return (
     <div
-      className={`bg-card-background flex flex-1 flex-col gap-8 rounded-lg p-12`}
+      className={`bg-card-background flex flex-1 shrink-0 flex-col gap-8 rounded-lg p-12`}
     >
       <Comment />
       <Comment />
