@@ -32,7 +32,7 @@ const Shelf = () => {
   return (
     <div
       className={clsx(
-        `bg-no-repeattransition-all shrink-0 bg-cover bg-center duration-700 ease-out transform-3d`,
+        `bg-no-repeat transition-all shrink-0 bg-cover bg-center duration-700 ease-out transform-3d`,
         isShrinked
           ? "aspect-1804/2040 h-100 bg-[url('/src/assets/shelf_side.png')] pt-15.5 pr-17 pb-6"
           : "aspect-1208/1257 h-125 bg-[url('/src/assets/shelf_front.png')] px-14 pt-15 pb-21"
