@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import logo from '../../assets/logo.png';
 import Shelf from '../../components/Shelf/Shelf';
 
 interface RoomContainerProps {
