@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './authSlice';
 import shelfReducer from './shelfSlice';
 
 export const store = configureStore({
   reducer: {
     shelf: shelfReducer,
+    auth: authReducer,
   },
 });
 

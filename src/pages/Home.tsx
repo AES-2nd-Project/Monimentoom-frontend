@@ -1,7 +1,12 @@
+import { useSelector } from 'react-redux';
 import LoginForm from '../components/LoginForm/LoginForm';
+import ProfileCard from '../components/ProfileCard/ProfileCard';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
+import type { RootState } from '../store';
 
 const Home = () => {
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
   return (
     <div
       className={
@@ -14,8 +19,8 @@ const Home = () => {
       </section>
 
       {/* 메인 섹션 */}
-      <main className={`mx-auto max-w-7xl min-w-[70vw]`}>
-        <LoginForm />
+      <main className={`mx-auto mt-15 max-w-7xl min-w-[70vw]`}>
+        {isLoggedIn ? <ProfileCard /> : <LoginForm />}
       </main>
     </div>
   );

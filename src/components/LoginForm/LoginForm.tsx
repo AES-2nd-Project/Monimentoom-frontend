@@ -1,10 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../api/users-api';
+import { setLoggedIn } from '../../store/authSlice';
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -12,6 +15,7 @@ const LoginForm = () => {
     mutationFn: login,
     onSuccess: data => {
       localStorage.setItem('accessToken', data.accessToken);
+      dispatch(setLoggedIn(true));
       navigate('/');
     },
     onError: (error: Error) => {
@@ -19,18 +23,17 @@ const LoginForm = () => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || !password) return alert('아이디와 비밀번호를 입력해주세요.');
 
-    // 3. 뮤테이션 실행
     mutate({ email, password });
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className={`bg-card-background mt-15 flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}
+      className={`bg-card-background flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}
     >
       <p>👥 Login</p>
       <input
