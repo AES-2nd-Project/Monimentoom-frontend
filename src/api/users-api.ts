@@ -14,7 +14,13 @@ export const login = async ({ email, password }: LoginProps) => {
       password,
     });
 
-    return response.data;
+    const authHeader = response.headers['authorization'];
+    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+
+    return {
+      ...response.data,
+      accessToken: token,
+    };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorCode = error.response?.data?.code as ErrorCode;
