@@ -8,7 +8,7 @@ const Home = () => {
         'mx-auto my-0 box-border flex w-full flex-col items-center justify-center'
       }
     >
-      <section className={`h-250 w-full`}>
+      <section className={`bg-purple-black h-250 w-full`}>
         {/* 룸 이미지 섹션 */}
         <RoomContainer isHome={true} />
       </section>
