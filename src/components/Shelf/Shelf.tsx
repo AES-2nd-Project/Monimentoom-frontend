@@ -23,8 +23,11 @@ const Shelf = ({ isLeft }: ShelfProps) => {
     handleMouseEnter,
     handleMouseUp,
     isCovered,
+    isCoveredWithImage,
     isPreviewed,
     clearSelection,
+    confirmSelectionWithImage,
+    setItemImage,
   } = useShelfSelection();
 
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
@@ -74,6 +77,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
           handleMouseDown={handleMouseDown}
           handleMouseEnter={handleMouseEnter}
           isCovered={isCovered}
+          isCoveredWithImage={isCoveredWithImage}
           isPreviewed={isPreviewed}
         />
 
@@ -88,7 +92,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
         />
 
         {/* 3. 등록된 아이템 */}
-        <ShelfItems items={items} />
+        <ShelfItems items={items} setItemImage={setItemImage} />
 
         {/* 4. 드래그 및 대기 중 미리보기 박스 */}
         <Preview
@@ -97,6 +101,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
           dragStart={dragStart}
           selection={selection}
           clearSelection={clearSelection}
+          onDropImage={confirmSelectionWithImage}
         />
       </div>
     </div>

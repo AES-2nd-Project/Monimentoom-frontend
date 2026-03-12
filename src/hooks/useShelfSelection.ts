@@ -28,9 +28,7 @@ const useShelfSelection = () => {
         coord.r >= r1 && coord.r <= r2 && coord.c >= c1 && coord.c <= c2;
 
       if (isInsideSelection) {
-        if (!checkOverlap(selection)) {
-          setItems(prevItems => [...prevItems, { id: Date.now(), ...selection }]);
-        }
+        // 클릭만으로는 아이템 등록 안 함 — 인벤토리에서 이미지 드롭해야 확정
         setSelection(null);
         return;
       }
@@ -64,9 +62,35 @@ const useShelfSelection = () => {
     setDragCurrent(null);
   };
 
+  // 인벤토리에서 드래그 앤 드롭으로 영역 확정 + 이미지 등록
+  const confirmSelectionWithImage = (imageSrc: string) => {
+    if (selection && !checkOverlap(selection)) {
+      setItems(prev => [...prev, { id: Date.now(), imageSrc, ...selection }]);
+      setSelection(null);
+    }
+  };
+
+  // 이미 확정된 아이템에 이미지 설정
+  const setItemImage = (id: number, imageSrc: string) => {
+    setItems(prev =>
+      prev.map(item => (item.id === id ? { ...item, imageSrc } : item))
+    );
+  };
+
   const isCovered = (coord: Coordinate) =>
     items.some(
       item =>
+        coord.r >= item.r1 &&
+        coord.r <= item.r2 &&
+        coord.c >= item.c1 &&
+        coord.c <= item.c2
+    );
+
+  // 이미지가 등록된 아이템이 차지하는 셀
+  const isCoveredWithImage = (coord: Coordinate) =>
+    items.some(
+      item =>
+        !!item.imageSrc &&
         coord.r >= item.r1 &&
         coord.r <= item.r2 &&
         coord.c >= item.c1 &&
@@ -110,8 +134,11 @@ const useShelfSelection = () => {
     handleMouseEnter,
     handleMouseUp,
     isCovered,
+    isCoveredWithImage,
     isPreviewed,
     clearSelection,
+    confirmSelectionWithImage,
+    setItemImage,
   };
 };
 

@@ -14,4 +14,5 @@ export interface Bounds {
 
 export interface Item extends Bounds {
   id: number;
+  imageSrc?: string;
 }
