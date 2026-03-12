@@ -17,9 +17,9 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: loginApi,
     onSuccess: data => {
-      dispatch(
-        setLoginInfo({ nickname: data.nickname, token: data.accessToken })
-      );
+      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('nickname', data.nickname);
+      dispatch(setLoginInfo({ nickname: data.nickname }));
       navigate('/');
     },
     onError: (error: Error) => {
@@ -29,6 +29,8 @@ export const useAuth = () => {
 
   // 로그아웃
   const logout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('nickname');
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
     navigate('/');

@@ -13,21 +13,14 @@ const authSlice = createSlice({
   } as AuthState,
   reducers: {
     // 로그인
-    setLoginInfo: (
-      state,
-      action: PayloadAction<{ nickname: string; token: string }>
-    ) => {
+    setLoginInfo: (state, action: PayloadAction<{ nickname: string }>) => {
       state.isLoggedIn = true;
       state.nickname = action.payload.nickname;
-      localStorage.setItem('accessToken', action.payload.token);
-      localStorage.setItem('nickname', action.payload.nickname);
     },
     // 로그아웃
     logout: state => {
       state.isLoggedIn = false;
       state.nickname = '';
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('nickname');
     },
   },
 });
