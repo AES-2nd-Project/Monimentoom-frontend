@@ -1,4 +1,5 @@
 import Header from '../components/Header/Header';
+import Inventory from '../components/Inventory/Inventory';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
 import CommentContainer from '../containers/CommentContainer/CommentContainer';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
@@ -8,7 +9,7 @@ const Room = () => {
   return (
     <div
       className={
-        'mx-auto my-0 box-border flex w-full flex-col items-center justify-center pt-20'
+        'mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'
       }
     >
       <Header />
@@ -19,10 +20,11 @@ const Room = () => {
 
       {/* 메인 섹션 */}
       <main
-        className={`mx-auto flex max-w-7xl min-w-[70vw] flex-col flex-wrap gap-6 pt-6`}
+        className={`mx-auto flex max-w-7xl min-w-[70vw] flex-col flex-wrap`}
       >
         <RoomControlContainer />
-        <div className={`flex h-auto w-full flex-row gap-12`}>
+        <Inventory />
+        <div className={`flex h-auto w-full flex-row gap-12 pt-6`}>
           <ProfileCard />
           <CommentContainer />
         </div>

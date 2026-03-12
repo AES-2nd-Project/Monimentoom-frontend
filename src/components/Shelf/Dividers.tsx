@@ -22,7 +22,7 @@ const Dividers = ({
   isPreviewOverlapping,
   isPreviewed,
 }: DividersProps) => {
-  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   return (
     <>
       {dividerRows.map((_, r) =>
@@ -46,8 +46,8 @@ const Dividers = ({
               style={getDividerGridCoord({ r, c })}
               className={clsx(
                 'flex h-4 items-start justify-center',
-                c === 0 && (isShrinked ? '-ml-1.5' : '-ml-7.5'),
-                c === 3 && (isShrinked ? '-mr-px' : '-mr-7.25')
+                c === 0 && (isEditMode ? '-ml-1.5' : '-ml-7.5'),
+                c === 3 && (isEditMode ? '-mr-px' : '-mr-7.25')
               )}
             >
               {showDivider && (

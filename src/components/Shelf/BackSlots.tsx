@@ -21,13 +21,13 @@ const BackSlots = ({
   isCovered,
   isPreviewed,
 }: BackSlotsProps) => {
-  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   return (
     <>
       {gridRows.map((_, r) =>
         gridCols.map((_, c) => {
           const hideVisuals =
-            isShrinked || isCovered({ r, c }) || isPreviewed({ r, c });
+            isEditMode || isCovered({ r, c }) || isPreviewed({ r, c });
 
           return (
             <div
@@ -39,7 +39,7 @@ const BackSlots = ({
                 'group z-10 mx-2 flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-center transition-colors duration-200',
                 !hideVisuals &&
                   'border-border hover:bg-card-background border-2 border-dashed bg-transparent hover:border-transparent',
-                isShrinked && 'pointer-events-none'
+                isEditMode && 'pointer-events-none'
               )}
             >
               {!hideVisuals && (

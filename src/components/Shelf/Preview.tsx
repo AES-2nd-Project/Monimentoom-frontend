@@ -19,10 +19,10 @@ const Preview = ({
   selection,
   clearSelection,
 }: PreviewProps) => {
-  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   return (
     <>
-      {!isShrinked && preview && (
+      {!isEditMode && preview && (
         <div
           style={getItemGridCoord(preview)}
           className={clsx(
