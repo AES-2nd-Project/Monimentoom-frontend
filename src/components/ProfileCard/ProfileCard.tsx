@@ -17,7 +17,7 @@ const ProfileCard = () => {
 
       <button
         type='submit'
-        className={`bg-button mt-auto h-12 w-full rounded-lg`}
+        className={`bg-button text-purple-white mt-auto h-12 w-full rounded-lg`}
       >
         로그아웃
       </button>
