@@ -18,7 +18,7 @@ const RoomControlContainer = () => {
       <div className={'flex justify-start'}>
         <RoomButton
           onClick={handleConfigClick}
-          color='point-green'
+          color='gray'
           label='편집'
           visibility={true}
         />

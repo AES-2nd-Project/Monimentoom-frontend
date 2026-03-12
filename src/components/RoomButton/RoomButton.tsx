@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 interface RoomButtonProps {
   onClick: () => void;
-  color: 'button' | 'point-pink' | 'point-green';
+  color: 'button' | 'point-pink' | 'point-green' | 'gray';
   label: string;
   visibility: boolean;
 }
@@ -17,7 +17,8 @@ const RoomButton = ({ onClick, color, label, visibility }: RoomButtonProps) => {
         !visibility && `invisible`,
         color === `button` && `bg-button`,
         color === `point-pink` && `bg-point-pink`,
-        color === `point-green` && `bg-point-green`
+        color === `point-green` && `bg-point-green`,
+        color === `gray` && `bg-gray-400`
       )}
     >
       <span>{label}</span>

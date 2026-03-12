@@ -8,7 +8,7 @@ import Preview from './Preview';
 import ShelfItems from './ShelfItems';
 
 interface ShelfProps {
-  isLeft: Boolean;
+  isLeft: boolean;
 }
 
 const Shelf = ({ isLeft }: ShelfProps) => {
