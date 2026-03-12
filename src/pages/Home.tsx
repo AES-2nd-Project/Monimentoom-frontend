@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import LoginForm from '../components/LoginForm/LoginForm';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
@@ -7,6 +9,14 @@ import type { RootState } from '../store';
 
 const Home = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.shouldScroll) {
+      window.scrollTo({ top: 1000, behavior: 'smooth' });
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   return (
     <div

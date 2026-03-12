@@ -11,6 +11,14 @@ const Header = () => {
   const isHome = location.pathname === '/';
   const menus = ['Room', 'MyPage'];
 
+  const handleLoginClick = () => {
+    if (isHome) {
+      window.scrollTo({ top: 1000, behavior: 'smooth' });
+    } else {
+      navigate('/', { state: { shouldScroll: true } });
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 1000) {
@@ -51,7 +59,7 @@ const Header = () => {
               </li>
             ))}
             <li
-              onClick={isLoggedIn ? logout : () => navigate('/')}
+              onClick={isLoggedIn ? logout : handleLoginClick}
               className={`hover:text-point-pink cursor-pointer transition-colors duration-300`}
             >
               {isLoggedIn ? `로그아웃` : `로그인`}
