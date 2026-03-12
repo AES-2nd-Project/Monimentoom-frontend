@@ -27,7 +27,6 @@ const Shelf = ({ isLeft }: ShelfProps) => {
   } = useShelfSelection();
 
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
-  console.log('123', isEditMode);
 
   // 그리드 배열 생성 헬퍼
   const gridRows: Array<number> = Array.from({ length: 4 });
