@@ -17,8 +17,9 @@ export const useAuth = () => {
   const loginMutation = useMutation({
     mutationFn: loginApi,
     onSuccess: data => {
-      localStorage.setItem('accessToken', data.accessToken);
-      dispatch(setLoginInfo({ nickname: data.nickname }));
+      dispatch(
+        setLoginInfo({ nickname: data.nickname, token: data.accessToken })
+      );
       navigate('/');
     },
     onError: (error: Error) => {
