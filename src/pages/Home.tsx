@@ -14,7 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     if (location.state?.shouldScroll) {
-      window.scrollTo({ top: 1000, behavior: 'smooth' });
+      window.scrollTo({ top: 950, behavior: 'smooth' });
       navigate(location.pathname, { replace: true, state: null });
     }
   }, [location, navigate]);

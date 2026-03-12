@@ -1,11 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../hooks/useAuth';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, logout, nickname } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const isHome = location.pathname === '/';
@@ -13,7 +14,7 @@ const Header = () => {
   // 홈 페이지로 이동 후 스크롤
   const handleLoginClick = () => {
     if (isHome) {
-      window.scrollTo({ top: 1000, behavior: 'smooth' });
+      window.scrollTo({ top: 950, behavior: 'smooth' });
     } else {
       navigate('/', { state: { shouldScroll: true } });
     }
@@ -34,16 +35,23 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 1000) {
+      if (!isHome) {
+        setIsScrolled(true);
+        return;
+      }
+
+      if (window.scrollY >= 900) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
     };
 
+    handleScroll();
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHome, location.pathname]);
 
   return (
     <motion.header
