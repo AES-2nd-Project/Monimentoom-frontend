@@ -1,6 +1,8 @@
 import image from '../../assets/react.svg';
+import { useAuth } from '../../hooks/useAuth';
 
 const ProfileCard = () => {
+  const { nickname, logout } = useAuth();
   return (
     <div
       className={`bg-card-background flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}
@@ -12,11 +14,12 @@ const ProfileCard = () => {
           src={image}
           className={`bg-primary h-10 w-10 shrink-0 rounded-4xl`}
         />
-        <p className={`w-20 shrink-0 text-start`}>닉네임</p>
+        <p className={`w-20 shrink-0 text-start`}>{nickname || '게스트'}</p>
       </div>
 
       <button
-        type='submit'
+        type='button'
+        onClick={logout}
         className={`bg-button text-purple-white mt-auto h-12 w-full rounded-lg`}
       >
         로그아웃

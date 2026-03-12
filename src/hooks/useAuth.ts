@@ -9,7 +9,9 @@ export const useAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const { isLoggedIn, nickname } = useSelector(
+    (state: RootState) => state.auth
+  );
 
   // 로그인
   const loginMutation = useMutation({
@@ -33,6 +35,7 @@ export const useAuth = () => {
 
   return {
     isLoggedIn,
+    nickname,
     login: loginMutation.mutate,
     isPending: loginMutation.isPending,
     logout,
