@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../api/users-api';
 import type { RootState } from '../store';
-import { logout as logoutAction, setLoggedIn } from '../store/authSlice';
+import { logout as logoutAction, setLoginInfo } from '../store/authSlice';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ export const useAuth = () => {
     mutationFn: loginApi,
     onSuccess: data => {
       localStorage.setItem('accessToken', data.accessToken);
-      dispatch(setLoggedIn(true));
+      dispatch(setLoginInfo({ nickname: data.nickname }));
       navigate('/');
     },
     onError: (error: Error) => {

@@ -20,6 +20,7 @@ export const login = async ({ email, password }: LoginProps) => {
     return {
       ...response.data,
       accessToken: token,
+      nickname: response.data.nickname,
     };
   } catch (error) {
     if (axios.isAxiosError(error)) {

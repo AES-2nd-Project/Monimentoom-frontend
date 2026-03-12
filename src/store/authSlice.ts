@@ -2,25 +2,31 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
   isLoggedIn: boolean;
+  nickname: string;
 }
-
-const initialState: AuthState = {
-  isLoggedIn: false,
-};
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: {
+    isLoggedIn: !!localStorage.getItem('accessToken'),
+    nickname: localStorage.getItem('nickname') || '',
+  } as AuthState,
   reducers: {
-    setLoggedIn: (state, action: PayloadAction<boolean>) => {
-      state.isLoggedIn = action.payload;
+    // 로그인
+    setLoginInfo: (state, action: PayloadAction<{ nickname: string }>) => {
+      state.isLoggedIn = true;
+      state.nickname = action.payload.nickname;
+      localStorage.setItem('nickname', action.payload.nickname);
     },
+    // 로그아웃
     logout: state => {
       state.isLoggedIn = false;
+      state.nickname = '';
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('nickname');
     },
   },
 });
 
-export const { setLoggedIn, logout } = authSlice.actions;
+export const { logout, setLoginInfo } = authSlice.actions;
 export default authSlice.reducer;
