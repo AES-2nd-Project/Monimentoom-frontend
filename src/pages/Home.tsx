@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import Header from '../components/Header/Header';
 import LoginForm from '../components/LoginForm/LoginForm';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
@@ -13,9 +14,10 @@ const Home = () => {
         'mx-auto my-0 box-border flex w-full flex-col items-center justify-center'
       }
     >
+      <Header />
       <section className={`bg-purple-black h-250 w-full`}>
         {/* 룸 이미지 섹션 */}
-        <RoomContainer isHome={true} />
+        <RoomContainer />
       </section>
 
       {/* 메인 섹션 */}

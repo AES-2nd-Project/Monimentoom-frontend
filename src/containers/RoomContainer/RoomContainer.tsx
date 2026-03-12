@@ -1,15 +1,13 @@
 import clsx from 'clsx';
 import Shelf from '../../components/Shelf/Shelf';
 
-interface RoomContainerProps {
-  isHome: boolean;
-}
+const RoomContainer = () => {
+  const isHome = location.pathname === '/';
 
-const RoomContainer = ({ isHome }: RoomContainerProps) => {
   return (
     <div
       className={clsx(
-        `relative z-0 flex h-250 w-full min-w-7xl shrink-0 items-center justify-center`
+        `relative z-0 flex h-250 w-full min-w-7xl shrink-0 items-center justify-center overflow-hidden`
       )}
     >
       {/* 홈 화면 효과 */}

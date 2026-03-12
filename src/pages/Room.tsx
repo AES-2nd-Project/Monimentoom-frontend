@@ -1,3 +1,4 @@
+import Header from '../components/Header/Header';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
 import CommentContainer from '../containers/CommentContainer/CommentContainer';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
@@ -7,12 +8,13 @@ const Room = () => {
   return (
     <div
       className={
-        'mx-auto my-0 box-border flex w-full flex-col items-center justify-center'
+        'mx-auto my-0 box-border flex w-full flex-col items-center justify-center pt-20'
       }
     >
+      <Header />
       <section className={`bg-purple-black h-250 w-full`}>
         {/* 룸 이미지 섹션 */}
-        <RoomContainer isHome={false} />
+        <RoomContainer />
       </section>
 
       {/* 메인 섹션 */}

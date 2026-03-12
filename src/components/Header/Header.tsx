@@ -1,0 +1,54 @@
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import logo from '../../assets/logo.png';
+import type { RootState } from '../../store';
+
+const Header = () => {
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isHome = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 1000) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  return (
+    <header
+      className={clsx(
+        `fixed top-0 left-0 z-50 flex h-20 w-full items-center transition-colors duration-300`,
+        !isHome || isScrolled ? 'bg-third' : 'bg-transparent'
+      )}
+    >
+      <div className='mx-auto flex w-full max-w-7xl items-center px-12'>
+        {!isHome && (
+          <Link to={'/'} className='h-20 shrink-0'>
+            <img src={logo} className='h-full w-auto' />
+          </Link>
+        )}
+
+        <nav className={`flex flex-1 justify-center`}>
+          <ul
+            className={`text-purple-white flex shrink-0 justify-between gap-40`}
+          >
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+            <li>{isLoggedIn ? `로그아웃` : `로그인`}</li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  );
+};
+
+export default Header;
