@@ -35,6 +35,7 @@ const Home = () => {
       <main className={`mx-auto mt-15 max-w-7xl min-w-[70vw]`}>
         {isLoggedIn ? <ProfileCard /> : <LoginForm />}
       </main>
+      <div className='h-[2000px]'></div>
     </div>
   );
 };

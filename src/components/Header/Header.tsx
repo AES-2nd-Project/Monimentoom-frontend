@@ -21,7 +21,12 @@ const Header = () => {
 
   const handleRoomClick = () => {
     if (isLoggedIn && nickname) {
-      navigate(`/rooms/${nickname}`);
+      const roomPath = `/rooms/${nickname}`;
+      if (location.pathname === roomPath) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate(roomPath);
+      }
     } else {
       handleLoginClick();
     }
