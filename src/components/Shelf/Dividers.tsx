@@ -46,8 +46,8 @@ const Dividers = ({
               style={getDividerGridCoord({ r, c })}
               className={clsx(
                 'flex h-4 items-start justify-center',
-                c === 0 && (isEditMode ? '-ml-1.5' : '-ml-7.5'),
-                c === 3 && (isEditMode ? '-mr-px' : '-mr-7.25')
+                c === 0 && (isEditMode ? '-ml-7.5' : '-ml-1.5'),
+                c === 3 && (isEditMode ? '-mr-7.25' : '-mr-px')
               )}
             >
               {showDivider && (

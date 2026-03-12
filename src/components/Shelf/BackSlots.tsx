@@ -27,7 +27,7 @@ const BackSlots = ({
       {gridRows.map((_, r) =>
         gridCols.map((_, c) => {
           const hideVisuals =
-            isEditMode || isCovered({ r, c }) || isPreviewed({ r, c });
+            !isEditMode || isCovered({ r, c }) || isPreviewed({ r, c });
 
           return (
             <div
@@ -37,9 +37,9 @@ const BackSlots = ({
               style={getItemGridCoord({ r1: r, r2: r, c1: c, c2: c })}
               className={clsx(
                 'group z-10 mx-2 flex shrink-0 cursor-pointer items-center justify-center rounded-lg text-center transition-colors duration-200',
-                !hideVisuals &&
-                  'border-border hover:bg-card-background border-2 border-dashed bg-transparent hover:border-transparent',
-                isEditMode && 'pointer-events-none'
+                isEditMode
+                  ? 'border-border hover:bg-card-background border-2 border-dashed bg-transparent hover:border-transparent'
+                  : 'pointer-events-none'
               )}
             >
               {!hideVisuals && (

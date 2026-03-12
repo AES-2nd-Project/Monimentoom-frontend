@@ -5,7 +5,7 @@ interface ShelfState {
 }
 
 const initialState: ShelfState = {
-  isEditMode: true,
+  isEditMode: false,
 };
 
 const shelfSlice = createSlice({

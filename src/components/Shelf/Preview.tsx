@@ -22,7 +22,7 @@ const Preview = ({
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   return (
     <>
-      {!isEditMode && preview && (
+      {isEditMode && preview && (
         <div
           style={getItemGridCoord(preview)}
           className={clsx(

@@ -1,7 +1,9 @@
 import clsx from 'clsx';
+import { useLocation } from 'react-router-dom';
 import Shelf from '../../components/Shelf/Shelf';
 
 const RoomContainer = () => {
+  const location = useLocation();
   const isHome = location.pathname === '/';
 
   return (
