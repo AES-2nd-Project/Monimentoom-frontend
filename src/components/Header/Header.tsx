@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
-import type { RootState } from '../../store';
+import { useAuth } from '../../hooks/useAuth';
 
 const Header = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const { isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const isHome = location.pathname === '/';
   const menus = ['Room', 'MyPage'];
@@ -23,6 +23,7 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
   return (
     <header
       className={clsx(
@@ -50,6 +51,7 @@ const Header = () => {
               </li>
             ))}
             <li
+              onClick={isLoggedIn ? logout : () => navigate('/')}
               className={`hover:text-point-pink cursor-pointer transition-colors duration-300`}
             >
               {isLoggedIn ? `로그아웃` : `로그인`}

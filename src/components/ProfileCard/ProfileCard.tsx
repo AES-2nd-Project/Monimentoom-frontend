@@ -14,6 +14,13 @@ const ProfileCard = () => {
         />
         <p className={`w-20 shrink-0 text-start`}>닉네임</p>
       </div>
+
+      <button
+        type='submit'
+        className={`bg-button mt-auto h-12 w-full rounded-lg`}
+      >
+        로그아웃
+      </button>
     </div>
   );
 };
