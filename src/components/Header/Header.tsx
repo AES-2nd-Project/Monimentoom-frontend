@@ -9,6 +9,7 @@ const Header = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const [isScrolled, setIsScrolled] = useState(false);
   const isHome = location.pathname === '/';
+  const menus = ['Room', 'MyPage'];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,10 +41,19 @@ const Header = () => {
           <ul
             className={`text-purple-white flex shrink-0 justify-between gap-40`}
           >
-            <li>Home</li>
-            <li>About</li>
-            <li>Contact</li>
-            <li>{isLoggedIn ? `로그아웃` : `로그인`}</li>
+            {menus.map(menu => (
+              <li
+                key={menu}
+                className={`hover:text-point-pink cursor-pointer transition-colors duration-300`}
+              >
+                {menu}
+              </li>
+            ))}
+            <li
+              className={`hover:text-point-pink cursor-pointer transition-colors duration-300`}
+            >
+              {isLoggedIn ? `로그아웃` : `로그인`}
+            </li>
           </ul>
         </nav>
       </div>
