@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useShelfSelection from '../../hooks/useShelfSelection';
 import type { RootState } from '../../store';
@@ -27,6 +28,15 @@ const Shelf = ({ isLeft }: ShelfProps) => {
   } = useShelfSelection();
 
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
+
+  // 편집 모드가 꺼질 때 선택/프리뷰 초기화
+  const prevEditMode = useRef(isEditMode);
+  useEffect(() => {
+    if (prevEditMode.current && !isEditMode) {
+      clearSelection();
+    }
+    prevEditMode.current = isEditMode;
+  }, [isEditMode, clearSelection]);
 
   // 그리드 배열 생성 헬퍼
   const gridRows: Array<number> = Array.from({ length: 4 });
