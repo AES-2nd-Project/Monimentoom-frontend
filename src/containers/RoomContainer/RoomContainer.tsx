@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -8,15 +7,16 @@ import {
   deletePosition,
   updatePosition,
 } from '../../api/position-api';
-import { getRoomMain } from '../../api/room-api';
-import Shelf from '../../components/Shelf/Shelf';
+import { getRoomMain, updateRoomFrameImage } from '../../api/room-api';
 import type { AppDispatch, RootState } from '../../store';
 import {
+  setFrameImage,
   setShelfItems,
   updateShelfItemPositionId,
 } from '../../store/shelfSlice';
 import type { PositionResponse, WallSide } from '../../types/position';
 import type { Item } from '../../types/room';
+import RoomScene from './RoomScene';
 
 // PositionResponse → Item 변환 (x=r1, y=c1), goodsId로 imageUrl 매핑
 const positionToItem = (
@@ -42,17 +42,24 @@ const RoomContainer = () => {
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const leftItems = useSelector((state: RootState) => state.shelf.leftItems);
   const rightItems = useSelector((state: RootState) => state.shelf.rightItems);
+  const frameImageUrl = useSelector(
+    (state: RootState) => state.shelf.frameImageUrl
+  );
 
   const [roomId, setRoomId] = useState<number | null>(null);
   const serverPositionsRef = useRef<PositionResponse[]>([]);
+  // 서버 기준 frameImageUrl — 변경 여부 비교용
+  const serverFrameImageUrlRef = useRef<string | null>(null);
 
   // isEditMode 감지 effect에서 최신값을 읽기 위한 ref
   const leftItemsRef = useRef<Item[]>(leftItems);
   const rightItemsRef = useRef<Item[]>(rightItems);
+  const frameImageUrlRef = useRef<string | null>(frameImageUrl);
   useEffect(() => {
     leftItemsRef.current = leftItems;
     rightItemsRef.current = rightItems;
-  }, [leftItems, rightItems]);
+    frameImageUrlRef.current = frameImageUrl;
+  }, [leftItems, rightItems, frameImageUrl]);
 
   // 룸 진입 시 서버 데이터로 Redux items 초기화
   useEffect(() => {
@@ -61,6 +68,11 @@ const RoomContainer = () => {
       .then(([roomData, goods]) => {
         setRoomId(roomData.roomId);
         serverPositionsRef.current = roomData.positions;
+
+        // 액자 이미지 초기화
+        const initialFrameImageUrl = roomData.frameImageUrl ?? null;
+        serverFrameImageUrlRef.current = initialFrameImageUrl;
+        dispatch(setFrameImage(initialFrameImageUrl));
 
         const imageMap = new Map(goods.map(g => [g.id, g.imageUrl]));
 
@@ -193,63 +205,24 @@ const RoomContainer = () => {
     if (prevEditMode.current && !isEditMode) {
       syncPositions('LEFT', leftItemsRef.current);
       syncPositions('RIGHT', rightItemsRef.current);
+
+      // 액자 이미지 변경 시 서버 반영
+      // TODO: 백엔드에서 RoomUpdateRequest에 frameImageUrl 추가 후 활성화
+      if (
+        roomId &&
+        frameImageUrlRef.current !== serverFrameImageUrlRef.current
+      ) {
+        updateRoomFrameImage(roomId, frameImageUrlRef.current)
+          .then(() => {
+            serverFrameImageUrlRef.current = frameImageUrlRef.current;
+          })
+          .catch(console.error);
+      }
     }
     prevEditMode.current = isEditMode;
-  }, [isEditMode, syncPositions]);
+  }, [isEditMode, syncPositions, roomId]);
 
-  return (
-    <div
-      className={clsx(
-        `relative z-0 flex h-250 w-full min-w-7xl shrink-0 items-center justify-center overflow-hidden`
-      )}
-    >
-      {/* 홈 화면 효과 */}
-      {isHome && (
-        <div
-          className={clsx(
-            'pointer-events-none z-100 flex h-full w-full items-center justify-center',
-            'bg-purple-black/50',
-            'backdrop-blur-[6px]'
-          )}
-        >
-          <div className="aspect-1280/698 w-200 bg-[url('/src/assets/logo.png')] bg-cover bg-center bg-no-repeat opacity-80"></div>
-        </div>
-      )}
-
-      {/* 바닥 */}
-      <div
-        className={`absolute top-1/2 z-0 h-1/2 w-7xl bg-[url('/src/assets/floor.jpg')] bg-size-[101%_cover] bg-position-[calc(50%-6px)] bg-no-repeat`}
-      ></div>
-
-      {/* 벽 */}
-      <div
-        className={`absolute top-[-25%] right-1/2 z-10 h-[90%] w-160 shrink-0 origin-right transform-[skewY(-13.8deg)] border-r-2 border-b-6 bg-[url('/src/assets/wall.jpg')] bg-cover bg-center bg-no-repeat`}
-      ></div>
-
-      {/* 벽 */}
-      <div
-        className={`absolute top-[-25%] left-1/2 z-10 h-[90%] w-160 origin-left transform-[skewY(13.8deg)] border-b-6 border-l-2 bg-[url('/src/assets/wall.jpg')] bg-cover bg-center bg-no-repeat`}
-      ></div>
-
-      {/* 액자 */}
-      <div
-        className={`absolute right-[calc(53%)] bottom-[calc(68%)] z-20 aspect-1766/1703 w-70 origin-right transform-[skewY(-13.8deg)]`}
-      >
-        <div
-          className={`absolute inset-0 z-20 bg-[url('/src/assets/frame.png')] bg-cover bg-no-repeat`}
-        ></div>
-        <div
-          className={`bg-purple-white absolute top-23 left-5 z-10 flex h-[59%] w-[87%] origin-right items-center justify-center bg-[url('/src/assets/Kaede.png')] bg-contain bg-center bg-no-repeat`}
-        ></div>
-      </div>
-
-      {/* 선반 */}
-      <main className='absolute bottom-40 z-20 flex w-full max-w-7xl origin-bottom justify-between px-20'>
-        <Shelf isLeft={true} />
-        <Shelf isLeft={false} />
-      </main>
-    </div>
-  );
+  return <RoomScene isHome={isHome} />;
 };
 
 export default RoomContainer;

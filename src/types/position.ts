@@ -26,4 +26,5 @@ export interface RoomPositionResponse {
   userId: number;
   name: string;
   positions: PositionResponse[];
+  frameImageUrl?: string | null;
 }
