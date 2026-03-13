@@ -86,6 +86,7 @@ const Inventory = () => {
             }}
           >
             <InventoryCard
+              goodsId={card.id}
               imageSrc={card.imageUrl}
               onRemove={() => removeCard(card.id)}
             />

@@ -5,7 +5,7 @@ import { getItemGridCoord } from './shelfUtils';
 
 interface ShelfItemsProps {
   items: Item[];
-  setItemImage: (id: number, imageSrc: string) => void;
+  setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
 }
 
 const ShelfItem = ({
@@ -13,7 +13,7 @@ const ShelfItem = ({
   setItemImage,
 }: {
   item: Item;
-  setItemImage: (id: number, imageSrc: string) => void;
+  setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -49,8 +49,11 @@ const ShelfItem = ({
       onDragLeave={() => setIsDragOver(false)}
       onDrop={e => {
         e.preventDefault();
-        const src = e.dataTransfer.getData('inventory-image');
-        if (src) setItemImage(item.id, src);
+        const raw = e.dataTransfer.getData('inventory-goods');
+        if (raw) {
+          const { goodsId, imageUrl } = JSON.parse(raw);
+          setItemImage(item.id, goodsId, imageUrl);
+        }
         setIsDragOver(false);
       }}
     />

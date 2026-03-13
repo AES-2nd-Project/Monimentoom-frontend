@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useShelfSelection from '../../hooks/useShelfSelection';
 import type { RootState } from '../../store';
+import type { Item } from '../../types/room';
 import BackSlots from './BackSlots';
 import Dividers from './Dividers';
 import Preview from './Preview';
@@ -10,9 +11,11 @@ import ShelfItems from './ShelfItems';
 
 interface ShelfProps {
   isLeft: boolean;
+  initialItems?: Item[];
+  onEditModeExit?: (items: Item[]) => void;
 }
 
-const Shelf = ({ isLeft }: ShelfProps) => {
+const Shelf = ({ isLeft, initialItems = [], onEditModeExit }: ShelfProps) => {
   const {
     items,
     dragStart,
@@ -28,18 +31,22 @@ const Shelf = ({ isLeft }: ShelfProps) => {
     clearSelection,
     confirmSelectionWithImage,
     setItemImage,
-  } = useShelfSelection();
+  } = useShelfSelection(initialItems);
 
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
 
-  // 편집 모드가 꺼질 때 선택/프리뷰 초기화
+  // 편집 모드가 꺼질 때 선택/프리뷰 초기화 + 아이템 목록 상위에 전달
   const prevEditMode = useRef(isEditMode);
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+
   useEffect(() => {
     if (prevEditMode.current && !isEditMode) {
       clearSelection();
+      onEditModeExit?.(itemsRef.current);
     }
     prevEditMode.current = isEditMode;
-  }, [isEditMode, clearSelection]);
+  }, [isEditMode, clearSelection, onEditModeExit]);
 
   // 그리드 배열 생성 헬퍼
   const gridRows: Array<number> = Array.from({ length: 4 });

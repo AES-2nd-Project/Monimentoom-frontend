@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Bounds, Coordinate, Item } from '../types/room';
 
-const useShelfSelection = () => {
-  const [items, setItems] = useState<Item[]>([]);
+const useShelfSelection = (initialItems: Item[] = []) => {
+  const [items, setItems] = useState<Item[]>(initialItems);
   const [dragStart, setDragStart] = useState<Coordinate | null>(null);
   const [dragCurrent, setDragCurrent] = useState<Coordinate | null>(null);
   const [selection, setSelection] = useState<Bounds | null>(null);
+
+  // initialItems가 처음 로드됐을 때 한 번만 반영
+  const initialized = useRef(false);
+  useEffect(() => {
+    if (!initialized.current && initialItems.length > 0) {
+      initialized.current = true;
+      setItems(initialItems);
+    }
+  }, [initialItems]);
 
   const checkOverlap = (rect: Bounds) => {
     return items.some(
@@ -63,17 +72,22 @@ const useShelfSelection = () => {
   };
 
   // 인벤토리에서 드래그 앤 드롭으로 영역 확정 + 이미지 등록
-  const confirmSelectionWithImage = (imageSrc: string) => {
+  const confirmSelectionWithImage = (goodsId: number, imageUrl: string) => {
     if (selection && !checkOverlap(selection)) {
-      setItems(prev => [...prev, { id: Date.now(), imageSrc, ...selection }]);
+      setItems(prev => [
+        ...prev,
+        { id: Date.now(), goodsId, imageSrc: imageUrl, ...selection },
+      ]);
       setSelection(null);
     }
   };
 
-  // 이미 확정된 아이템에 이미지 설정
-  const setItemImage = (id: number, imageSrc: string) => {
+  // 이미 확정된 아이템에 goodsId + 이미지 설정
+  const setItemImage = (id: number, goodsId: number, imageUrl: string) => {
     setItems(prev =>
-      prev.map(item => (item.id === id ? { ...item, imageSrc } : item))
+      prev.map(item =>
+        item.id === id ? { ...item, goodsId, imageSrc: imageUrl } : item
+      )
     );
   };
 

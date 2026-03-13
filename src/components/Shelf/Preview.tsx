@@ -11,7 +11,7 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
-  onDropImage: (imageSrc: string) => void;
+  onDropImage: (goodsId: number, imageUrl: string) => void;
 }
 
 const Preview = ({
@@ -52,8 +52,11 @@ const Preview = ({
             isConfirmed
               ? e => {
                   e.preventDefault();
-                  const src = e.dataTransfer.getData('inventory-image');
-                  if (src) onDropImage(src);
+                  const raw = e.dataTransfer.getData('inventory-goods');
+                  if (raw) {
+                    const { goodsId, imageUrl } = JSON.parse(raw);
+                    onDropImage(goodsId, imageUrl);
+                  }
                   setIsDragOver(false);
                 }
               : undefined

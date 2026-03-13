@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useRef, useState } from 'react';
 
 interface FilledCardProps {
+  goodsId: number;
   imageSrc: string;
   onRemove: () => void;
   onAdd?: never;
@@ -11,13 +12,14 @@ interface FilledCardProps {
 interface EmptyCardProps {
   onAdd: (file: File) => void;
   isUploading?: boolean;
+  goodsId?: never;
   imageSrc?: never;
   onRemove?: never;
 }
 
 type InventoryCardProps = FilledCardProps | EmptyCardProps;
 
-const InventoryCard = ({ imageSrc, onRemove, onAdd, isUploading }: InventoryCardProps) => {
+const InventoryCard = ({ goodsId, imageSrc, onRemove, onAdd, isUploading }: InventoryCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -62,7 +64,10 @@ const InventoryCard = ({ imageSrc, onRemove, onAdd, isUploading }: InventoryCard
       className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing`}
       draggable
       onDragStart={e => {
-        e.dataTransfer.setData('inventory-image', imageSrc);
+        e.dataTransfer.setData(
+          'inventory-goods',
+          JSON.stringify({ goodsId, imageUrl: imageSrc })
+        );
         e.dataTransfer.effectAllowed = 'copy';
       }}
       onMouseEnter={() => setIsHovered(true)}
