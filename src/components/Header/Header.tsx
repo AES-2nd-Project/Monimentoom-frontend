@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigateToLogin } from '../../hooks/useNavigateToLogin';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -10,15 +11,7 @@ const Header = () => {
   const { isLoggedIn, logout, nickname } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const isHome = location.pathname === '/';
-
-  // 홈 페이지로 이동 후 스크롤
-  const handleLoginClick = () => {
-    if (isHome) {
-      window.scrollTo({ top: 950, behavior: 'smooth' });
-    } else {
-      navigate('/', { state: { shouldScroll: true } });
-    }
-  };
+  const handleLoginClick = useNavigateToLogin();
 
   const handleRoomClick = () => {
     if (isLoggedIn && nickname) {
