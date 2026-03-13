@@ -7,9 +7,10 @@ import {
   deletePosition,
   updatePosition,
 } from '../../api/position-api';
-import { getRoomMain } from '../../api/room-api';
+import { getRoomMain, updateRoomFrameImage } from '../../api/room-api';
 import type { AppDispatch, RootState } from '../../store';
 import {
+  setFrameImage,
   setShelfItems,
   updateShelfItemPositionId,
 } from '../../store/shelfSlice';
@@ -41,17 +42,24 @@ const RoomContainer = () => {
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const leftItems = useSelector((state: RootState) => state.shelf.leftItems);
   const rightItems = useSelector((state: RootState) => state.shelf.rightItems);
+  const frameImageUrl = useSelector(
+    (state: RootState) => state.shelf.frameImageUrl
+  );
 
   const [roomId, setRoomId] = useState<number | null>(null);
   const serverPositionsRef = useRef<PositionResponse[]>([]);
+  // 서버 기준 frameImageUrl — 변경 여부 비교용
+  const serverFrameImageUrlRef = useRef<string | null>(null);
 
   // isEditMode 감지 effect에서 최신값을 읽기 위한 ref
   const leftItemsRef = useRef<Item[]>(leftItems);
   const rightItemsRef = useRef<Item[]>(rightItems);
+  const frameImageUrlRef = useRef<string | null>(frameImageUrl);
   useEffect(() => {
     leftItemsRef.current = leftItems;
     rightItemsRef.current = rightItems;
-  }, [leftItems, rightItems]);
+    frameImageUrlRef.current = frameImageUrl;
+  }, [leftItems, rightItems, frameImageUrl]);
 
   // 룸 진입 시 서버 데이터로 Redux items 초기화
   useEffect(() => {
@@ -60,6 +68,11 @@ const RoomContainer = () => {
       .then(([roomData, goods]) => {
         setRoomId(roomData.roomId);
         serverPositionsRef.current = roomData.positions;
+
+        // 액자 이미지 초기화
+        const initialFrameImageUrl = roomData.frameImageUrl ?? null;
+        serverFrameImageUrlRef.current = initialFrameImageUrl;
+        dispatch(setFrameImage(initialFrameImageUrl));
 
         const imageMap = new Map(goods.map(g => [g.id, g.imageUrl]));
 
@@ -192,9 +205,22 @@ const RoomContainer = () => {
     if (prevEditMode.current && !isEditMode) {
       syncPositions('LEFT', leftItemsRef.current);
       syncPositions('RIGHT', rightItemsRef.current);
+
+      // 액자 이미지 변경 시 서버 반영
+      // TODO: 백엔드에서 RoomUpdateRequest에 frameImageUrl 추가 후 활성화
+      if (
+        roomId &&
+        frameImageUrlRef.current !== serverFrameImageUrlRef.current
+      ) {
+        updateRoomFrameImage(roomId, frameImageUrlRef.current)
+          .then(() => {
+            serverFrameImageUrlRef.current = frameImageUrlRef.current;
+          })
+          .catch(console.error);
+      }
     }
     prevEditMode.current = isEditMode;
-  }, [isEditMode, syncPositions]);
+  }, [isEditMode, syncPositions, roomId]);
 
   return <RoomScene isHome={isHome} />;
 };

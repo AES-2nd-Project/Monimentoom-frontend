@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import Shelf from '../../components/Shelf/Shelf';
+import RoomFrame from './RoomFrame';
 
 interface RoomSceneProps {
   isHome: boolean;
@@ -41,19 +42,7 @@ const RoomScene = ({ isHome }: RoomSceneProps) => {
       />
 
       {/* 액자 */}
-      <div
-        className={clsx(
-          'absolute bottom-[68%] left-1/2 z-20 aspect-1766/1703 w-70',
-          'origin-right -translate-x-[calc(100%+20px)] -skew-y-[13.8deg]'
-        )}
-      >
-        <div
-          className={`absolute inset-0 z-20 bg-[url('/src/assets/frame.png')] bg-cover bg-no-repeat`}
-        />
-        <div
-          className={`bg-purple-white absolute top-23 left-5 z-10 flex h-[59%] w-[87%] origin-right items-center justify-center bg-[url('/src/assets/Kaede.png')] bg-contain bg-center bg-no-repeat`}
-        />
-      </div>
+      <RoomFrame />
 
       {/* 책장 */}
       <div

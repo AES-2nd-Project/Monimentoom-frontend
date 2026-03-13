@@ -15,6 +15,15 @@ export const getGoodsPresignedUrl = async (
   return response.data;
 };
 
+export const getFramePresignedUrl = async (
+  fileName: string
+): Promise<PresignedUrlResponse> => {
+  const response = await axiosInstance.get('/s3/presigned-url/frame', {
+    params: { fileName },
+  });
+  return response.data;
+};
+
 // S3에 직접 PUT (JWT 불필요, presigned URL 자체가 인증 포함)
 export const uploadToS3 = async (
   presignedUrl: string,

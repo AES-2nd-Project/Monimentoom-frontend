@@ -6,12 +6,14 @@ interface ShelfState {
   isEditMode: boolean;
   leftItems: Item[];
   rightItems: Item[];
+  frameImageUrl: string | null;
 }
 
 const initialState: ShelfState = {
   isEditMode: false,
   leftItems: [],
   rightItems: [],
+  frameImageUrl: null,
 };
 
 const shelfSlice = createSlice({
@@ -79,6 +81,10 @@ const shelfSlice = createSlice({
         );
       }
     },
+    // 액자 이미지 설정/해제
+    setFrameImage: (state, action: PayloadAction<string | null>) => {
+      state.frameImageUrl = action.payload;
+    },
     // createPosition 성공 후 positionId 반영 — 중복 POST 방지의 핵심
     updateShelfItemPositionId: (
       state,
@@ -106,6 +112,7 @@ export const {
   removeShelfItem,
   updateShelfItemImage,
   updateShelfItemPositionId,
+  setFrameImage,
 } = shelfSlice.actions;
 
 export default shelfSlice.reducer;
