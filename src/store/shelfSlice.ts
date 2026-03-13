@@ -64,6 +64,21 @@ const shelfSlice = createSlice({
         item.imageSrc = action.payload.imageSrc;
       }
     },
+    // 아이템 제거 (X 버튼 클릭 시)
+    removeShelfItem: (
+      state,
+      action: PayloadAction<{ wallSide: WallSide; id: number }>
+    ) => {
+      if (action.payload.wallSide === 'LEFT') {
+        state.leftItems = state.leftItems.filter(
+          i => i.id !== action.payload.id
+        );
+      } else {
+        state.rightItems = state.rightItems.filter(
+          i => i.id !== action.payload.id
+        );
+      }
+    },
     // createPosition 성공 후 positionId 반영 — 중복 POST 방지의 핵심
     updateShelfItemPositionId: (
       state,
@@ -88,6 +103,7 @@ export const {
   toggleIsEditMode,
   setShelfItems,
   addShelfItem,
+  removeShelfItem,
   updateShelfItemImage,
   updateShelfItemPositionId,
 } = shelfSlice.actions;

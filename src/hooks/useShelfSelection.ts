@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../store';
-import { addShelfItem, updateShelfItemImage } from '../store/shelfSlice';
+import {
+  addShelfItem,
+  removeShelfItem,
+  updateShelfItemImage,
+} from '../store/shelfSlice';
 import type { WallSide } from '../types/position';
 import type { Bounds, Coordinate } from '../types/room';
 
@@ -79,6 +83,11 @@ const useShelfSelection = (wallSide: WallSide) => {
     }
   };
 
+  // 아이템 제거 (X 버튼 클릭 시) — 서버 반영은 편집 모드 종료 시 sync에서 처리
+  const removeItem = (id: number) => {
+    dispatch(removeShelfItem({ wallSide, id }));
+  };
+
   // 이미지 없는 아이템에 드롭
   const setItemImage = (id: number, goodsId: number, imageUrl: string) => {
     dispatch(
@@ -143,6 +152,7 @@ const useShelfSelection = (wallSide: WallSide) => {
     clearSelection,
     confirmSelectionWithImage,
     setItemImage,
+    removeItem,
   };
 };
 

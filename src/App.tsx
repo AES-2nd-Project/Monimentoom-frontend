@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import Home from './pages/Home';
 import Room from './pages/Room';
+import Signup from './pages/Signup';
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/rooms/:nickname' element={<Room />} />
+            <Route path='/signup' element={<Signup />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

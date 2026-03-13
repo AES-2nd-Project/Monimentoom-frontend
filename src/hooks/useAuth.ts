@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login as loginApi } from '../api/users-api';
+import { login as loginApi, signup as signupApi } from '../api/users-api';
 import type { RootState } from '../store';
 import { logout as logoutAction, setLoginInfo } from '../store/authSlice';
 
@@ -27,6 +27,18 @@ export const useAuth = () => {
     },
   });
 
+  // 회원가입 — 토큰 없이 가입만 처리, 완료 후 홈으로 이동해서 로그인
+  const signupMutation = useMutation({
+    mutationFn: signupApi,
+    onSuccess: () => {
+      alert('회원가입이 완료되었습니다. 로그인해주세요.');
+      navigate('/', { state: { shouldScroll: true } });
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
   // 로그아웃
   const logout = () => {
     localStorage.removeItem('accessToken');
@@ -41,6 +53,8 @@ export const useAuth = () => {
     nickname,
     login: loginMutation.mutate,
     isPending: loginMutation.isPending,
+    signup: signupMutation.mutate,
+    isSignupPending: signupMutation.isPending,
     logout,
   };
 };

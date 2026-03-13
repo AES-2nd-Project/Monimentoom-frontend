@@ -7,6 +7,19 @@ interface LoginProps {
   password: string;
 }
 
+interface SignupProps {
+  email: string;
+  nickname: string;
+  password: string;
+}
+
+interface UserResponse {
+  id: number;
+  email: string;
+  nickname: string;
+  mainRoomId: number | null;
+}
+
 export const login = async ({ email, password }: LoginProps) => {
   try {
     const response = await axiosInstance.post('/users/login', {
@@ -31,6 +44,31 @@ export const login = async ({ email, password }: LoginProps) => {
         error.response?.data?.message ||
         ERROR_MESSAGES.DEFAULT;
 
+      throw new Error(errorMessage);
+    }
+    throw new Error(ERROR_MESSAGES.DEFAULT);
+  }
+};
+
+export const signup = async ({
+  email,
+  nickname,
+  password,
+}: SignupProps): Promise<UserResponse> => {
+  try {
+    const response = await axiosInstance.post('/users/signup', {
+      email,
+      nickname,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorCode = error.response?.data?.code as ErrorCode;
+      const errorMessage =
+        ERROR_MESSAGES[errorCode] ||
+        error.response?.data?.message ||
+        ERROR_MESSAGES.DEFAULT;
       throw new Error(errorMessage);
     }
     throw new Error(ERROR_MESSAGES.DEFAULT);

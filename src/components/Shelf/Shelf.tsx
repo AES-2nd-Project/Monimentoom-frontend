@@ -30,6 +30,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
     clearSelection,
     confirmSelectionWithImage,
     setItemImage,
+    removeItem,
   } = useShelfSelection(wallSide);
 
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
@@ -93,7 +94,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
         />
 
         {/* 3. 등록된 아이템 */}
-        <ShelfItems items={items} setItemImage={setItemImage} />
+        <ShelfItems items={items} setItemImage={setItemImage} removeItem={removeItem} />
 
         {/* 4. 드래그 및 대기 중 미리보기 박스 */}
         <Preview

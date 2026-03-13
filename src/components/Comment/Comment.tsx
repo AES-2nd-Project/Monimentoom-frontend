@@ -5,19 +5,26 @@ const Comment = () => {
     <div
       className={`flex flex-row items-start justify-center gap-4 overflow-hidden`}
     >
-      <div
-        className={`bg-third flex flex-row items-center justify-center rounded-xl p-2`}
-      >
+      <div className={`flex flex-row items-center justify-center gap-4 p-2`}>
         <img
           src={image}
           className={`bg-primary h-10 w-10 shrink-0 rounded-4xl`}
         />
-        <p className={`text-purple-white w-20 shrink-0 text-center`}>닉네임</p>
+        <p
+          className={`text-purple-black w-30 shrink-0 text-center text-[18px] font-bold`}
+        >
+          123
+        </p>
       </div>
 
-      <p className={`bg-third text-purple-white rounded-xl p-4`}>
-        댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용
-      </p>
+      <div
+        className={`bg-third text-purple-white flex flex-col items-start justify-center gap-4 rounded-xl p-4`}
+      >
+        <p>2026-03-13</p>
+        <p>
+          댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용댓글내용
+        </p>
+      </div>
     </div>
   );
 };
