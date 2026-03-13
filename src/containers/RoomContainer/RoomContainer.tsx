@@ -2,20 +2,20 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
-import Shelf from '../../components/Shelf/Shelf';
-import type { RootState } from '../../store';
-import type { Item } from '../../types/room';
-import type { PositionResponse, WallSide } from '../../types/position';
-import { getRoomMain } from '../../api/room-api';
 import {
   createPosition,
   deletePosition,
   updatePosition,
 } from '../../api/position-api';
+import { getRoomMain } from '../../api/room-api';
+import Shelf from '../../components/Shelf/Shelf';
+import type { RootState } from '../../store';
+import type { PositionResponse, WallSide } from '../../types/position';
+import type { Item } from '../../types/room';
 
-// PositionResponse → Item 변환 (x=r1, y=c1)
+// PositionResponse -> Item 변환 (x=r1, y=c1)
 const positionToItem = (pos: PositionResponse): Item => ({
-  id: pos.id, // 임시 local id로 positionId 재사용
+  id: pos.id, // 임시 local id, positionId 재사용
   positionId: pos.id,
   goodsId: pos.goodsId,
   r1: pos.x,
@@ -34,7 +34,7 @@ const RoomContainer = () => {
   const [leftItems, setLeftItems] = useState<Item[]>([]);
   const [rightItems, setRightItems] = useState<Item[]>([]);
 
-  // 서버에서 불러온 원본 positions (diff 계산용)
+  // 서버에서 불러온 원본 positions
   const serverPositionsRef = useRef<PositionResponse[]>([]);
 
   useEffect(() => {
@@ -76,14 +76,16 @@ const RoomContainer = () => {
           .map(item => item.positionId!)
       );
 
-      // 1. 서버에 있었지만 현재 없는 것 → DELETE
+      // 서버에 있었지만 현재 없는 것은 DELETE
       const deletePromises = [...serverIds]
         .filter(id => !currentPositionIds.has(id))
         .map(id => deletePosition(id).catch(console.error));
 
-      // 2. 서버에 있고 현재도 있는 것 → 위치가 바뀌었으면 PATCH
+      // 위치가 바뀌었으면 PATCH
       const updatePromises = syncableItems
-        .filter(item => item.positionId != null && serverIds.has(item.positionId))
+        .filter(
+          item => item.positionId != null && serverIds.has(item.positionId)
+        )
         .map(item => {
           const original = serverSidePositions.find(
             p => p.id === item.positionId
@@ -108,7 +110,7 @@ const RoomContainer = () => {
           return Promise.resolve();
         });
 
-      // 3. positionId 없는 것 → POST
+      // positionId 없는 것은 POST
       const createPromises = syncableItems
         .filter(item => item.positionId == null)
         .map(item =>
@@ -131,7 +133,11 @@ const RoomContainer = () => {
             .catch(console.error)
         );
 
-      await Promise.all([...deletePromises, ...updatePromises, ...createPromises]);
+      await Promise.all([
+        ...deletePromises,
+        ...updatePromises,
+        ...createPromises,
+      ]);
 
       // serverPositionsRef 정리 (삭제된 것 제거)
       serverPositionsRef.current = serverPositionsRef.current.filter(

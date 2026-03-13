@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   createGoods,
@@ -20,12 +20,21 @@ const Inventory = () => {
   const [cards, setCards] = useState<GoodsResponse[]>([]);
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
+  const timeoutIdsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
 
   // 로그인 상태일 때 goods 목록 불러오기
   useEffect(() => {
     if (!isLoggedIn) return;
     getGoods().then(setCards).catch(console.error);
   }, [isLoggedIn]);
+
+  // 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      timeoutIdsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutIdsRef.current.clear();
+    };
+  }, []);
 
   const addCard = async (file: File) => {
     setIsUploading(true);
@@ -48,20 +57,23 @@ const Inventory = () => {
 
   const removeCard = (id: number) => {
     setRemovingIds(prev => new Set(prev).add(id));
-    setTimeout(async () => {
+    const timeoutId = setTimeout(async () => {
       try {
         await deleteGoods(id);
         setCards(prev => prev.filter(c => c.id !== id));
       } catch (err) {
         console.error('goods 삭제 실패:', err);
         setCards(prev => prev); // 실패 시 유지
+      } finally {
+        setRemovingIds(prev => {
+          const next = new Set(prev);
+          next.delete(id);
+          return next;
+        });
+        timeoutIdsRef.current.delete(id);
       }
-      setRemovingIds(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
     }, REMOVE_DURATION);
+    timeoutIdsRef.current.set(id, timeoutId);
   };
 
   return (
