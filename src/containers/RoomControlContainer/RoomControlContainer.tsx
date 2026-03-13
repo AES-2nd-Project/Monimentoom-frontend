@@ -1,9 +1,12 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RoomButton from '../../components/RoomButton/RoomButton';
+import type { RootState } from '../../store';
 import { toggleIsEditMode } from '../../store/shelfSlice';
 
 const RoomControlContainer = () => {
   const dispatch = useDispatch();
+
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
 
   const handleConfigClick = () => {
     dispatch(toggleIsEditMode());
@@ -16,12 +19,21 @@ const RoomControlContainer = () => {
   return (
     <div className={'grid w-full grid-cols-3 items-center px-25'}>
       <div className={'flex justify-start'}>
-        <RoomButton
-          onClick={handleConfigClick}
-          color='gray'
-          label='편집'
-          visibility={true}
-        />
+        {isEditMode ? (
+          <RoomButton
+            onClick={handleConfigClick}
+            color='point-green'
+            label='저장'
+            visibility={true}
+          />
+        ) : (
+          <RoomButton
+            onClick={handleConfigClick}
+            color='gray'
+            label='편집'
+            visibility={true}
+          />
+        )}
       </div>
       <div className={'flex justify-center'}>
         <RoomButton
