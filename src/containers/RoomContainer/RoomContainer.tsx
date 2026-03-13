@@ -113,7 +113,14 @@ const RoomContainer = () => {
               y: item.c1,
               widthUnit: item.c2 - item.c1 + 1,
               heightUnit: item.r2 - item.r1 + 1,
-            }).catch(console.error);
+            })
+              .then(updated => {
+                // 서버 최신값으로 갱신 (다음 sync에서 동일 항목 반복 PATCH 방지)
+                serverPositionsRef.current = serverPositionsRef.current.map(
+                  p => (p.id === updated.id ? updated : p)
+                );
+              })
+              .catch(console.error);
           }
           return Promise.resolve();
         });
@@ -132,11 +139,12 @@ const RoomContainer = () => {
             heightUnit: item.r2 - item.r1 + 1,
           })
             .then(created => {
-              // 새로 생성된 position을 serverPositionsRef에 추가
               serverPositionsRef.current = [
                 ...serverPositionsRef.current,
                 created,
               ];
+              // cleanup 단계에서 방금 생성된 항목이 제거되지 않도록 id 추가
+              currentPositionIds.add(created.id);
             })
             .catch(console.error)
         );

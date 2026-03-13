@@ -65,7 +65,6 @@ const Inventory = () => {
         setCards(prev => prev.filter(c => c.id !== id));
       } catch (err) {
         console.error('goods 삭제 실패:', err);
-        setCards(prev => prev); // 실패 시 유지
       } finally {
         setRemovingIds(prev => {
           const next = new Set(prev);

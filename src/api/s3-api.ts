@@ -21,9 +21,12 @@ export const uploadToS3 = async (
   file: File,
   contentType: string
 ): Promise<void> => {
-  await fetch(presignedUrl, {
+  const response = await fetch(presignedUrl, {
     method: 'PUT',
     body: file,
     headers: { 'Content-Type': contentType },
   });
+  if (!response.ok) {
+    throw new Error(`S3 업로드 실패: ${response.status} ${response.statusText}`);
+  }
 };

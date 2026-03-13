@@ -1,3 +1,5 @@
+import type { PositionResponse } from './position';
+
 export interface GoodsRequest {
   name: string;
   imageUrl: string;
@@ -13,5 +15,5 @@ export interface GoodsResponse {
   imageUrl: string;
   price?: number;
   createdAt: string;
-  positions: unknown[];
+  positions: PositionResponse[];
 }

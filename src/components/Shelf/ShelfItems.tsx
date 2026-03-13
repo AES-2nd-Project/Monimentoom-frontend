@@ -51,8 +51,14 @@ const ShelfItem = ({
         e.preventDefault();
         const raw = e.dataTransfer.getData('inventory-goods');
         if (raw) {
-          const { goodsId, imageUrl } = JSON.parse(raw);
-          setItemImage(item.id, goodsId, imageUrl);
+          try {
+            const { goodsId, imageUrl } = JSON.parse(raw);
+            if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+              setItemImage(item.id, goodsId, imageUrl);
+            }
+          } catch {
+            // 앱 외부에서 드롭된 잘못된 데이터 무시
+          }
         }
         setIsDragOver(false);
       }}
