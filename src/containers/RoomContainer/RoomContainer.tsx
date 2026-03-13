@@ -243,6 +243,21 @@ const RoomContainer = () => {
         ></div>
       </div>
 
+      {/* 책장 */}
+      <div
+        className={`absolute right-[calc(71%)] bottom-[calc(58%)] z-20 aspect-1600/1868 w-70 origin-right transform-[skewY(-0.9deg)] bg-[url('/src/assets/bookshelf.png')] bg-cover bg-center bg-no-repeat`}
+      ></div>
+
+      {/* 창문 */}
+      <div
+        className={`absolute bottom-[calc(62%)] left-[calc(61%)] z-20 aspect-1478/1621 w-80 origin-left transform-[skewY(13.8deg)] bg-[url('/src/assets/window.png')] bg-cover bg-center bg-no-repeat`}
+      ></div>
+
+      {/* 이젤 */}
+      <div
+        className={`absolute bottom-[calc(10%)] left-[calc(39.5%)] z-20 aspect-1349/2010 w-80 origin-bottom bg-[url('/src/assets/easel.png')] bg-cover bg-center bg-no-repeat`}
+      ></div>
+
       {/* 선반 */}
       <main className='absolute bottom-40 z-20 flex w-full max-w-7xl origin-bottom justify-between px-20'>
         <Shelf isLeft={true} />
