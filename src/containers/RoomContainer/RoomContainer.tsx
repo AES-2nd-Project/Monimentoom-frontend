@@ -233,7 +233,10 @@ const RoomContainer = () => {
 
       {/* 액자 */}
       <div
-        className={`absolute right-[calc(53%)] bottom-[calc(68%)] z-20 aspect-1766/1703 w-70 origin-right transform-[skewY(-13.8deg)]`}
+        className={clsx(
+          'absolute bottom-[68%] left-1/2 z-20 aspect-1766/1703 w-70',
+          'origin-right -translate-x-[calc(100%+20px)] -skew-y-[13.8deg]'
+        )}
       >
         <div
           className={`absolute inset-0 z-20 bg-[url('/src/assets/frame.png')] bg-cover bg-no-repeat`}
@@ -245,17 +248,29 @@ const RoomContainer = () => {
 
       {/* 책장 */}
       <div
-        className={`absolute right-[calc(71%)] bottom-[calc(58%)] z-20 aspect-1600/1868 w-70 origin-right transform-[skewY(-0.9deg)] bg-[url('/src/assets/bookshelf.png')] bg-cover bg-center bg-no-repeat`}
+        className={clsx(
+          'absolute bottom-[58%] left-1/2 z-20 aspect-1600/1868 w-70',
+          'origin-right -translate-x-150 -skew-y-[1.8deg]',
+          'bg-[url("/src/assets/bookshelf.png")] bg-cover bg-center bg-no-repeat'
+        )}
       ></div>
 
       {/* 창문 */}
       <div
-        className={`absolute bottom-[calc(62%)] left-[calc(61%)] z-20 aspect-1478/1621 w-80 origin-left transform-[skewY(13.8deg)] bg-[url('/src/assets/window.png')] bg-cover bg-center bg-no-repeat`}
+        className={clsx(
+          'absolute bottom-[62%] left-1/2 z-20 aspect-1478/1621 w-80',
+          'origin-left translate-x-37.5 skew-y-[13.8deg]',
+          'bg-[url("/src/assets/window.png")] bg-cover bg-center bg-no-repeat'
+        )}
       ></div>
 
       {/* 이젤 */}
       <div
-        className={`absolute bottom-[calc(10%)] left-[calc(39.5%)] z-20 aspect-1349/2010 w-80 origin-bottom bg-[url('/src/assets/easel.png')] bg-cover bg-center bg-no-repeat`}
+        className={clsx(
+          'absolute bottom-[10%] left-1/2 z-20 aspect-1349/2010 w-80',
+          'origin-bottom -translate-x-41.25',
+          "bg-[url('/src/assets/easel.png')] bg-cover bg-center bg-no-repeat"
+        )}
       ></div>
 
       {/* 선반 */}
