@@ -20,7 +20,9 @@ const Inventory = () => {
   const [cards, setCards] = useState<GoodsResponse[]>([]);
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
-  const timeoutIdsRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const timeoutIdsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
 
   // 로그인 상태일 때 goods 목록 불러오기
   useEffect(() => {
