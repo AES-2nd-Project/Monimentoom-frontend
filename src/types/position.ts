@@ -1,0 +1,29 @@
+export type WallSide = 'LEFT' | 'RIGHT';
+
+export interface PositionRequest {
+  goodsId: number;
+  roomId: number;
+  wallSide: WallSide;
+  x: number;
+  y: number;
+  widthUnit: number;
+  heightUnit: number;
+}
+
+export interface PositionResponse {
+  id: number;
+  goodsId: number;
+  roomId: number;
+  wallSide: WallSide;
+  x: number;
+  y: number;
+  widthUnit: number;
+  heightUnit: number;
+}
+
+export interface RoomPositionResponse {
+  roomId: number;
+  userId: number;
+  name: string;
+  positions: PositionResponse[];
+}

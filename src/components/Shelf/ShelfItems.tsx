@@ -5,7 +5,7 @@ import { getItemGridCoord } from './shelfUtils';
 
 interface ShelfItemsProps {
   items: Item[];
-  setItemImage: (id: number, imageSrc: string) => void;
+  setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
 }
 
 const ShelfItem = ({
@@ -13,7 +13,7 @@ const ShelfItem = ({
   setItemImage,
 }: {
   item: Item;
-  setItemImage: (id: number, imageSrc: string) => void;
+  setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
 
@@ -49,8 +49,17 @@ const ShelfItem = ({
       onDragLeave={() => setIsDragOver(false)}
       onDrop={e => {
         e.preventDefault();
-        const src = e.dataTransfer.getData('inventory-image');
-        if (src) setItemImage(item.id, src);
+        const raw = e.dataTransfer.getData('inventory-goods');
+        if (raw) {
+          try {
+            const { goodsId, imageUrl } = JSON.parse(raw);
+            if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+              setItemImage(item.id, goodsId, imageUrl);
+            }
+          } catch {
+            // 앱 외부에서 드롭된 잘못된 데이터 무시
+          }
+        }
         setIsDragOver(false);
       }}
     />

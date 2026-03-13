@@ -11,7 +11,7 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
-  onDropImage: (imageSrc: string) => void;
+  onDropImage: (goodsId: number, imageUrl: string) => void;
 }
 
 const Preview = ({
@@ -52,8 +52,17 @@ const Preview = ({
             isConfirmed
               ? e => {
                   e.preventDefault();
-                  const src = e.dataTransfer.getData('inventory-image');
-                  if (src) onDropImage(src);
+                  const raw = e.dataTransfer.getData('inventory-goods');
+                  if (raw) {
+                    try {
+                      const { goodsId, imageUrl } = JSON.parse(raw);
+                      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+                        onDropImage(goodsId, imageUrl);
+                      }
+                    } catch {
+                      // 앱 외부에서 드롭된 잘못된 데이터 무시
+                    }
+                  }
                   setIsDragOver(false);
                 }
               : undefined

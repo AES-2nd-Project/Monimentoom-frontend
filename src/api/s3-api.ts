@@ -1,0 +1,32 @@
+import axiosInstance from './axios-instance';
+
+interface PresignedUrlResponse {
+  presignedUrl: string;
+  imageUrl: string;
+  contentType: string;
+}
+
+export const getGoodsPresignedUrl = async (
+  fileName: string
+): Promise<PresignedUrlResponse> => {
+  const response = await axiosInstance.get('/s3/presigned-url/goods', {
+    params: { fileName },
+  });
+  return response.data;
+};
+
+// S3에 직접 PUT (JWT 불필요, presigned URL 자체가 인증 포함)
+export const uploadToS3 = async (
+  presignedUrl: string,
+  file: File,
+  contentType: string
+): Promise<void> => {
+  const response = await fetch(presignedUrl, {
+    method: 'PUT',
+    body: file,
+    headers: { 'Content-Type': contentType },
+  });
+  if (!response.ok) {
+    throw new Error(`S3 업로드 실패: ${response.status} ${response.statusText}`);
+  }
+};
