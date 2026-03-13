@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { getGoods } from '../../api/goods-api';
 import {
@@ -10,11 +10,15 @@ import {
 } from '../../api/position-api';
 import { getRoomMain } from '../../api/room-api';
 import Shelf from '../../components/Shelf/Shelf';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+import {
+  setShelfItems,
+  updateShelfItemPositionId,
+} from '../../store/shelfSlice';
 import type { PositionResponse, WallSide } from '../../types/position';
 import type { Item } from '../../types/room';
 
-// PositionResponse -> Item 변환 (x=r1, y=c1), goodsId로 imageUrl 매핑
+// PositionResponse → Item 변환 (x=r1, y=c1), goodsId로 imageUrl 매핑
 const positionToItem = (
   pos: PositionResponse,
   imageMap: Map<number, string>
@@ -30,18 +34,19 @@ const positionToItem = (
 });
 
 const RoomContainer = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const isHome = location.pathname === '/';
   const nickname = useSelector((state: RootState) => state.auth.nickname);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
+  const leftItems = useSelector((state: RootState) => state.shelf.leftItems);
+  const rightItems = useSelector((state: RootState) => state.shelf.rightItems);
 
   const [roomId, setRoomId] = useState<number | null>(null);
-  const [leftItems, setLeftItems] = useState<Item[]>([]);
-  const [rightItems, setRightItems] = useState<Item[]>([]);
-
-  // 서버에서 불러온 원본 positions
   const serverPositionsRef = useRef<PositionResponse[]>([]);
 
+  // 룸 진입 시 서버 데이터로 Redux items 초기화
   useEffect(() => {
     if (!isLoggedIn || !nickname) return;
     Promise.all([getRoomMain(nickname), getGoods()])
@@ -49,23 +54,29 @@ const RoomContainer = () => {
         setRoomId(roomData.roomId);
         serverPositionsRef.current = roomData.positions;
 
-        // goodsId -> imageUrl 매핑
         const imageMap = new Map(goods.map(g => [g.id, g.imageUrl]));
 
-        const left = roomData.positions
-          .filter(p => p.wallSide === 'LEFT')
-          .map(p => positionToItem(p, imageMap));
-        const right = roomData.positions
-          .filter(p => p.wallSide === 'RIGHT')
-          .map(p => positionToItem(p, imageMap));
-
-        setLeftItems(left);
-        setRightItems(right);
+        dispatch(
+          setShelfItems({
+            wallSide: 'LEFT',
+            items: roomData.positions
+              .filter(p => p.wallSide === 'LEFT')
+              .map(p => positionToItem(p, imageMap)),
+          })
+        );
+        dispatch(
+          setShelfItems({
+            wallSide: 'RIGHT',
+            items: roomData.positions
+              .filter(p => p.wallSide === 'RIGHT')
+              .map(p => positionToItem(p, imageMap)),
+          })
+        );
       })
       .catch(console.error);
-  }, [isLoggedIn, nickname]);
+  }, [isLoggedIn, nickname, dispatch]);
 
-  // 편집 모드 종료 시 해당 선반의 positions를 서버와 동기화
+  // 편집 모드 종료 시 Redux에서 직접 items를 읽어 sync
   const syncPositions = useCallback(
     async (wallSide: WallSide, items: Item[]) => {
       if (!roomId) return;
@@ -75,7 +86,6 @@ const RoomContainer = () => {
       );
       const serverIds = new Set(serverSidePositions.map(p => p.id));
 
-      // goodsId가 있는 아이템만 동기화 (이미지 등록된 것만)
       const syncableItems = items.filter(item => item.goodsId != null);
 
       const currentPositionIds = new Set(
@@ -84,12 +94,12 @@ const RoomContainer = () => {
           .map(item => item.positionId!)
       );
 
-      // 서버에 있었지만 현재 없는 것은 DELETE
+      // DELETE: 서버에 있었지만 현재 없는 것
       const deletePromises = [...serverIds]
         .filter(id => !currentPositionIds.has(id))
         .map(id => deletePosition(id).catch(console.error));
 
-      // 위치가 바뀌었으면 PATCH
+      // PATCH: 위치가 바뀐 것
       const updatePromises = syncableItems
         .filter(
           item => item.positionId != null && serverIds.has(item.positionId)
@@ -115,7 +125,6 @@ const RoomContainer = () => {
               heightUnit: item.r2 - item.r1 + 1,
             })
               .then(updated => {
-                // 서버 최신값으로 갱신 (다음 sync에서 동일 항목 반복 PATCH 방지)
                 serverPositionsRef.current = serverPositionsRef.current.map(
                   p => (p.id === updated.id ? updated : p)
                 );
@@ -125,7 +134,7 @@ const RoomContainer = () => {
           return Promise.resolve();
         });
 
-      // positionId 없는 것은 POST
+      // POST: positionId 없는 새 아이템
       const createPromises = syncableItems
         .filter(item => item.positionId == null)
         .map(item =>
@@ -143,8 +152,15 @@ const RoomContainer = () => {
                 ...serverPositionsRef.current,
                 created,
               ];
-              // cleanup 단계에서 방금 생성된 항목이 제거되지 않도록 id 추가
               currentPositionIds.add(created.id);
+              // Redux items에 positionId 반영 → 다음 sync에서 중복 POST 방지
+              dispatch(
+                updateShelfItemPositionId({
+                  wallSide,
+                  localId: item.id,
+                  positionId: created.id,
+                })
+              );
             })
             .catch(console.error)
         );
@@ -160,18 +176,18 @@ const RoomContainer = () => {
         p => p.wallSide !== wallSide || currentPositionIds.has(p.id)
       );
     },
-    [roomId]
+    [roomId, dispatch]
   );
 
-  const handleLeftExit = useCallback(
-    (items: Item[]) => syncPositions('LEFT', items),
-    [syncPositions]
-  );
-
-  const handleRightExit = useCallback(
-    (items: Item[]) => syncPositions('RIGHT', items),
-    [syncPositions]
-  );
+  // 편집 모드 false → true 전환 감지
+  const prevEditMode = useRef(isEditMode);
+  useEffect(() => {
+    if (prevEditMode.current && !isEditMode) {
+      syncPositions('LEFT', leftItems);
+      syncPositions('RIGHT', rightItems);
+    }
+    prevEditMode.current = isEditMode;
+  }, [isEditMode, leftItems, rightItems, syncPositions]);
 
   return (
     <div
@@ -188,7 +204,6 @@ const RoomContainer = () => {
             'backdrop-blur-[6px]'
           )}
         >
-          {/* 중앙에 로고 배치 */}
           <div className="aspect-1280/698 w-200 bg-[url('/src/assets/logo.png')] bg-cover bg-center bg-no-repeat opacity-80"></div>
         </div>
       )}
@@ -222,18 +237,8 @@ const RoomContainer = () => {
 
       {/* 선반 */}
       <main className='absolute bottom-40 z-20 flex w-full max-w-7xl origin-bottom justify-between px-20'>
-        <Shelf
-          key={`left-${roomId ?? 'init'}`}
-          isLeft={true}
-          initialItems={leftItems}
-          onEditModeExit={handleLeftExit}
-        />
-        <Shelf
-          key={`right-${roomId ?? 'init'}`}
-          isLeft={false}
-          initialItems={rightItems}
-          onEditModeExit={handleRightExit}
-        />
+        <Shelf isLeft={true} />
+        <Shelf isLeft={false} />
       </main>
     </div>
   );

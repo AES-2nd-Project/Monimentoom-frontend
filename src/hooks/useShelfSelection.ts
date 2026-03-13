@@ -1,20 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import type { Bounds, Coordinate, Item } from '../types/room';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../store';
+import { addShelfItem, updateShelfItemImage } from '../store/shelfSlice';
+import type { WallSide } from '../types/position';
+import type { Bounds, Coordinate } from '../types/room';
 
-const useShelfSelection = (initialItems: Item[] = []) => {
-  const [items, setItems] = useState<Item[]>(initialItems);
+const useShelfSelection = (wallSide: WallSide) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const items = useSelector((state: RootState) =>
+    wallSide === 'LEFT' ? state.shelf.leftItems : state.shelf.rightItems
+  );
+
   const [dragStart, setDragStart] = useState<Coordinate | null>(null);
   const [dragCurrent, setDragCurrent] = useState<Coordinate | null>(null);
   const [selection, setSelection] = useState<Bounds | null>(null);
-
-  // initialItems가 처음 로드됐을 때 한 번만 반영
-  const initialized = useRef(false);
-  useEffect(() => {
-    if (!initialized.current && initialItems.length > 0) {
-      initialized.current = true;
-      setItems(initialItems);
-    }
-  }, [initialItems]);
 
   const checkOverlap = (rect: Bounds) => {
     return items.some(
@@ -37,13 +36,11 @@ const useShelfSelection = (initialItems: Item[] = []) => {
         coord.r >= r1 && coord.r <= r2 && coord.c >= c1 && coord.c <= c2;
 
       if (isInsideSelection) {
-        // 클릭만으로는 아이템 등록 안 함 — 인벤토리에서 이미지 드롭해야 확정
         setSelection(null);
         return;
       }
     }
 
-    // 새로운 마우스 입력 시 선택 초기화 후 드래그 시작
     setSelection(null);
     setDragStart(coord);
     setDragCurrent(coord);
@@ -59,8 +56,6 @@ const useShelfSelection = (initialItems: Item[] = []) => {
         c2: Math.max(dragStart.c, current.c),
       });
     }
-
-    // 마우스 뗐을 때 기존 드래그 값들 초기화
     setDragStart(null);
     setDragCurrent(null);
   };
@@ -71,23 +66,23 @@ const useShelfSelection = (initialItems: Item[] = []) => {
     setDragCurrent(null);
   };
 
-  // 인벤토리에서 드래그 앤 드롭으로 영역 확정 + 이미지 등록
+  // 인벤토리 드롭으로 영역 확정 + 이미지 등록
   const confirmSelectionWithImage = (goodsId: number, imageUrl: string) => {
     if (selection && !checkOverlap(selection)) {
-      setItems(prev => [
-        ...prev,
-        { id: Date.now(), goodsId, imageSrc: imageUrl, ...selection },
-      ]);
+      dispatch(
+        addShelfItem({
+          wallSide,
+          item: { id: Date.now(), goodsId, imageSrc: imageUrl, ...selection },
+        })
+      );
       setSelection(null);
     }
   };
 
-  // 이미 확정된 아이템에 goodsId + 이미지 설정
+  // 이미지 없는 아이템에 드롭
   const setItemImage = (id: number, goodsId: number, imageUrl: string) => {
-    setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, goodsId, imageSrc: imageUrl } : item
-      )
+    dispatch(
+      updateShelfItemImage({ wallSide, id, goodsId, imageSrc: imageUrl })
     );
   };
 
@@ -100,7 +95,6 @@ const useShelfSelection = (initialItems: Item[] = []) => {
         coord.c <= item.c2
     );
 
-  // 이미지가 등록된 아이템이 차지하는 셀
   const isCoveredWithImage = (coord: Coordinate) =>
     items.some(
       item =>
@@ -112,7 +106,7 @@ const useShelfSelection = (initialItems: Item[] = []) => {
     );
 
   // 미리보기 영역 계산
-  let preview: Bounds | null =
+  const preview: Bounds | null =
     dragStart && dragCurrent
       ? {
           r1: Math.min(dragStart.r, dragCurrent.r),
@@ -122,11 +116,7 @@ const useShelfSelection = (initialItems: Item[] = []) => {
         }
       : selection;
 
-  let isPreviewOverlapping = false;
-
-  if (preview) {
-    isPreviewOverlapping = checkOverlap(preview);
-  }
+  const isPreviewOverlapping = preview ? checkOverlap(preview) : false;
 
   const isPreviewed = (coord: Coordinate) => {
     if (!preview) return false;
