@@ -32,7 +32,7 @@ export const useAuth = () => {
     mutationFn: signupApi,
     onSuccess: () => {
       alert('회원가입이 완료되었습니다. 로그인해주세요.');
-      navigate('/');
+      navigate('/', { state: { shouldScroll: true } });
     },
     onError: (error: Error) => {
       alert(error.message);

@@ -15,14 +15,15 @@ const ShelfItem = ({
   item,
   setItemImage,
   removeItem,
+  isEditMode,
 }: {
   item: Item;
   setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
   removeItem: (id: number) => void;
+  isEditMode: boolean;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
 
   if (item.imageSrc) {
     return (
@@ -87,6 +88,8 @@ const ShelfItem = ({
 };
 
 const ShelfItems = ({ items, setItemImage, removeItem }: ShelfItemsProps) => {
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
+
   return (
     <>
       {items.map(item => (
@@ -95,6 +98,7 @@ const ShelfItems = ({ items, setItemImage, removeItem }: ShelfItemsProps) => {
           item={item}
           setItemImage={setItemImage}
           removeItem={removeItem}
+          isEditMode={isEditMode}
         />
       ))}
     </>
