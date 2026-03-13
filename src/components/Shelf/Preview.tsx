@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import type { Bounds, Coordinate } from '../../types/room';
@@ -10,6 +11,7 @@ interface PreviewProps {
   dragStart: Coordinate | null;
   selection: Bounds | null;
   clearSelection: () => void;
+  onDropImage: (imageSrc: string) => void;
 }
 
 const Preview = ({
@@ -18,30 +20,58 @@ const Preview = ({
   dragStart,
   selection,
   clearSelection,
+  onDropImage,
 }: PreviewProps) => {
-  const isShrinked = useSelector((state: RootState) => state.shelf.isShrinked);
+  const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const isConfirmed = !dragStart && selection && !isPreviewOverlapping;
+
   return (
     <>
-      {!isShrinked && preview && (
+      {isEditMode && preview && (
         <div
           style={getItemGridCoord(preview)}
           className={clsx(
-            'pointer-events-none relative z-30 mx-2 flex items-center justify-center rounded-lg border-2 shadow-md transition-all',
+            `relative z-30 mx-2 flex items-center justify-center rounded-lg border-2 shadow-md transition-all`,
             isPreviewOverlapping
-              ? 'border-red-500 bg-red-400 text-red-900'
-              : 'border-blue-500 bg-blue-300 text-blue-900',
-            !dragStart && selection && !isPreviewOverlapping && 'animate-pulse'
+              ? `border-point-pink bg-point-pink/60 text-point-pink pointer-events-none`
+              : `border-point-green bg-point-green/60 text-point-green`,
+            isConfirmed && !isDragOver && `animate-pulse`
           )}
+          onDragOver={
+            isConfirmed
+              ? e => {
+                  e.preventDefault();
+                  setIsDragOver(true);
+                }
+              : undefined
+          }
+          onDragLeave={isConfirmed ? () => setIsDragOver(false) : undefined}
+          onDrop={
+            isConfirmed
+              ? e => {
+                  e.preventDefault();
+                  const src = e.dataTransfer.getData('inventory-image');
+                  if (src) onDropImage(src);
+                  setIsDragOver(false);
+                }
+              : undefined
+          }
         >
-          {preview.c2 - preview.c1 + 1} x {preview.r2 - preview.r1 + 1}
-          {/* 선택 대기 상태일 때만 우상단에 X 버튼 표시 */}
-          {!dragStart && selection && (
+          {!isConfirmed && (
+            <span className={`pointer-events-none text-sm`}>
+              {preview.c2 - preview.c1 + 1} x {preview.r2 - preview.r1 + 1}
+            </span>
+          )}
+
+          {isConfirmed && (
             <button
               onClick={e => {
                 e.stopPropagation();
                 clearSelection();
               }}
-              className={`pointer-events-auto absolute -top-2 -right-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-red-500 text-xs text-white shadow hover:bg-red-600`}
+              className={`bg-point-pink text-purple-white pointer-events-auto absolute -top-2 -right-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-xs shadow hover:opacity-80`}
             >
               ✕
             </button>

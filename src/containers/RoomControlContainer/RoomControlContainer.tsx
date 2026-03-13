@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
 import RoomButton from '../../components/RoomButton/RoomButton';
-import { toggleIsShrinked } from '../../store/shelfSlice';
+import { toggleIsEditMode } from '../../store/shelfSlice';
 
 const RoomControlContainer = () => {
   const dispatch = useDispatch();
 
   const handleConfigClick = () => {
-    dispatch(toggleIsShrinked());
+    dispatch(toggleIsEditMode());
   };
 
   const onClick = () => {

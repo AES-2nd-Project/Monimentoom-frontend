@@ -1,25 +1,25 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 interface ShelfState {
-  isShrinked: boolean;
+  isEditMode: boolean;
 }
 
 const initialState: ShelfState = {
-  isShrinked: true,
+  isEditMode: false,
 };
 
 const shelfSlice = createSlice({
   name: 'shelf',
   initialState,
   reducers: {
-    setIsShrinked: (state, action: PayloadAction<boolean>) => {
-      state.isShrinked = action.payload;
+    setIsEditMode: (state, action: PayloadAction<boolean>) => {
+      state.isEditMode = action.payload;
     },
-    toggleIsShrinked: state => {
-      state.isShrinked = !state.isShrinked;
+    toggleIsEditMode: state => {
+      state.isEditMode = !state.isEditMode;
     },
   },
 });
 
-export const { setIsShrinked, toggleIsShrinked } = shelfSlice.actions;
+export const { setIsEditMode, toggleIsEditMode } = shelfSlice.actions;
 export default shelfSlice.reducer;
