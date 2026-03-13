@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { getGoods } from '../../api/goods-api';
 import {
   createPosition,
   deletePosition,
@@ -13,11 +14,15 @@ import type { RootState } from '../../store';
 import type { PositionResponse, WallSide } from '../../types/position';
 import type { Item } from '../../types/room';
 
-// PositionResponse -> Item 변환 (x=r1, y=c1)
-const positionToItem = (pos: PositionResponse): Item => ({
-  id: pos.id, // 임시 local id, positionId 재사용
+// PositionResponse -> Item 변환 (x=r1, y=c1), goodsId로 imageUrl 매핑
+const positionToItem = (
+  pos: PositionResponse,
+  imageMap: Map<number, string>
+): Item => ({
+  id: pos.id,
   positionId: pos.id,
   goodsId: pos.goodsId,
+  imageSrc: imageMap.get(pos.goodsId),
   r1: pos.x,
   r2: pos.x + pos.heightUnit - 1,
   c1: pos.y,
@@ -39,17 +44,20 @@ const RoomContainer = () => {
 
   useEffect(() => {
     if (!isLoggedIn || !nickname) return;
-    getRoomMain(nickname)
-      .then(data => {
-        setRoomId(data.roomId);
-        serverPositionsRef.current = data.positions;
+    Promise.all([getRoomMain(nickname), getGoods()])
+      .then(([roomData, goods]) => {
+        setRoomId(roomData.roomId);
+        serverPositionsRef.current = roomData.positions;
 
-        const left = data.positions
+        // goodsId -> imageUrl 매핑
+        const imageMap = new Map(goods.map(g => [g.id, g.imageUrl]));
+
+        const left = roomData.positions
           .filter(p => p.wallSide === 'LEFT')
-          .map(positionToItem);
-        const right = data.positions
+          .map(p => positionToItem(p, imageMap));
+        const right = roomData.positions
           .filter(p => p.wallSide === 'RIGHT')
-          .map(positionToItem);
+          .map(p => positionToItem(p, imageMap));
 
         setLeftItems(left);
         setRightItems(right);
