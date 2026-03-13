@@ -46,6 +46,14 @@ const RoomContainer = () => {
   const [roomId, setRoomId] = useState<number | null>(null);
   const serverPositionsRef = useRef<PositionResponse[]>([]);
 
+  // isEditMode 감지 effect에서 최신값을 읽기 위한 ref
+  const leftItemsRef = useRef<Item[]>(leftItems);
+  const rightItemsRef = useRef<Item[]>(rightItems);
+  useEffect(() => {
+    leftItemsRef.current = leftItems;
+    rightItemsRef.current = rightItems;
+  }, [leftItems, rightItems]);
+
   // 룸 진입 시 서버 데이터로 Redux items 초기화
   useEffect(() => {
     if (!isLoggedIn || !nickname) return;
@@ -179,15 +187,15 @@ const RoomContainer = () => {
     [roomId, dispatch]
   );
 
-  // 편집 모드 false → true 전환 감지
+  // 편집 모드 true → false 전환 감지 (편집 모드 종료 시점)
   const prevEditMode = useRef(isEditMode);
   useEffect(() => {
     if (prevEditMode.current && !isEditMode) {
-      syncPositions('LEFT', leftItems);
-      syncPositions('RIGHT', rightItems);
+      syncPositions('LEFT', leftItemsRef.current);
+      syncPositions('RIGHT', rightItemsRef.current);
     }
     prevEditMode.current = isEditMode;
-  }, [isEditMode, leftItems, rightItems, syncPositions]);
+  }, [isEditMode, syncPositions]);
 
   return (
     <div
