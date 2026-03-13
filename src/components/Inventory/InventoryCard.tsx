@@ -1,39 +1,44 @@
+import clsx from 'clsx';
 import { useRef, useState } from 'react';
 
 interface FilledCardProps {
   imageSrc: string;
   onRemove: () => void;
   onAdd?: never;
+  isUploading?: never;
 }
 
 interface EmptyCardProps {
-  onAdd: (imageSrc: string) => void;
+  onAdd: (file: File) => void;
+  isUploading?: boolean;
   imageSrc?: never;
   onRemove?: never;
 }
 
 type InventoryCardProps = FilledCardProps | EmptyCardProps;
 
-const InventoryCard = ({ imageSrc, onRemove, onAdd }: InventoryCardProps) => {
+const InventoryCard = ({ imageSrc, onRemove, onAdd, isUploading }: InventoryCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      onAdd?.(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    onAdd?.(file);
     e.target.value = '';
   };
 
+  // 빈 카드 (끝에 하나)
   if (!imageSrc) {
     return (
       <div
-        className={`border-border/40 hover:border-border text-purple-black/40 hover:text-purple-black/70 bg-card-background flex h-full w-60 shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed transition-colors`}
-        onClick={() => inputRef.current?.click()}
+        className={clsx(
+          `border-border/40 bg-card-background flex h-full w-60 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed transition-colors`,
+          isUploading
+            ? `cursor-wait opacity-60`
+            : `hover:border-border cursor-pointer`
+        )}
+        onClick={() => !isUploading && inputRef.current?.click()}
       >
         <input
           ref={inputRef}
@@ -42,11 +47,16 @@ const InventoryCard = ({ imageSrc, onRemove, onAdd }: InventoryCardProps) => {
           className={`hidden`}
           onChange={handleFileChange}
         />
-        <span className={`text-3xl`}>+</span>
+        {isUploading ? (
+          <div className={`border-secondary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent`} />
+        ) : (
+          <span className={`text-purple-black/40 text-3xl`}>+</span>
+        )}
       </div>
     );
   }
 
+  // 채워진 카드
   return (
     <div
       className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing`}
