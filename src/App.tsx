@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import Home from './pages/Home';
+import KakaoCallback from './pages/KakaoCallback';
 import MyPage from './pages/MyPage';
 import Room from './pages/Room';
 import Signup from './pages/Signup';
@@ -26,6 +27,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/rooms/:nickname' element={<Room />} />
             <Route path='/signup' element={<Signup />} />
+            <Route path='/oauth/kakao' element={<KakaoCallback />} />
             <Route
               path='/mypage'
               element={

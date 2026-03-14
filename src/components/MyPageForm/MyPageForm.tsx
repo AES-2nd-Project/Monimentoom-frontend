@@ -7,23 +7,14 @@ const MyPageForm = () => {
   const navigate = useNavigate();
   const {
     nickname,
-    verifyPassword,
-    isVerifyPending,
     updateProfile,
     isUpdateProfilePending,
   } = useAuth();
-
-  const [step, setStep] = useState<'verify' | 'edit'>('verify');
-
-  // 비밀번호 확인
-  const [password, setPassword] = useState('');
 
   // 프로필 편집
   const [newNickname, setNewNickname] = useState(nickname);
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
-  const [newPassword, setNewPassword] = useState('');
-  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
   // previewUrl이 바뀌거나 언마운트될 때 이전 blob URL 해제
@@ -35,17 +26,6 @@ const MyPageForm = () => {
   }, [previewUrl]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleVerify = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!password) return alert('비밀번호를 입력해주세요.');
-    try {
-      await verifyPassword(password);
-      setStep('edit');
-    } catch {
-      alert('비밀번호가 올바르지 않습니다.');
-    }
-  };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,59 +50,17 @@ const MyPageForm = () => {
   const handleUpdate = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newNickname) return alert('닉네임을 입력해주세요.');
-    if (newPassword && newPassword !== newPasswordConfirm)
-      return alert('새 비밀번호가 일치하지 않습니다.');
 
     updateProfile({
       nickname: newNickname,
       profileImageUrl,
-      newPassword: newPassword || undefined,
     });
   };
-
-  if (step === 'verify') {
-    return (
-      <form
-        onSubmit={handleVerify}
-        className={`bg-card-background flex w-75 flex-col gap-4 rounded-lg p-8`}
-      >
-        <p>🔒 본인 확인</p>
-        <p className='text-purple-black/50 text-sm'>
-          계속하려면 현재 비밀번호를 입력해주세요.
-        </p>
-        <input
-          type='password'
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          className={`bg-purple-white h-10 rounded-lg px-4`}
-          placeholder='현재 비밀번호'
-        />
-        <button
-          type='submit'
-          disabled={isVerifyPending}
-          className={`bg-button text-purple-white hover:bg-hover active:bg-hover/70 mt-auto h-12 w-full rounded-lg transition-colors duration-200`}
-        >
-          {isVerifyPending ? '확인 중...' : '확인'}
-        </button>
-        <p
-          className={`text-purple-black/50 hover:text-purple-black/80 text-center transition-colors duration-200`}
-        >
-          <button
-            type='button'
-            onClick={() => navigate('/')}
-            className='cursor-pointer underline'
-          >
-            돌아가기
-          </button>
-        </p>
-      </form>
-    );
-  }
 
   return (
     <form
       onSubmit={handleUpdate}
-      className={`bg-card-background flex w-75 flex-col gap-4 rounded-lg p-8`}
+      className='bg-card-background flex w-75 flex-col gap-4 rounded-lg p-8'
     >
       <p>👤 프로필 편집</p>
 
@@ -158,33 +96,26 @@ const MyPageForm = () => {
         type='text'
         value={newNickname}
         onChange={e => setNewNickname(e.target.value)}
-        className={`bg-purple-white h-10 rounded-lg px-4`}
+        className='bg-purple-white h-10 rounded-lg px-4'
         placeholder='닉네임'
-      />
-
-      {/* 새 비밀번호 (선택) */}
-      <input
-        type='password'
-        value={newPassword}
-        onChange={e => setNewPassword(e.target.value)}
-        className={`bg-purple-white h-10 rounded-lg px-4`}
-        placeholder='새 비밀번호 (변경 시에만 입력)'
-      />
-      <input
-        type='password'
-        value={newPasswordConfirm}
-        onChange={e => setNewPasswordConfirm(e.target.value)}
-        className={`bg-purple-white h-10 rounded-lg px-4`}
-        placeholder='새 비밀번호 확인'
       />
 
       <button
         type='submit'
         disabled={isUpdateProfilePending || isUploading}
-        className={`bg-button text-purple-white hover:bg-hover active:bg-hover/70 mt-auto h-12 w-full rounded-lg transition-colors duration-200`}
+        className='bg-button text-purple-white hover:bg-hover active:bg-hover/70 mt-auto h-12 w-full rounded-lg transition-colors duration-200'
       >
         {isUpdateProfilePending ? '저장 중...' : '저장'}
       </button>
+      <p className='text-purple-black/50 hover:text-purple-black/80 text-center transition-colors duration-200'>
+        <button
+          type='button'
+          onClick={() => navigate('/')}
+          className='cursor-pointer underline'
+        >
+          돌아가기
+        </button>
+      </p>
     </form>
   );
 };
