@@ -15,6 +15,15 @@ export const getGoodsPresignedUrl = async (
   return response.data;
 };
 
+export const getProfilePresignedUrl = async (
+  fileName: string
+): Promise<PresignedUrlResponse> => {
+  const response = await axiosInstance.get('/s3/presigned-url/profile', {
+    params: { fileName },
+  });
+  return response.data;
+};
+
 export const getFramePresignedUrl = async (
   fileName: string
 ): Promise<PresignedUrlResponse> => {
