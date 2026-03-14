@@ -7,11 +7,22 @@ export interface KakaoLoginResponse {
   isNewUser: boolean;
   signupToken: string | null; // 신규 유저일 때만
   token: string | null; // 기존 유저일 때만
+  userId: number | null; // 기존 유저일 때만
+  nickname: string | null; // 기존 유저일 때만
+  email: string | null; // 기존 유저일 때만
 }
 
 // 카카오 회원가입 요청
 export interface KakaoSignupRequest {
   signupToken: string;
+  nickname: string;
+  email: string;
+}
+
+// 카카오 회원가입 2단계 응답
+export interface KakaoSignupResponse {
+  token: string;
+  userId: number;
   nickname: string;
   email: string;
 }
@@ -40,17 +51,14 @@ export const kakaoLogin = async (code: string): Promise<KakaoLoginResponse> => {
 
 /**
  * 2단계: 신규 유저 닉네임/이메일 입력 후 회원가입
- * → Authorization 헤더에서 JWT 추출
+ * → 응답 body에서 token + 유저 정보 추출
  */
 export const kakaoSignup = async (
   request: KakaoSignupRequest
-): Promise<string> => {
+): Promise<KakaoSignupResponse> => {
   try {
     const response = await axiosInstance.post('/oauth/kakao/signup', request);
-    const authHeader = response.headers['authorization'];
-    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
-    if (!token) throw new Error('토큰을 받지 못했습니다.');
-    return token;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       const errorCode = error.response?.data?.code as ErrorCode;

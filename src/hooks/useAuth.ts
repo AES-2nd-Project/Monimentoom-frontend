@@ -7,9 +7,8 @@ import {
   kakaoSignup as kakaoSignupApi,
 } from '../api/oauth-api';
 import {
-  getMe,
-  updateProfile as updateProfileApi,
   logoutUser as logoutUserApi,
+  updateProfile as updateProfileApi,
 } from '../api/users-api';
 import type { RootState } from '../store';
 import {
@@ -18,22 +17,19 @@ import {
   updateUserInfo,
 } from '../store/authSlice';
 
-/** 토큰 저장 후 /users/me 호출 → localStorage + Redux 동기화 */
-const syncUserInfo = async (
+/** 로그인/회원가입 응답 데이터 → localStorage + Redux 동기화 */
+const syncUserInfo = (
   token: string,
+  userId: number,
+  nickname: string,
+  email: string,
   dispatch: ReturnType<typeof useDispatch>
 ) => {
   localStorage.setItem('accessToken', token);
-  try {
-    const me = await getMe();
-    localStorage.setItem('nickname', me.nickname);
-    localStorage.setItem('email', me.email);
-    localStorage.setItem('userId', String(me.id));
-    dispatch(setLoginInfo({ nickname: me.nickname, email: me.email, userId: me.id }));
-  } catch {
-    // /users/me 실패 시 토큰만 유지 — 다음 새로고침에서 재시도
-    console.error('/users/me 호출 실패');
-  }
+  localStorage.setItem('userId', String(userId));
+  localStorage.setItem('nickname', nickname);
+  localStorage.setItem('email', email);
+  dispatch(setLoginInfo({ nickname, email, userId }));
 };
 
 export const useAuth = () => {
@@ -53,9 +49,21 @@ export const useAuth = () => {
   const kakaoLoginMutation = useMutation({
     mutationFn: kakaoLoginApi,
     onSuccess: async data => {
-      if (!data.isNewUser && data.token) {
-        // 기존 유저: 토큰 저장 → 유저 정보 가져오기 → 홈으로
-        await syncUserInfo(data.token, dispatch);
+      if (
+        !data.isNewUser &&
+        data.token &&
+        data.userId &&
+        data.nickname &&
+        data.email
+      ) {
+        // 기존 유저: 응답 데이터로 바로 동기화 → 홈으로
+        syncUserInfo(
+          data.token,
+          data.userId,
+          data.nickname,
+          data.email,
+          dispatch
+        );
         navigate('/');
       } else if (data.isNewUser && data.signupToken) {
         // 신규 유저: 닉네임/이메일 입력 페이지로
@@ -71,8 +79,14 @@ export const useAuth = () => {
   // 카카오 회원가입 (닉네임/이메일 입력 후)
   const kakaoSignupMutation = useMutation({
     mutationFn: kakaoSignupApi,
-    onSuccess: async token => {
-      await syncUserInfo(token, dispatch);
+    onSuccess: data => {
+      syncUserInfo(
+        data.token,
+        data.userId,
+        data.nickname,
+        data.email,
+        dispatch
+      );
       alert('회원가입이 완료되었습니다!');
       navigate('/');
     },
