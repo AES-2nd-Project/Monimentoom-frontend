@@ -1,15 +1,23 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login as loginApi, signup as signupApi } from '../api/users-api';
+import {
+  login as loginApi,
+  signup as signupApi,
+  updateProfile as updateProfileApi,
+} from '../api/users-api';
 import type { RootState } from '../store';
-import { logout as logoutAction, setLoginInfo } from '../store/authSlice';
+import {
+  logout as logoutAction,
+  setLoginInfo,
+  updateUserInfo,
+} from '../store/authSlice';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isLoggedIn, nickname } = useSelector(
+  const { isLoggedIn, nickname, email, userId } = useSelector(
     (state: RootState) => state.auth
   );
 
@@ -19,7 +27,15 @@ export const useAuth = () => {
     onSuccess: data => {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('nickname', data.nickname);
-      dispatch(setLoginInfo({ nickname: data.nickname }));
+      localStorage.setItem('email', data.email);
+      localStorage.setItem('userId', String(data.id));
+      dispatch(
+        setLoginInfo({
+          nickname: data.nickname,
+          email: data.email,
+          userId: data.id,
+        })
+      );
       navigate('/');
     },
     onError: (error: Error) => {
@@ -39,10 +55,64 @@ export const useAuth = () => {
     },
   });
 
+  // 비밀번호 인증 — 로그인 API 재활용
+  const verifyPasswordMutation = useMutation({
+    mutationFn: (password: string) => loginApi({ email, password }),
+    onSuccess: data => {
+      // 백엔드가 새 토큰을 발급할 경우 클라이언트 상태 동기화
+      if (data?.accessToken)
+        localStorage.setItem('accessToken', data.accessToken);
+      if (data?.nickname) localStorage.setItem('nickname', data.nickname);
+      if (data?.email) localStorage.setItem('email', data.email);
+      if (data?.id != null) localStorage.setItem('userId', String(data.id));
+      if (data?.nickname && data?.email && data?.id != null) {
+        dispatch(
+          setLoginInfo({
+            nickname: data.nickname,
+            email: data.email,
+            userId: data.id,
+          })
+        );
+      }
+    },
+  });
+
+  // 프로필 업데이트
+  const updateProfileMutation = useMutation({
+    mutationFn: ({
+      nickname: newNickname,
+      profileImageUrl,
+      newPassword,
+    }: {
+      nickname: string;
+      profileImageUrl?: string;
+      newPassword?: string;
+    }) => {
+      if (userId == null)
+        return Promise.reject(new Error('로그인이 필요합니다.'));
+      return updateProfileApi(userId, {
+        nickname: newNickname,
+        profileImageUrl,
+        newPassword,
+      });
+    },
+    onSuccess: data => {
+      localStorage.setItem('nickname', data.nickname);
+      dispatch(updateUserInfo({ nickname: data.nickname }));
+      alert('프로필이 업데이트되었습니다.');
+      navigate('/');
+    },
+    onError: (error: Error) => {
+      alert(error.message);
+    },
+  });
+
   // 로그아웃
   const logout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('nickname');
+    localStorage.removeItem('email');
+    localStorage.removeItem('userId');
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
     navigate('/');
@@ -51,10 +121,16 @@ export const useAuth = () => {
   return {
     isLoggedIn,
     nickname,
+    email,
+    userId,
     login: loginMutation.mutate,
     isPending: loginMutation.isPending,
     signup: signupMutation.mutate,
     isSignupPending: signupMutation.isPending,
+    verifyPassword: verifyPasswordMutation.mutateAsync,
+    isVerifyPending: verifyPasswordMutation.isPending,
+    updateProfile: updateProfileMutation.mutate,
+    isUpdateProfilePending: updateProfileMutation.isPending,
     logout,
   };
 };

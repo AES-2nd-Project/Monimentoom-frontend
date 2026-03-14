@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { getGoods } from '../../api/goods-api';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   createPosition,
   deletePosition,
@@ -18,15 +17,12 @@ import type { PositionResponse, WallSide } from '../../types/position';
 import type { Item } from '../../types/room';
 import RoomScene from './RoomScene';
 
-// PositionResponse → Item 변환 (x=r1, y=c1), goodsId로 imageUrl 매핑
-const positionToItem = (
-  pos: PositionResponse,
-  imageMap: Map<number, string>
-): Item => ({
+// PositionResponse → Item 변환 (x=r1, y=c1)
+const positionToItem = (pos: PositionResponse): Item => ({
   id: pos.id,
   positionId: pos.id,
   goodsId: pos.goodsId,
-  imageSrc: imageMap.get(pos.goodsId),
+  imageSrc: pos.imageUrl,
   r1: pos.x,
   r2: pos.x + pos.heightUnit - 1,
   c1: pos.y,
@@ -36,9 +32,12 @@ const positionToItem = (
 const RoomContainer = () => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const { nickname: urlNickname } = useParams<{ nickname: string }>();
   const isHome = location.pathname === '/';
-  const nickname = useSelector((state: RootState) => state.auth.nickname);
+  const authNickname = useSelector((state: RootState) => state.auth.nickname);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  // URL 파라미터 닉네임 우선, 없으면 로그인된 닉네임 사용
+  const nickname = urlNickname ?? authNickname;
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const leftItems = useSelector((state: RootState) => state.shelf.leftItems);
   const rightItems = useSelector((state: RootState) => state.shelf.rightItems);
@@ -64,8 +63,8 @@ const RoomContainer = () => {
   // 룸 진입 시 서버 데이터로 Redux items 초기화
   useEffect(() => {
     if (!isLoggedIn || !nickname) return;
-    Promise.all([getRoomMain(nickname), getGoods()])
-      .then(([roomData, goods]) => {
+    getRoomMain(nickname)
+      .then(roomData => {
         setRoomId(roomData.roomId);
         serverPositionsRef.current = roomData.positions;
 
@@ -74,14 +73,12 @@ const RoomContainer = () => {
         serverFrameImageUrlRef.current = initialFrameImageUrl;
         dispatch(setFrameImage(initialFrameImageUrl));
 
-        const imageMap = new Map(goods.map(g => [g.id, g.imageUrl]));
-
         dispatch(
           setShelfItems({
             wallSide: 'LEFT',
             items: roomData.positions
               .filter(p => p.wallSide === 'LEFT')
-              .map(p => positionToItem(p, imageMap)),
+              .map(p => positionToItem(p)),
           })
         );
         dispatch(
@@ -89,7 +86,7 @@ const RoomContainer = () => {
             wallSide: 'RIGHT',
             items: roomData.positions
               .filter(p => p.wallSide === 'RIGHT')
-              .map(p => positionToItem(p, imageMap)),
+              .map(p => positionToItem(p)),
           })
         );
       })
@@ -207,7 +204,6 @@ const RoomContainer = () => {
       syncPositions('RIGHT', rightItemsRef.current);
 
       // 액자 이미지 변경 시 서버 반영
-      // TODO: 백엔드에서 RoomUpdateRequest에 frameImageUrl 추가 후 활성화
       if (
         roomId &&
         frameImageUrlRef.current !== serverFrameImageUrlRef.current

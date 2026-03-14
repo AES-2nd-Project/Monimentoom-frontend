@@ -14,16 +14,23 @@ const Header = () => {
   const handleLoginClick = useNavigateToLogin();
 
   const handleRoomClick = () => {
-    if (isLoggedIn && nickname) {
-      const roomPath = `/rooms/${nickname}`;
-      if (location.pathname === roomPath) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        navigate(roomPath);
-      }
+    if (!isLoggedIn || !nickname) return handleLoginClick();
+    const roomPath = `/rooms/${nickname}`;
+    if (location.pathname === roomPath) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      handleLoginClick();
+      navigate(roomPath);
     }
+  };
+
+  const handleMyPageClick = () => {
+    if (!isLoggedIn) return handleLoginClick();
+    navigate('/mypage');
+  };
+
+  const handleAuthClick = () => {
+    if (isLoggedIn) logout();
+    else handleLoginClick();
   };
 
   useEffect(() => {
@@ -86,12 +93,13 @@ const Header = () => {
               Room
             </li>
             <li
+              onClick={handleMyPageClick}
               className={`hover:text-point-pink cursor-pointer transition-colors`}
             >
               MyPage
             </li>
             <li
-              onClick={isLoggedIn ? logout : handleLoginClick}
+              onClick={handleAuthClick}
               className={`hover:text-point-pink cursor-pointer transition-colors`}
             >
               {isLoggedIn ? `로그아웃` : `로그인`}
