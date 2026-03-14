@@ -56,7 +56,6 @@ interface UpdateProfileProps {
   newPassword?: string;
 }
 
-// TODO: 백엔드에서 PATCH /users/{id} 엔드포인트 추가 필요
 export const updateProfile = async (
   userId: number,
   data: UpdateProfileProps

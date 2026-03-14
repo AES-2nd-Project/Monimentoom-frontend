@@ -18,7 +18,6 @@ import type { Item } from '../../types/room';
 import RoomScene from './RoomScene';
 
 // PositionResponse → Item 변환 (x=r1, y=c1)
-// 백엔드가 imageUrl을 포함해서 내려줌 → 방 주인이 누구든 이미지 표시 가능
 const positionToItem = (pos: PositionResponse): Item => ({
   id: pos.id,
   positionId: pos.id,
@@ -205,7 +204,6 @@ const RoomContainer = () => {
       syncPositions('RIGHT', rightItemsRef.current);
 
       // 액자 이미지 변경 시 서버 반영
-      // TODO: 백엔드에서 RoomUpdateRequest에 frameImageUrl 추가 후 활성화
       if (
         roomId &&
         frameImageUrlRef.current !== serverFrameImageUrlRef.current

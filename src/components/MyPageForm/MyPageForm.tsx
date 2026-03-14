@@ -5,15 +5,20 @@ import { useAuth } from '../../hooks/useAuth';
 
 const MyPageForm = () => {
   const navigate = useNavigate();
-  const { nickname, verifyPassword, isVerifyPending, updateProfile, isUpdateProfilePending } =
-    useAuth();
+  const {
+    nickname,
+    verifyPassword,
+    isVerifyPending,
+    updateProfile,
+    isUpdateProfilePending,
+  } = useAuth();
 
   const [step, setStep] = useState<'verify' | 'edit'>('verify');
 
-  // 1단계 - 비밀번호 확인
+  // 비밀번호 확인
   const [password, setPassword] = useState('');
 
-  // 2단계 - 프로필 편집
+  // 프로필 편집
   const [newNickname, setNewNickname] = useState(nickname);
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
@@ -91,7 +96,9 @@ const MyPageForm = () => {
         >
           {isVerifyPending ? '확인 중...' : '확인'}
         </button>
-        <p className={`text-purple-black/50 hover:text-purple-black/80 text-center transition-colors duration-200`}>
+        <p
+          className={`text-purple-black/50 hover:text-purple-black/80 text-center transition-colors duration-200`}
+        >
           <button
             type='button'
             onClick={() => navigate('/')}
@@ -118,7 +125,11 @@ const MyPageForm = () => {
           onClick={() => fileInputRef.current?.click()}
         >
           {previewUrl ? (
-            <img src={previewUrl} alt='프로필' className='h-full w-full object-cover' />
+            <img
+              src={previewUrl}
+              alt='프로필'
+              className='h-full w-full object-cover'
+            />
           ) : (
             <span className='text-secondary/50 text-xs'>
               {isUploading ? '업로드 중...' : '이미지 변경'}
