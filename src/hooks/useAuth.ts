@@ -30,7 +30,11 @@ export const useAuth = () => {
       localStorage.setItem('email', data.email);
       localStorage.setItem('userId', String(data.id));
       dispatch(
-        setLoginInfo({ nickname: data.nickname, email: data.email, userId: data.id })
+        setLoginInfo({
+          nickname: data.nickname,
+          email: data.email,
+          userId: data.id,
+        })
       );
       navigate('/');
     },
@@ -54,6 +58,23 @@ export const useAuth = () => {
   // 비밀번호 인증 — 로그인 API 재활용
   const verifyPasswordMutation = useMutation({
     mutationFn: (password: string) => loginApi({ email, password }),
+    onSuccess: data => {
+      // 백엔드가 새 토큰을 발급할 경우 클라이언트 상태 동기화
+      if (data?.accessToken)
+        localStorage.setItem('accessToken', data.accessToken);
+      if (data?.nickname) localStorage.setItem('nickname', data.nickname);
+      if (data?.email) localStorage.setItem('email', data.email);
+      if (data?.id != null) localStorage.setItem('userId', String(data.id));
+      if (data?.nickname && data?.email && data?.id != null) {
+        dispatch(
+          setLoginInfo({
+            nickname: data.nickname,
+            email: data.email,
+            userId: data.id,
+          })
+        );
+      }
+    },
   });
 
   // 프로필 업데이트
@@ -66,7 +87,15 @@ export const useAuth = () => {
       nickname: string;
       profileImageUrl?: string;
       newPassword?: string;
-    }) => updateProfileApi(userId!, { nickname: newNickname, profileImageUrl, newPassword }),
+    }) => {
+      if (userId == null)
+        return Promise.reject(new Error('로그인이 필요합니다.'));
+      return updateProfileApi(userId, {
+        nickname: newNickname,
+        profileImageUrl,
+        newPassword,
+      });
+    },
     onSuccess: data => {
       localStorage.setItem('nickname', data.nickname);
       dispatch(updateUserInfo({ nickname: data.nickname }));

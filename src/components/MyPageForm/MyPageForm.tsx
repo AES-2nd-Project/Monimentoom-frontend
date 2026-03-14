@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProfilePresignedUrl, uploadToS3 } from '../../api/s3-api';
 import { useAuth } from '../../hooks/useAuth';
@@ -25,6 +25,14 @@ const MyPageForm = () => {
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+
+  // previewUrl이 바뀌거나 언마운트될 때 이전 blob URL 해제
+  useEffect(() => {
+    if (!previewUrl) return;
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
