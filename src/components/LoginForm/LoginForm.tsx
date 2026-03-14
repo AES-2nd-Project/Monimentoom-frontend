@@ -5,7 +5,7 @@ const LoginForm = () => {
 
   return (
     <div
-      className={`bg-card-background flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}
+      className={`bg-card-background flex w-75 flex-col items-start gap-4 rounded-lg p-8`}
     >
       <p>👥 Login</p>
       <p className='text-purple-black/50 text-sm'>
@@ -14,7 +14,7 @@ const LoginForm = () => {
       <button
         type='button'
         onClick={redirectToKakao}
-        className='mt-auto flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FEE500] text-[#191919] transition-[filter] hover:brightness-95 active:brightness-90'
+        className='flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FEE500] text-[#191919] transition-[filter] hover:brightness-95 active:brightness-90'
       >
         <svg
           width='18'

@@ -8,6 +8,11 @@ export const getRoomMain = async (
   return response.data;
 };
 
+export const getRandomRoom = async (): Promise<RoomPositionResponse> => {
+  const response = await axiosInstance.get('/rooms/random');
+  return response.data;
+};
+
 export const updateRoomFrameImage = async (
   roomId: number,
   frameImageUrl: string | null

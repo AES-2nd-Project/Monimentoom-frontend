@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getRandomRoom } from '../../api/room-api';
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigateToLogin } from '../../hooks/useNavigateToLogin';
@@ -13,8 +14,20 @@ const Header = () => {
   const isHome = location.pathname === '/';
   const handleLoginClick = useNavigateToLogin();
 
-  const handleRoomClick = () => {
-    if (!isLoggedIn || !nickname) return handleLoginClick();
+  const handleRoomClick = async () => {
+    if (!isLoggedIn || !nickname) {
+      // 게스트: 랜덤 유저의 방 방문
+      try {
+        const data = await getRandomRoom();
+        if (data?.nickname) {
+          navigate(`/rooms/${data.nickname}`);
+        }
+      } catch {
+        // 랜덤 방 조회 실패 시 로그인 유도
+        handleLoginClick();
+      }
+      return;
+    }
     const roomPath = `/rooms/${nickname}`;
     if (location.pathname === roomPath) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
