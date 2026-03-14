@@ -7,6 +7,7 @@ interface ShelfState {
   leftItems: Item[];
   rightItems: Item[];
   frameImageUrl: string | null;
+  roomId: number | null;
 }
 
 const initialState: ShelfState = {
@@ -14,6 +15,7 @@ const initialState: ShelfState = {
   leftItems: [],
   rightItems: [],
   frameImageUrl: null,
+  roomId: null,
 };
 
 const shelfSlice = createSlice({
@@ -81,6 +83,10 @@ const shelfSlice = createSlice({
         );
       }
     },
+    // 방 ID 설정
+    setRoomId: (state, action: PayloadAction<number | null>) => {
+      state.roomId = action.payload;
+    },
     // 액자 이미지 설정/해제
     setFrameImage: (state, action: PayloadAction<string | null>) => {
       state.frameImageUrl = action.payload;
@@ -112,6 +118,7 @@ export const {
   removeShelfItem,
   updateShelfItemImage,
   updateShelfItemPositionId,
+  setRoomId,
   setFrameImage,
 } = shelfSlice.actions;
 
