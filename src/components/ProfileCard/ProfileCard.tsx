@@ -1,8 +1,9 @@
 import image from '../../assets/react.svg';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState, useLogout } from '../../hooks/useAuth';
 
 const ProfileCard = () => {
-  const { nickname, logout } = useAuth();
+  const { nickname } = useAuthState();
+  const { logout } = useLogout();
   return (
     <div
       className={`bg-card-background flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}

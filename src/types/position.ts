@@ -25,6 +25,7 @@ export interface PositionResponse {
 export interface RoomPositionResponse {
   roomId: number;
   userId: number;
+  nickname?: string; // 방 주인 닉네임 (랜덤 방 방문 등에서 URL 이동에 사용)
   name: string;
   positions: PositionResponse[];
   frameImageUrl?: string | null;

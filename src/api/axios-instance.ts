@@ -11,10 +11,8 @@ axiosInstance.interceptors.request.use(
   config => {
     const token = localStorage.getItem('accessToken');
 
-    // 로그인, 회원가입 요청은 제외
-    const isAuthRoute =
-      config.url?.includes('/users/login') ||
-      config.url?.includes('/users/signup');
+    // OAuth 요청은 토큰 불필요
+    const isAuthRoute = config.url?.includes('/oauth/kakao');
 
     if (token && !isAuthRoute) {
       if (!config.headers) config.headers = {} as AxiosRequestHeaders;

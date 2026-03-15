@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import {
@@ -10,6 +10,7 @@ import { getRoomMain, updateRoomFrameImage } from '../../api/room-api';
 import type { AppDispatch, RootState } from '../../store';
 import {
   setFrameImage,
+  setRoomId as setRoomIdAction,
   setShelfItems,
   updateShelfItemPositionId,
 } from '../../store/shelfSlice';
@@ -29,7 +30,11 @@ const positionToItem = (pos: PositionResponse): Item => ({
   c2: pos.y + pos.widthUnit - 1,
 });
 
-const RoomContainer = () => {
+interface RoomContainerProps {
+  onStart?: () => void;
+}
+
+const RoomContainer = ({ onStart }: RoomContainerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const { nickname: urlNickname } = useParams<{ nickname: string }>();
@@ -45,7 +50,7 @@ const RoomContainer = () => {
     (state: RootState) => state.shelf.frameImageUrl
   );
 
-  const [roomId, setRoomId] = useState<number | null>(null);
+  const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const serverPositionsRef = useRef<PositionResponse[]>([]);
   // 서버 기준 frameImageUrl — 변경 여부 비교용
   const serverFrameImageUrlRef = useRef<string | null>(null);
@@ -61,11 +66,12 @@ const RoomContainer = () => {
   }, [leftItems, rightItems, frameImageUrl]);
 
   // 룸 진입 시 서버 데이터로 Redux items 초기화
+  // URL 닉네임이 있으면 비로그인 게스트도 조회 가능 (타인 방 방문)
   useEffect(() => {
-    if (!isLoggedIn || !nickname) return;
+    if (!nickname) return;
     getRoomMain(nickname)
       .then(roomData => {
-        setRoomId(roomData.roomId);
+        dispatch(setRoomIdAction(roomData.roomId));
         serverPositionsRef.current = roomData.positions;
 
         // 액자 이미지 초기화
@@ -218,7 +224,7 @@ const RoomContainer = () => {
     prevEditMode.current = isEditMode;
   }, [isEditMode, syncPositions, roomId]);
 
-  return <RoomScene isHome={isHome} />;
+  return <RoomScene isHome={isHome} onStart={onStart} />;
 };
 
 export default RoomContainer;

@@ -1,20 +1,35 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { getRandomRoom } from '../../api/room-api';
 import logo from '../../assets/logo.png';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState, useLogout } from '../../hooks/useAuth';
 import { useNavigateToLogin } from '../../hooks/useNavigateToLogin';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoggedIn, logout, nickname } = useAuth();
+  const { isLoggedIn, nickname } = useAuthState();
+  const { logout } = useLogout();
   const [isScrolled, setIsScrolled] = useState(false);
   const isHome = location.pathname === '/';
   const handleLoginClick = useNavigateToLogin();
 
-  const handleRoomClick = () => {
-    if (!isLoggedIn || !nickname) return handleLoginClick();
+  const handleRoomClick = async () => {
+    if (!isLoggedIn || !nickname) {
+      // 게스트: 랜덤 유저의 방 방문
+      try {
+        const data = await getRandomRoom();
+        if (data?.nickname) {
+          navigate(`/rooms/${data.nickname}`);
+        } else {
+          handleLoginClick();
+        }
+      } catch {
+        handleLoginClick();
+      }
+      return;
+    }
     const roomPath = `/rooms/${nickname}`;
     if (location.pathname === roomPath) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -35,23 +50,18 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!isHome) {
+      if (location.pathname !== '/') {
         setIsScrolled(true);
         return;
       }
-
-      if (window.scrollY >= 900) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY >= 900);
     };
 
     handleScroll();
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isHome, location.pathname]);
+  }, [location.pathname]);
 
   return (
     <motion.header

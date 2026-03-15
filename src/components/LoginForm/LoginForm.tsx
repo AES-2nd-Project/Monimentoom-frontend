@@ -1,55 +1,37 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { redirectToKakao } from '../../hooks/useAuth';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login, isPending } = useAuth();
-
-  const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!email || !password) return alert('아이디와 비밀번호를 입력해주세요.');
-
-    login({ email, password });
-  };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className={`bg-card-background flex h-75 w-75 flex-col gap-4 rounded-lg p-8`}
+    <div
+      className={`bg-card-background flex w-75 flex-col items-start gap-4 rounded-lg p-8`}
     >
       <p>👥 Login</p>
-      <input
-        type='text'
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        className={`bg-purple-white h-10 rounded-lg px-4`}
-        placeholder='email'
-      />
-      <input
-        type='password'
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        className={`bg-purple-white h-10 rounded-lg px-4`}
-        placeholder='password'
-      />
-      <button
-        type='submit'
-        disabled={isPending}
-        className={`bg-button text-purple-white hover:bg-hover active:bg-hover/70 mt-auto h-12 w-full rounded-lg transition-colors duration-200`}
-      >
-        {isPending ? '로그인 중...' : '로그인'}
-      </button>
-      <p
-        className={`text-purple-black/50 hover:text-purple-black/80 text-center transition-colors duration-200`}
-      >
-        계정이 없나요?{' '}
-        <Link to={'/signup'} className={`cursor-pointer underline`}>
-          회원가입
-        </Link>
+      <p className='text-purple-black/50 text-sm'>
+        카카오 계정으로 간편하게 시작하세요.
       </p>
-    </form>
+      <button
+        type='button'
+        onClick={redirectToKakao}
+        className='flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-[#FEE500] text-[#191919] transition-[filter] hover:brightness-95 active:brightness-90'
+      >
+        <svg
+          width='18'
+          height='18'
+          viewBox='0 0 18 18'
+          fill='none'
+          xmlns='http://www.w3.org/2000/svg'
+        >
+          <path
+            fillRule='evenodd'
+            clipRule='evenodd'
+            d='M9 0.6C4.029 0.6 0 3.713 0 7.55C0 9.94 1.558 12.048 3.931 13.296L2.933 16.944C2.845 17.262 3.213 17.514 3.489 17.324L7.873 14.403C8.242 14.44 8.617 14.46 9 14.46C13.971 14.46 18 11.347 18 7.51C18 3.673 13.971 0.6 9 0.6Z'
+            fill='#191919'
+          />
+        </svg>
+        카카오 로그인
+      </button>
+    </div>
   );
 };
 
