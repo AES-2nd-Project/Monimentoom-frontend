@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useKakaoLogin } from '../hooks/useAuth';
 
 const KakaoCallback = () => {
   const [searchParams] = useSearchParams();
-  const { handleKakaoCallback, isKakaoLoginPending } = useAuth();
+  const { handleKakaoCallback, isKakaoLoginPending } = useKakaoLogin();
 
   useEffect(() => {
     const code = searchParams.get('code');

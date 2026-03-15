@@ -1,7 +1,6 @@
-import { useAuth } from '../../hooks/useAuth';
+import { redirectToKakao } from '../../hooks/useAuth';
 
 const LoginForm = () => {
-  const { redirectToKakao } = useAuth();
 
   return (
     <div

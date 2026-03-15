@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useKakaoSignup } from '../../hooks/useAuth';
 
 const SignupForm = () => {
   const location = useLocation();
@@ -9,7 +9,7 @@ const SignupForm = () => {
 
   const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
-  const { kakaoSignup, isKakaoSignupPending } = useAuth();
+  const { kakaoSignup, isKakaoSignupPending } = useKakaoSignup();
 
   // signupToken이 없으면 잘못된 접근
   if (!signupToken) {

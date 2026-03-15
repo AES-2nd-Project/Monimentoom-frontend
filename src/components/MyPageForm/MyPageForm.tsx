@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProfilePresignedUrl, uploadToS3 } from '../../api/s3-api';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuthState, useProfileUpdate } from '../../hooks/useAuth';
 
 const MyPageForm = () => {
   const navigate = useNavigate();
-  const {
-    nickname,
-    updateProfile,
-    isUpdateProfilePending,
-  } = useAuth();
+  const { nickname } = useAuthState();
+  const { updateProfile, isUpdateProfilePending } = useProfileUpdate();
 
   // 프로필 편집
   const [newNickname, setNewNickname] = useState(nickname);

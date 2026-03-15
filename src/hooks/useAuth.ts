@@ -32,23 +32,46 @@ const syncUserInfo = (
   dispatch(setLoginInfo({ nickname, email, userId }));
 };
 
-export const useAuth = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+/** 카카오 로그인 페이지로 리다이렉트 (훅 불필요) */
+export const redirectToKakao = () => {
+  window.location.href = getKakaoAuthUrl();
+};
 
+/** Redux에서 인증 상태만 읽기 (mutation 없음) */
+export const useAuthState = () => {
   const { isLoggedIn, nickname, email, userId } = useSelector(
     (state: RootState) => state.auth
   );
+  return { isLoggedIn, nickname, email, userId };
+};
 
-  // 카카오 로그인 페이지로 리다이렉트
-  const redirectToKakao = () => {
-    window.location.href = getKakaoAuthUrl();
+/** 로그아웃 */
+export const useLogout = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    logoutUserApi().catch(console.error);
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('nickname');
+    localStorage.removeItem('email');
+    localStorage.removeItem('userId');
+    dispatch(logoutAction());
+    alert('로그아웃 되었습니다.');
+    navigate('/');
   };
 
-  // 카카오 인가코드 처리 (콜백 페이지에서 호출)
+  return { logout };
+};
+
+/** 카카오 인가코드 → 로그인 처리 (KakaoCallback에서 사용) */
+export const useKakaoLogin = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const kakaoLoginMutation = useMutation({
     mutationFn: kakaoLoginApi,
-    onSuccess: async data => {
+    onSuccess: data => {
       if (
         !data.isNewUser &&
         data.token &&
@@ -56,7 +79,6 @@ export const useAuth = () => {
         data.nickname &&
         data.email
       ) {
-        // 기존 유저: 응답 데이터로 바로 동기화 → 홈으로
         syncUserInfo(
           data.token,
           data.userId,
@@ -66,7 +88,6 @@ export const useAuth = () => {
         );
         navigate('/');
       } else if (data.isNewUser && data.signupToken) {
-        // 신규 유저: 닉네임/이메일 입력 페이지로
         navigate('/signup', { state: { signupToken: data.signupToken } });
       }
     },
@@ -76,7 +97,17 @@ export const useAuth = () => {
     },
   });
 
-  // 카카오 회원가입 (닉네임/이메일 입력 후)
+  return {
+    handleKakaoCallback: kakaoLoginMutation.mutate,
+    isKakaoLoginPending: kakaoLoginMutation.isPending,
+  };
+};
+
+/** 카카오 회원가입 (SignupForm에서 사용) */
+export const useKakaoSignup = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const kakaoSignupMutation = useMutation({
     mutationFn: kakaoSignupApi,
     onSuccess: data => {
@@ -95,7 +126,18 @@ export const useAuth = () => {
     },
   });
 
-  // 프로필 업데이트
+  return {
+    kakaoSignup: kakaoSignupMutation.mutate,
+    isKakaoSignupPending: kakaoSignupMutation.isPending,
+  };
+};
+
+/** 프로필 수정 (MyPageForm에서 사용) */
+export const useProfileUpdate = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userId = useSelector((state: RootState) => state.auth.userId);
+
   const updateProfileMutation = useMutation({
     mutationFn: ({
       nickname: newNickname,
@@ -122,30 +164,8 @@ export const useAuth = () => {
     },
   });
 
-  // 로그아웃
-  const logout = () => {
-    logoutUserApi().catch(console.error);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('nickname');
-    localStorage.removeItem('email');
-    localStorage.removeItem('userId');
-    dispatch(logoutAction());
-    alert('로그아웃 되었습니다.');
-    navigate('/');
-  };
-
   return {
-    isLoggedIn,
-    nickname,
-    email,
-    userId,
-    redirectToKakao,
-    handleKakaoCallback: kakaoLoginMutation.mutate,
-    isKakaoLoginPending: kakaoLoginMutation.isPending,
-    kakaoSignup: kakaoSignupMutation.mutate,
-    isKakaoSignupPending: kakaoSignupMutation.isPending,
     updateProfile: updateProfileMutation.mutate,
     isUpdateProfilePending: updateProfileMutation.isPending,
-    logout,
   };
 };
