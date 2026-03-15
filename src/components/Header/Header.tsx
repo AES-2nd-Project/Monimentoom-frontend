@@ -22,9 +22,10 @@ const Header = () => {
         const data = await getRandomRoom();
         if (data?.nickname) {
           navigate(`/rooms/${data.nickname}`);
+        } else {
+          handleLoginClick();
         }
       } catch {
-        // 랜덤 방 조회 실패 시 로그인 유도
         handleLoginClick();
       }
       return;

@@ -1,17 +1,24 @@
 import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useKakaoLogin } from '../hooks/useAuth';
 
 const KakaoCallback = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { handleKakaoCallback, isKakaoLoginPending } = useKakaoLogin();
 
   useEffect(() => {
+    const error = searchParams.get('error');
     const code = searchParams.get('code');
-    if (code) {
-      handleKakaoCallback(code);
+
+    if (error || !code) {
+      alert('카카오 로그인에 실패했습니다. 다시 시도해주세요.');
+      navigate('/');
+      return;
     }
-  }, [searchParams, handleKakaoCallback]);
+
+    handleKakaoCallback(code);
+  }, [searchParams, handleKakaoCallback, navigate]);
 
   return (
     <div className='flex h-screen items-center justify-center'>

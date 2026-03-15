@@ -89,6 +89,9 @@ export const useKakaoLogin = () => {
         navigate('/');
       } else if (data.isNewUser && data.signupToken) {
         navigate('/signup', { state: { signupToken: data.signupToken } });
+      } else {
+        alert('로그인 처리 중 문제가 발생했습니다. 다시 시도해주세요.');
+        navigate('/');
       }
     },
     onError: (error: Error) => {

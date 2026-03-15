@@ -66,8 +66,9 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
   }, [leftItems, rightItems, frameImageUrl]);
 
   // 룸 진입 시 서버 데이터로 Redux items 초기화
+  // URL 닉네임이 있으면 비로그인 게스트도 조회 가능 (타인 방 방문)
   useEffect(() => {
-    if (!isLoggedIn || !nickname) return;
+    if (!nickname) return;
     getRoomMain(nickname)
       .then(roomData => {
         dispatch(setRoomIdAction(roomData.roomId));

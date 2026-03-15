@@ -75,8 +75,18 @@ export const kakaoSignup = async (
 /**
  * 카카오 인가 페이지 URL 생성
  */
-export const getKakaoAuthUrl = () => {
+export const getKakaoAuthUrl = (): string => {
   const clientId = import.meta.env.VITE_KAKAO_CLIENT;
   const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-  return `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`;
+  if (!clientId || !redirectUri) {
+    throw new Error(
+      '카카오 로그인 환경변수(VITE_KAKAO_CLIENT, VITE_KAKAO_REDIRECT_URI)가 설정되지 않았습니다.'
+    );
+  }
+  return (
+    `https://kauth.kakao.com/oauth/authorize` +
+    `?client_id=${encodeURIComponent(clientId)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&response_type=code`
+  );
 };
