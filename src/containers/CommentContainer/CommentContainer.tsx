@@ -71,7 +71,18 @@ const CommentContainer = ({ initialComments }: CommentContainerProps) => {
           아직 댓글이 없습니다.
         </p>
       ) : (
-        comments.map(comment => <Comment key={comment.id} comment={comment} />)
+        comments.map(comment => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onUpdate={updated =>
+              setComments(prev => prev.map(c => (c.id === updated.id ? updated : c)))
+            }
+            onDelete={id =>
+              setComments(prev => prev.filter(c => c.id !== id))
+            }
+          />
+        ))
       )}
     </div>
   );
