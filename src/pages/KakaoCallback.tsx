@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useKakaoLogin } from '../hooks/useAuth';
 
@@ -6,8 +6,12 @@ const KakaoCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { handleKakaoCallback, isKakaoLoginPending } = useKakaoLogin();
+  const called = useRef(false);
 
   useEffect(() => {
+    if (called.current) return;
+    called.current = true;
+
     const error = searchParams.get('error');
     const code = searchParams.get('code');
 

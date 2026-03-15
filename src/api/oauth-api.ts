@@ -3,13 +3,13 @@ import { ERROR_MESSAGES, type ErrorCode } from '../constants/error-messages';
 import axiosInstance from './axios-instance';
 
 // 카카오 로그인 1단계 응답
+// signupToken 있음 → 신규 유저, token 있음 → 기존 유저
 export interface KakaoLoginResponse {
-  isNewUser: boolean;
-  signupToken: string | null; // 신규 유저일 때만
-  token: string | null; // 기존 유저일 때만
-  userId: number | null; // 기존 유저일 때만
-  nickname: string | null; // 기존 유저일 때만
-  email: string | null; // 기존 유저일 때만
+  signupToken: string | null;
+  token: string | null;
+  userId: number | null;
+  nickname: string | null;
+  email: string | null;
 }
 
 // 카카오 회원가입 요청
