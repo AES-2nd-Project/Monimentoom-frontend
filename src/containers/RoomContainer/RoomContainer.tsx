@@ -6,9 +6,10 @@ import {
   deletePosition,
   updatePosition,
 } from '../../api/position-api';
-import { getRoomMain, updateRoomFrameImage } from '../../api/room-api';
+import { getRoomMain, updateRoomImages } from '../../api/room-api';
 import type { AppDispatch, RootState } from '../../store';
 import {
+  setEaselImage,
   setFrameImage,
   setRoomId as setRoomIdAction,
   setShelfItems,
@@ -49,21 +50,27 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
   const frameImageUrl = useSelector(
     (state: RootState) => state.shelf.frameImageUrl
   );
+  const easelImageUrl = useSelector(
+    (state: RootState) => state.shelf.easelImageUrl
+  );
 
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const serverPositionsRef = useRef<PositionResponse[]>([]);
-  // 서버 기준 frameImageUrl — 변경 여부 비교용
+  // 서버 기준 frameImageUrl/easelImageUrl — 변경 여부 비교용
   const serverFrameImageUrlRef = useRef<string | null>(null);
+  const serverEaselImageUrlRef = useRef<string | null>(null);
 
   // isEditMode 감지 effect에서 최신값을 읽기 위한 ref
   const leftItemsRef = useRef<Item[]>(leftItems);
   const rightItemsRef = useRef<Item[]>(rightItems);
   const frameImageUrlRef = useRef<string | null>(frameImageUrl);
+  const easelImageUrlRef = useRef<string | null>(easelImageUrl);
   useEffect(() => {
     leftItemsRef.current = leftItems;
     rightItemsRef.current = rightItems;
     frameImageUrlRef.current = frameImageUrl;
-  }, [leftItems, rightItems, frameImageUrl]);
+    easelImageUrlRef.current = easelImageUrl;
+  }, [leftItems, rightItems, frameImageUrl, easelImageUrl]);
 
   // 룸 진입 시 서버 데이터로 Redux items 초기화
   // URL 닉네임이 있으면 비로그인 게스트도 조회 가능 (타인 방 방문)
@@ -74,10 +81,14 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
         dispatch(setRoomIdAction(roomData.roomId));
         serverPositionsRef.current = roomData.positions;
 
-        // 액자 이미지 초기화
+        // 액자/이젤 이미지 초기화
         const initialFrameImageUrl = roomData.frameImageUrl ?? null;
         serverFrameImageUrlRef.current = initialFrameImageUrl;
         dispatch(setFrameImage(initialFrameImageUrl));
+
+        const initialEaselImageUrl = roomData.easelImageUrl ?? null;
+        serverEaselImageUrlRef.current = initialEaselImageUrl;
+        dispatch(setEaselImage(initialEaselImageUrl));
 
         dispatch(
           setShelfItems({
@@ -209,14 +220,20 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
       syncPositions('LEFT', leftItemsRef.current);
       syncPositions('RIGHT', rightItemsRef.current);
 
-      // 액자 이미지 변경 시 서버 반영
+      // 액자/이젤 이미지 변경 시 서버 반영 (둘 중 하나라도 바뀌면 같이 전송)
       if (
         roomId &&
-        frameImageUrlRef.current !== serverFrameImageUrlRef.current
+        (frameImageUrlRef.current !== serverFrameImageUrlRef.current ||
+          easelImageUrlRef.current !== serverEaselImageUrlRef.current)
       ) {
-        updateRoomFrameImage(roomId, frameImageUrlRef.current)
+        updateRoomImages(
+          roomId,
+          frameImageUrlRef.current,
+          easelImageUrlRef.current
+        )
           .then(() => {
             serverFrameImageUrlRef.current = frameImageUrlRef.current;
+            serverEaselImageUrlRef.current = easelImageUrlRef.current;
           })
           .catch(console.error);
       }
