@@ -30,7 +30,11 @@ const positionToItem = (pos: PositionResponse): Item => ({
   c2: pos.y + pos.widthUnit - 1,
 });
 
-const RoomContainer = () => {
+interface RoomContainerProps {
+  onStart?: () => void;
+}
+
+const RoomContainer = ({ onStart }: RoomContainerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const { nickname: urlNickname } = useParams<{ nickname: string }>();
@@ -219,7 +223,7 @@ const RoomContainer = () => {
     prevEditMode.current = isEditMode;
   }, [isEditMode, syncPositions, roomId]);
 
-  return <RoomScene isHome={isHome} />;
+  return <RoomScene isHome={isHome} onStart={onStart} />;
 };
 
 export default RoomContainer;
