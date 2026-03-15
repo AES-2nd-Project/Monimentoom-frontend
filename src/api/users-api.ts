@@ -14,13 +14,6 @@ interface UpdateProfileProps {
   profileImageUrl?: string;
 }
 
-// TODO: 백엔드에 GET /users/me 엔드포인트 추가 필요
-// @GetMapping("/me") + @AuthenticationPrincipal Long userId → UserResponse.from(user)
-export const getMe = async (): Promise<UserResponse> => {
-  const response = await axiosInstance.get('/users/me');
-  return response.data;
-};
-
 export const updateProfile = async (
   userId: number,
   data: UpdateProfileProps
