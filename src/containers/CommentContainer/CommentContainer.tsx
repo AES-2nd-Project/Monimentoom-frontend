@@ -1,26 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createComment } from '../../api/comment-api';
-import { getRoomDetail } from '../../api/room-api';
 import Comment from '../../components/Comment/Comment';
 import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
 
-const CommentContainer = () => {
+interface CommentContainerProps {
+  initialComments: CommentResponse[];
+}
+
+const CommentContainer = ({ initialComments }: CommentContainerProps) => {
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  const [comments, setComments] = useState<CommentResponse[]>([]);
+  const [comments, setComments] = useState<CommentResponse[]>(initialComments);
   const [content, setContent] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // roomId가 세팅되면 댓글 조회
+  // roomDetail이 비동기로 로드된 후 initialComments가 바뀌면 동기화
   useEffect(() => {
-    if (roomId == null) return;
-    getRoomDetail(roomId)
-      .then(data => setComments(data.comments))
-      .catch(console.error);
-  }, [roomId]);
+    setComments(initialComments);
+  }, [initialComments]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,9 +43,7 @@ const CommentContainer = () => {
   };
 
   return (
-    <div
-      className={`bg-card-background flex flex-1 flex-col items-start justify-start gap-8 rounded-lg p-12`}
-    >
+    <div className='bg-card-background flex flex-1 flex-col items-start justify-start gap-8 rounded-lg p-12'>
       {/* 댓글 작성 인풋 */}
       {isLoggedIn && (
         <form onSubmit={handleSubmit} className='flex w-full gap-3'>
