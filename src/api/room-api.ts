@@ -1,5 +1,25 @@
+import type { CommentResponse } from '../types/comment';
 import type { RoomPositionResponse } from '../types/position';
 import axiosInstance from './axios-instance';
+
+export interface RoomDetailResponse {
+  roomId: number;
+  name: string;
+  userProfileImageUrl: string | null;
+  nickname: string;
+  isLoggedIn: boolean;
+  isMine: boolean;
+  isLiked: boolean;
+  userCreatedAt: string;
+  comments: CommentResponse[];
+}
+
+export const getRoomDetail = async (
+  roomId: number
+): Promise<RoomDetailResponse> => {
+  const response = await axiosInstance.get(`/rooms/${roomId}/detail`);
+  return response.data;
+};
 
 export const getRoomMain = async (
   nickname: string

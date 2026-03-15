@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { createComment, getComments } from '../../api/comment-api';
+import { createComment } from '../../api/comment-api';
+import { getRoomDetail } from '../../api/room-api';
 import Comment from '../../components/Comment/Comment';
 import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
@@ -16,7 +17,9 @@ const CommentContainer = () => {
   // roomId가 세팅되면 댓글 조회
   useEffect(() => {
     if (roomId == null) return;
-    getComments(roomId).then(setComments).catch(console.error);
+    getRoomDetail(roomId)
+      .then(data => setComments(data.comments))
+      .catch(console.error);
   }, [roomId]);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
