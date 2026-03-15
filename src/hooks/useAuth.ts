@@ -72,22 +72,12 @@ export const useKakaoLogin = () => {
   const kakaoLoginMutation = useMutation({
     mutationFn: kakaoLoginApi,
     onSuccess: data => {
-      if (
-        !data.isNewUser &&
-        data.token &&
-        data.userId &&
-        data.nickname &&
-        data.email
-      ) {
-        syncUserInfo(
-          data.token,
-          data.userId,
-          data.nickname,
-          data.email,
-          dispatch
-        );
+      if (data.token && data.userId && data.nickname && data.email) {
+        // 기존 유저
+        syncUserInfo(data.token, data.userId, data.nickname, data.email, dispatch);
         navigate('/');
-      } else if (data.isNewUser && data.signupToken) {
+      } else if (data.signupToken) {
+        // 신규 유저
         navigate('/signup', { state: { signupToken: data.signupToken } });
       } else {
         alert('로그인 처리 중 문제가 발생했습니다. 다시 시도해주세요.');
