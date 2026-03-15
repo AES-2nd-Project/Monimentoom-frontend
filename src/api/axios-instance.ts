@@ -32,3 +32,21 @@ axiosInstance.interceptors.request.use(
 );
 
 export default axiosInstance;
+
+axiosInstance.interceptors.response.use(
+  response => response,
+  error => {
+    // 401에러 뜨면 로그아웃하고 홈으로 보내기
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('userId');
+      import('../store').then(({ store }) => {
+        import('../store/authSlice').then(({ logout }) => {
+          store.dispatch(logout());
+        });
+      });
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
