@@ -7,6 +7,7 @@ interface ShelfState {
   leftItems: Item[];
   rightItems: Item[];
   frameImageUrl: string | null;
+  easelImageUrl: string | null;
   roomId: number | null;
 }
 
@@ -15,6 +16,7 @@ const initialState: ShelfState = {
   leftItems: [],
   rightItems: [],
   frameImageUrl: null,
+  easelImageUrl: null,
   roomId: null,
 };
 
@@ -91,6 +93,10 @@ const shelfSlice = createSlice({
     setFrameImage: (state, action: PayloadAction<string | null>) => {
       state.frameImageUrl = action.payload;
     },
+    // 이젤 이미지 설정/해제
+    setEaselImage: (state, action: PayloadAction<string | null>) => {
+      state.easelImageUrl = action.payload;
+    },
     // createPosition 성공 후 positionId 반영 — 중복 POST 방지의 핵심
     updateShelfItemPositionId: (
       state,
@@ -120,6 +126,7 @@ export const {
   updateShelfItemPositionId,
   setRoomId,
   setFrameImage,
+  setEaselImage,
 } = shelfSlice.actions;
 
 export default shelfSlice.reducer;

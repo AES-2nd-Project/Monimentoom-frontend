@@ -29,4 +29,5 @@ export interface RoomPositionResponse {
   name: string;
   positions: PositionResponse[];
   frameImageUrl?: string | null;
+  easelImageUrl?: string | null;
 }

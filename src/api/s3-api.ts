@@ -33,6 +33,15 @@ export const getFramePresignedUrl = async (
   return response.data;
 };
 
+export const getEaselPresignedUrl = async (
+  fileName: string
+): Promise<PresignedUrlResponse> => {
+  const response = await axiosInstance.get('/s3/presigned-url/easel', {
+    params: { fileName },
+  });
+  return response.data;
+};
+
 // S3에 직접 PUT (JWT 불필요, presigned URL 자체가 인증 포함)
 export const uploadToS3 = async (
   presignedUrl: string,
@@ -45,6 +54,8 @@ export const uploadToS3 = async (
     headers: { 'Content-Type': contentType },
   });
   if (!response.ok) {
-    throw new Error(`S3 업로드 실패: ${response.status} ${response.statusText}`);
+    throw new Error(
+      `S3 업로드 실패: ${response.status} ${response.statusText}`
+    );
   }
 };

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Shelf from '../../components/Shelf/Shelf';
+import RoomEasel from './RoomEasel';
 import RoomFrame from './RoomFrame';
 
 interface RoomSceneProps {
@@ -95,18 +96,7 @@ const RoomScene = ({ isHome, onStart }: RoomSceneProps) => {
       />
 
       {/* 이젤 */}
-      <div
-        className={
-          'absolute bottom-[10%] left-1/2 z-20 h-auto w-80 origin-bottom -translate-x-41.25'
-        }
-      >
-        <div
-          className={`z-20 aspect-1349/2010 w-full bg-[url('/src/assets/easel.png')] bg-cover bg-center bg-no-repeat`}
-        />
-        <div
-          className={`absolute right-1/2 bottom-45.5 left-4.5 -z-5 h-[41%] w-[89.5%] origin-bottom bg-[url('/src/assets/Kaede.png')] bg-contain bg-center bg-no-repeat`}
-        />
-      </div>
+      <RoomEasel />
 
       {/* 선반 */}
       <main className='absolute bottom-40 z-20 flex w-full max-w-7xl origin-bottom justify-between px-20'>

@@ -13,9 +13,14 @@ export const getRandomRoom = async (): Promise<RoomPositionResponse> => {
   return response.data;
 };
 
-export const updateRoomFrameImage = async (
+export const updateRoomImages = async (
   roomId: number,
-  frameImageUrl: string | null
+  frameImageUrl: string | null,
+  easelImageUrl: string | null
 ): Promise<void> => {
-  await axiosInstance.patch(`/rooms/${roomId}`, { frameImageUrl });
+  await axiosInstance.patch(`/rooms/${roomId}`, {
+    updateImages: true,
+    frameImageUrl,
+    easelImageUrl,
+  });
 };
