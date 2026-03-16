@@ -1,23 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { createComment, getComments } from '../../api/comment-api';
+import { createComment } from '../../api/comment-api';
 import Comment from '../../components/Comment/Comment';
 import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
 
-const CommentContainer = () => {
+interface CommentContainerProps {
+  comments: CommentResponse[];
+  setComments: React.Dispatch<React.SetStateAction<CommentResponse[]>>;
+}
+
+const CommentContainer = ({ comments, setComments }: CommentContainerProps) => {
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  const [comments, setComments] = useState<CommentResponse[]>([]);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // roomId가 세팅되면 댓글 조회
-  useEffect(() => {
-    if (roomId == null) return;
-    getComments(roomId).then(setComments).catch(console.error);
-  }, [roomId]);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,9 +38,7 @@ const CommentContainer = () => {
   };
 
   return (
-    <div
-      className={`bg-card-background flex flex-1 flex-col items-start justify-start gap-8 rounded-lg p-12`}
-    >
+    <div className='bg-card-background flex flex-1 flex-col items-start justify-start gap-4 rounded-lg p-12'>
       {/* 댓글 작성 인풋 */}
       {isLoggedIn && (
         <form onSubmit={handleSubmit} className='flex w-full gap-3'>
@@ -70,7 +66,18 @@ const CommentContainer = () => {
           아직 댓글이 없습니다.
         </p>
       ) : (
-        comments.map(comment => <Comment key={comment.id} comment={comment} />)
+        comments.map(comment => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            onUpdate={updated =>
+              setComments(prev =>
+                prev.map(c => (c.id === updated.id ? updated : c))
+              )
+            }
+            onDelete={id => setComments(prev => prev.filter(c => c.id !== id))}
+          />
+        ))
       )}
     </div>
   );

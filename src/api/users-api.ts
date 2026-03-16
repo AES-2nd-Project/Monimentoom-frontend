@@ -1,18 +1,9 @@
 import axios from 'axios';
 import { ERROR_MESSAGES, type ErrorCode } from '../constants/error-messages';
+import type { UpdateProfileProps, UserResponse } from '../types/user';
 import axiosInstance from './axios-instance';
 
-export interface UserResponse {
-  id: number;
-  email: string;
-  nickname: string;
-  mainRoomId: number | null;
-}
-
-interface UpdateProfileProps {
-  nickname: string;
-  profileImageUrl?: string;
-}
+export type { UpdateProfileProps, UserResponse };
 
 export const updateProfile = async (
   userId: number,

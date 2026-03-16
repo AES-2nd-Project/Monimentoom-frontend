@@ -1,31 +1,13 @@
 import axios from 'axios';
 import { ERROR_MESSAGES, type ErrorCode } from '../constants/error-messages';
+import type {
+  KakaoLoginResponse,
+  KakaoSignupRequest,
+  KakaoSignupResponse,
+} from '../types/oauth';
 import axiosInstance from './axios-instance';
 
-// 카카오 로그인 1단계 응답
-// signupToken 있음 → 신규 유저, token 있음 → 기존 유저
-export interface KakaoLoginResponse {
-  signupToken: string | null;
-  token: string | null;
-  userId: number | null;
-  nickname: string | null;
-  email: string | null;
-}
-
-// 카카오 회원가입 요청
-export interface KakaoSignupRequest {
-  signupToken: string;
-  nickname: string;
-  email: string;
-}
-
-// 카카오 회원가입 2단계 응답
-export interface KakaoSignupResponse {
-  token: string;
-  userId: number;
-  nickname: string;
-  email: string;
-}
+export type { KakaoLoginResponse, KakaoSignupRequest, KakaoSignupResponse };
 
 /**
  * 1단계: 카카오 인가코드를 서버로 전달 → 기존/신규 유저 판별

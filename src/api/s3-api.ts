@@ -1,10 +1,7 @@
+import type { PresignedUrlResponse } from '../types/s3';
 import axiosInstance from './axios-instance';
 
-interface PresignedUrlResponse {
-  presignedUrl: string;
-  imageUrl: string;
-  contentType: string;
-}
+export type { PresignedUrlResponse };
 
 export const getGoodsPresignedUrl = async (
   fileName: string
@@ -40,6 +37,12 @@ export const getEaselPresignedUrl = async (
     params: { fileName },
   });
   return response.data;
+};
+
+export const deleteS3File = async (imageUrl: string): Promise<void> => {
+  await axiosInstance.delete('/s3/presigned-url/file', {
+    params: { imageUrl },
+  });
 };
 
 // S3에 직접 PUT (JWT 불필요, presigned URL 자체가 인증 포함)

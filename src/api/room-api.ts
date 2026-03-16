@@ -1,5 +1,15 @@
 import type { RoomPositionResponse } from '../types/position';
+import type { RoomDetailResponse } from '../types/room';
 import axiosInstance from './axios-instance';
+
+export type { RoomDetailResponse };
+
+export const getRoomDetail = async (
+  roomId: number
+): Promise<RoomDetailResponse> => {
+  const response = await axiosInstance.get(`/rooms/${roomId}/detail`);
+  return response.data;
+};
 
 export const getRoomMain = async (
   nickname: string
