@@ -10,6 +10,8 @@ export interface RoomDetailResponse {
   isLoggedIn: boolean;
   isMine: boolean;
   isLiked: boolean;
+  likeCount: number;
+  commentCount: number;
   userCreatedAt: string;
   comments: CommentResponse[];
 }

@@ -26,7 +26,11 @@ const Room = () => {
       </section>
 
       <main className='mx-auto flex max-w-7xl min-w-[70vw] flex-col flex-wrap'>
-        <RoomControlContainer />
+        <RoomControlContainer
+          isLiked={roomDetail?.isLiked ?? false}
+          likeCount={roomDetail?.likeCount ?? 0}
+          commentCount={roomDetail?.commentCount ?? 0}
+        />
         <Inventory />
         <div className='flex h-auto w-full flex-row gap-12 pt-6'>
           <ProfileCard
