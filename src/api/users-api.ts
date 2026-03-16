@@ -40,7 +40,3 @@ export const updateProfile = async (
     throw new Error(ERROR_MESSAGES.DEFAULT);
   }
 };
-
-export const logoutUser = async (): Promise<void> => {
-  await axiosInstance.post('/users/logout');
-};

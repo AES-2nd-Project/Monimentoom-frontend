@@ -1,4 +1,3 @@
-import defaultImage from '../../assets/react.svg';
 import { useAuthState, useLogout } from '../../hooks/useAuth';
 
 interface ProfileCardProps {
@@ -19,8 +18,7 @@ const ProfileCard = ({
 
   // props가 없으면 내 정보 사용 (홈 페이지에서 조회되는 프로필)
   const displayNickname = ownerNickname ?? myNickname ?? '게스트';
-  const displayImage =
-    ownerProfileImageUrl ?? myProfileImageUrl ?? defaultImage;
+  const displayImage = ownerProfileImageUrl ?? myProfileImageUrl ?? '/icon.png';
   // 방 주인 정보가 내려온 경우(Room 페이지)엔 isMine === true일 때만 로그아웃 노출
   // 홈 페이지처럼 props 없이 쓸 때는 항상 노출
   const hasOwnerInfo =

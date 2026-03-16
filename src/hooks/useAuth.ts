@@ -1,15 +1,13 @@
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser as logoutUserApi } from '../api/auth-api';
 import {
   getKakaoAuthUrl,
   kakaoLogin as kakaoLoginApi,
   kakaoSignup as kakaoSignupApi,
 } from '../api/oauth-api';
-import {
-  logoutUser as logoutUserApi,
-  updateProfile as updateProfileApi,
-} from '../api/users-api';
+import { updateProfile as updateProfileApi } from '../api/users-api';
 import type { RootState } from '../store';
 import {
   logout as logoutAction,
