@@ -58,6 +58,13 @@ const Inventory = () => {
   };
 
   const removeCard = (id: number) => {
+    const isPlaced = (cards.find(c => c.id === id)?.positions.length ?? 0) > 0;
+    if (isPlaced) {
+      const confirmed = confirm(
+        '해당 굿즈는 방에 배치되어 있습니다.\n삭제 시 배치된 굿즈가 모두 해제됩니다.\n정말 삭제하시겠습니까?'
+      );
+      if (!confirmed) return;
+    }
     setRemovingIds(prev => new Set(prev).add(id));
     const timeoutId = setTimeout(async () => {
       try {

@@ -1,5 +1,5 @@
-import axiosInstance from './axios-instance';
 import type { GoodsRequest, GoodsResponse } from '../types/goods';
+import axiosInstance from './axios-instance';
 
 export type { GoodsRequest, GoodsResponse };
 
