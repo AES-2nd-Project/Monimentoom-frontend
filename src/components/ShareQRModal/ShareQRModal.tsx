@@ -59,7 +59,7 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
           <h2 className='text-purple-black text-lg font-bold'>방 공유하기</h2>
           <button
             onClick={onClose}
-            className='text-purple-black/60 cursor-pointer transition-colors hover:text-purple-black'
+            className='text-purple-black/60 hover:text-purple-black cursor-pointer transition-colors'
             aria-label='닫기'
           >
             <svg
@@ -119,23 +119,7 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
               복사 완료!
             </>
           ) : (
-            <>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='h-4 w-4'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.065a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.343 8.52'
-                />
-              </svg>
-              링크 복사
-            </>
+            <>링크 복사</>
           )}
         </button>
       </div>
