@@ -33,4 +33,6 @@ export interface Item extends Bounds {
   positionId?: number;
   goodsId?: number;
   imageSrc?: string;
+  goodsName?: string;
+  goodsDescription?: string;
 }

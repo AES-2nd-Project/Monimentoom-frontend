@@ -29,6 +29,8 @@ const positionToItem = (pos: PositionResponse): Item => ({
   positionId: pos.id,
   goodsId: pos.goodsId,
   imageSrc: pos.imageUrl,
+  goodsName: pos.goodsName,
+  goodsDescription: pos.goodsDescription,
   r1: pos.x,
   r2: pos.x + pos.heightUnit - 1,
   c1: pos.y,

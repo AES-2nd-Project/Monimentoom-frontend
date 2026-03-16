@@ -1,8 +1,10 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import type { Item } from '../../types/room';
+import GoodsDetailOverlay from './GoodsDetailOverlay';
 import { getItemGridCoord } from './shelfUtils';
 
 interface ShelfItemsProps {
@@ -16,27 +18,40 @@ const ShelfItem = ({
   setItemImage,
   removeItem,
   isEditMode,
+  onItemClick,
 }: {
   item: Item;
   setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
   removeItem: (id: number) => void;
   isEditMode: boolean;
+  onItemClick: (item: Item, rect: DOMRect) => void;
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const itemRef = useRef<HTMLDivElement>(null);
 
   if (item.imageSrc) {
     return (
       <div
+        ref={itemRef}
         style={getItemGridCoord(item)}
-        className={`relative z-20 mx-2 overflow-hidden rounded-lg`}
+        className={clsx(
+          'relative z-20 mx-2 overflow-hidden rounded-lg',
+          !isEditMode &&
+            'cursor-pointer transition-[filter] hover:brightness-110'
+        )}
         onMouseEnter={() => isEditMode && setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={() => {
+          if (!isEditMode && itemRef.current) {
+            onItemClick(item, itemRef.current.getBoundingClientRect());
+          }
+        }}
       >
         <img
           src={item.imageSrc}
-          alt='shelf item'
-          className={`pointer-events-none h-full w-full object-contain`}
+          alt={item.goodsName ?? 'shelf item'}
+          className='pointer-events-none h-full w-full object-contain'
           draggable={false}
         />
         {isEditMode && isHovered && (
@@ -45,7 +60,7 @@ const ShelfItem = ({
               e.stopPropagation();
               removeItem(item.id);
             }}
-            className={`bg-point-pink text-purple-white hover:bg-point-pink/80 pointer-events-auto absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-xs shadow transition-colors`}
+            className='bg-point-pink text-purple-white hover:bg-point-pink/80 pointer-events-auto absolute top-1 right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-xs shadow transition-colors'
           >
             ✕
           </button>
@@ -58,10 +73,10 @@ const ShelfItem = ({
     <div
       style={getItemGridCoord(item)}
       className={clsx(
-        `z-20 mx-2 flex items-center justify-center rounded-lg border-2 border-dashed transition-colors`,
+        'z-20 mx-2 flex items-center justify-center rounded-lg border-2 border-dashed transition-colors',
         isDragOver
-          ? `border-point-green bg-point-green/20`
-          : `border-secondary/50 bg-secondary/10`
+          ? 'border-point-green bg-point-green/20'
+          : 'border-secondary/50 bg-secondary/10'
       )}
       onDragOver={e => {
         e.preventDefault();
@@ -89,6 +104,18 @@ const ShelfItem = ({
 
 const ShelfItems = ({ items, setItemImage, removeItem }: ShelfItemsProps) => {
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
+  const [detailItem, setDetailItem] = useState<Item | null>(null);
+  const [anchorRect, setAnchorRect] = useState<DOMRect | null>(null);
+
+  const handleItemClick = (item: Item, rect: DOMRect) => {
+    setDetailItem(item);
+    setAnchorRect(rect);
+  };
+
+  const handleClose = () => {
+    setDetailItem(null);
+    setAnchorRect(null);
+  };
 
   return (
     <>
@@ -99,8 +126,18 @@ const ShelfItems = ({ items, setItemImage, removeItem }: ShelfItemsProps) => {
           setItemImage={setItemImage}
           removeItem={removeItem}
           isEditMode={isEditMode}
+          onItemClick={handleItemClick}
         />
       ))}
+
+      {createPortal(
+        <GoodsDetailOverlay
+          item={detailItem}
+          anchorRect={anchorRect}
+          onClose={handleClose}
+        />,
+        document.body
+      )}
     </>
   );
 };
