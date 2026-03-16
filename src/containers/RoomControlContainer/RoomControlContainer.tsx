@@ -217,7 +217,7 @@ const RoomControlContainer = ({
       {/* QR 공유 모달 */}
       {isShareOpen && (
         <ShareQRModal
-          url={window.location.href}
+          url={`${window.location.origin}${window.location.pathname}`}
           onClose={() => setIsShareOpen(false)}
         />
       )}
