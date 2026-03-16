@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { deleteLike, postLike } from '../../api/like-api';
 import { getRandomRoom, getRoomMain } from '../../api/room-api';
 import RoomButton from '../../components/RoomButton/RoomButton';
+import ShareQRModal from '../../components/ShareQRModal/ShareQRModal';
 import type { RootState } from '../../store';
 import { toggleIsEditMode } from '../../store/shelfSlice';
 import type { RoomPositionResponse } from '../../types/position';
@@ -37,6 +38,7 @@ const RoomControlContainer = ({
   const [liked, setLiked] = useState(initialIsLiked);
   const [count, setCount] = useState(initialLikeCount);
   const [likeLoading, setLikeLoading] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -188,7 +190,37 @@ const RoomControlContainer = ({
             {commentCount}
           </span>
         </div>
+
+        {/* 공유 */}
+        <button
+          onClick={() => setIsShareOpen(true)}
+          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90'
+          aria-label='공유하기'
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='text-purple-black h-6 w-6 -translate-y-0.5 -rotate-25'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5'
+            />
+          </svg>
+        </button>
       </div>
+
+      {/* QR 공유 모달 */}
+      {isShareOpen && (
+        <ShareQRModal
+          url={`${window.location.origin}${window.location.pathname}`}
+          onClose={() => setIsShareOpen(false)}
+        />
+      )}
 
       {/* 오른쪽: 지정이동 / 랜덤이동 */}
       <div className='flex w-fit flex-row items-center gap-3 justify-self-end'>
