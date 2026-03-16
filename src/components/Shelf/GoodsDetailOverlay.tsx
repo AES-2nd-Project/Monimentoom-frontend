@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import type { Item } from '../../types/room';
 
 interface GoodsDetailOverlayProps {
@@ -13,6 +13,15 @@ const GoodsDetailOverlay = ({
   anchorRect,
   onClose,
 }: GoodsDetailOverlayProps) => {
+  useEffect(() => {
+    if (!item) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [item, onClose]);
+
   // exit 애니메이션 중에도 마지막 값 유지
   const lastRectRef = useRef<DOMRect | null>(null);
   if (anchorRect) lastRectRef.current = anchorRect;
