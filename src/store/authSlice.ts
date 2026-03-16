@@ -26,9 +26,12 @@ const authSlice = createSlice({
     },
     updateUserInfo: (
       state,
-      action: PayloadAction<{ nickname?: string; profileImageUrl?: string | null }>
+      action: PayloadAction<{
+        nickname?: string;
+        profileImageUrl?: string | null;
+      }>
     ) => {
-      if (action.payload.nickname) {
+      if (action.payload.nickname !== undefined) {
         state.nickname = action.payload.nickname;
       }
       if (action.payload.profileImageUrl !== undefined) {
