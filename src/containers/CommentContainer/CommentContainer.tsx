@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createComment } from '../../api/comment-api';
 import Comment from '../../components/Comment/Comment';
@@ -6,20 +6,15 @@ import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
 
 interface CommentContainerProps {
-  initialComments: CommentResponse[];
+  comments: CommentResponse[];
+  setComments: React.Dispatch<React.SetStateAction<CommentResponse[]>>;
 }
 
-const CommentContainer = ({ initialComments }: CommentContainerProps) => {
+const CommentContainer = ({ comments, setComments }: CommentContainerProps) => {
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
-  const [comments, setComments] = useState<CommentResponse[]>(initialComments);
   const [content, setContent] = useState('');
-
-  // roomDetail이 비동기로 로드된 후 initialComments가 바뀌면 동기화
-  useEffect(() => {
-    setComments(initialComments);
-  }, [initialComments]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -76,11 +71,11 @@ const CommentContainer = ({ initialComments }: CommentContainerProps) => {
             key={comment.id}
             comment={comment}
             onUpdate={updated =>
-              setComments(prev => prev.map(c => (c.id === updated.id ? updated : c)))
+              setComments(prev =>
+                prev.map(c => (c.id === updated.id ? updated : c))
+              )
             }
-            onDelete={id =>
-              setComments(prev => prev.filter(c => c.id !== id))
-            }
+            onDelete={id => setComments(prev => prev.filter(c => c.id !== id))}
           />
         ))
       )}

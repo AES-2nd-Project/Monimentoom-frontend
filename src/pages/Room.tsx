@@ -8,14 +8,21 @@ import CommentContainer from '../containers/CommentContainer/CommentContainer';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
 import RoomControlContainer from '../containers/RoomControlContainer/RoomControlContainer';
 import type { RootState } from '../store';
+import type { CommentResponse } from '../types/comment';
 
 const Room = () => {
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const [roomDetail, setRoomDetail] = useState<RoomDetailResponse | null>(null);
+  const [comments, setComments] = useState<CommentResponse[]>([]);
 
   useEffect(() => {
     if (roomId == null) return;
-    getRoomDetail(roomId).then(setRoomDetail).catch(console.error);
+    getRoomDetail(roomId)
+      .then(data => {
+        setRoomDetail(data);
+        setComments(data.comments ?? []);
+      })
+      .catch(console.error);
   }, [roomId]);
 
   return (
@@ -29,7 +36,7 @@ const Room = () => {
         <RoomControlContainer
           isLiked={roomDetail?.isLiked ?? false}
           likeCount={roomDetail?.likeCount ?? 0}
-          commentCount={roomDetail?.commentCount ?? 0}
+          commentCount={comments.length}
         />
         <Inventory />
         <div className='flex h-auto w-full flex-row gap-12 pt-6'>
@@ -38,7 +45,7 @@ const Room = () => {
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
             isMine={roomDetail?.isMine}
           />
-          <CommentContainer initialComments={roomDetail?.comments ?? []} />
+          <CommentContainer comments={comments} setComments={setComments} />
         </div>
       </main>
     </div>
