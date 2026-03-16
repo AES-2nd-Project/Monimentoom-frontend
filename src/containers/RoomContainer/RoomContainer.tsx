@@ -6,7 +6,11 @@ import {
   deletePosition,
   updatePosition,
 } from '../../api/position-api';
-import { getRoomMain, updateRoomImages } from '../../api/room-api';
+import {
+  getRandomRoom,
+  getRoomMain,
+  updateRoomImages,
+} from '../../api/room-api';
 import type { AppDispatch, RootState } from '../../store';
 import {
   setEaselImage,
@@ -72,43 +76,61 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
     easelImageUrlRef.current = easelImageUrl;
   }, [leftItems, rightItems, frameImageUrl, easelImageUrl]);
 
-  // 룸 진입 시 서버 데이터로 Redux items 초기화
+  const loadRoomData = useCallback(
+    (
+      fetcher: () => Promise<
+        import('../../types/position').RoomPositionResponse
+      >
+    ) => {
+      fetcher()
+        .then(roomData => {
+          dispatch(setRoomIdAction(roomData.roomId));
+          serverPositionsRef.current = roomData.positions;
+
+          const initialFrameImageUrl = roomData.frameImageUrl ?? null;
+          serverFrameImageUrlRef.current = initialFrameImageUrl;
+          dispatch(setFrameImage(initialFrameImageUrl));
+
+          const initialEaselImageUrl = roomData.easelImageUrl ?? null;
+          serverEaselImageUrlRef.current = initialEaselImageUrl;
+          dispatch(setEaselImage(initialEaselImageUrl));
+
+          dispatch(
+            setShelfItems({
+              wallSide: 'LEFT',
+              items: roomData.positions
+                .filter(p => p.wallSide === 'LEFT')
+                .map(p => positionToItem(p)),
+            })
+          );
+          dispatch(
+            setShelfItems({
+              wallSide: 'RIGHT',
+              items: roomData.positions
+                .filter(p => p.wallSide === 'RIGHT')
+                .map(p => positionToItem(p)),
+            })
+          );
+        })
+        .catch(console.error);
+    },
+    [dispatch]
+  );
+
+  // 홈 페이지: 랜덤 방을 4초마다 순환
+  useEffect(() => {
+    if (!isHome) return;
+    loadRoomData(getRandomRoom);
+    const intervalId = setInterval(() => loadRoomData(getRandomRoom), 4000);
+    return () => clearInterval(intervalId);
+  }, [isHome, loadRoomData]);
+
+  // 룸 페이지 진입 시 서버 데이터로 Redux items 초기화
   // URL 닉네임이 있으면 비로그인 게스트도 조회 가능 (타인 방 방문)
   useEffect(() => {
-    if (!nickname) return;
-    getRoomMain(nickname)
-      .then(roomData => {
-        dispatch(setRoomIdAction(roomData.roomId));
-        serverPositionsRef.current = roomData.positions;
-
-        // 액자/이젤 이미지 초기화
-        const initialFrameImageUrl = roomData.frameImageUrl ?? null;
-        serverFrameImageUrlRef.current = initialFrameImageUrl;
-        dispatch(setFrameImage(initialFrameImageUrl));
-
-        const initialEaselImageUrl = roomData.easelImageUrl ?? null;
-        serverEaselImageUrlRef.current = initialEaselImageUrl;
-        dispatch(setEaselImage(initialEaselImageUrl));
-
-        dispatch(
-          setShelfItems({
-            wallSide: 'LEFT',
-            items: roomData.positions
-              .filter(p => p.wallSide === 'LEFT')
-              .map(p => positionToItem(p)),
-          })
-        );
-        dispatch(
-          setShelfItems({
-            wallSide: 'RIGHT',
-            items: roomData.positions
-              .filter(p => p.wallSide === 'RIGHT')
-              .map(p => positionToItem(p)),
-          })
-        );
-      })
-      .catch(console.error);
-  }, [isLoggedIn, nickname, dispatch]);
+    if (isHome || !nickname) return;
+    loadRoomData(() => getRoomMain(nickname));
+  }, [isHome, isLoggedIn, nickname, loadRoomData]);
 
   // 편집 모드 종료 시 Redux에서 직접 items를 읽어 sync
   const syncPositions = useCallback(
