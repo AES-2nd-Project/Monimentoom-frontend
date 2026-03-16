@@ -16,6 +16,7 @@ import {
   setLoginInfo,
   updateUserInfo,
 } from '../store/authSlice';
+import type { UpdateProfileProps } from '../types/user';
 
 /** 로그인/회원가입 응답 데이터 → localStorage + Redux 동기화 */
 const syncUserInfo = (
@@ -121,8 +122,7 @@ export const useProfileUpdate = () => {
   const navigate = useNavigate();
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: { nickname?: string; profileImageUrl?: string }) =>
-      updateProfileApi(data),
+    mutationFn: (data: UpdateProfileProps) => updateProfileApi(data),
     onSuccess: data => {
       localStorage.setItem('nickname', data.nickname);
       if (data.profileImageUrl) {
