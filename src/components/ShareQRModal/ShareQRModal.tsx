@@ -9,7 +9,7 @@ const QR_API_BASE = 'https://api.qrserver.com/v1/create-qr-code';
 
 const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
   const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const qrImageUrl = `${QR_API_BASE}?data=${encodeURIComponent(url)}&size=200x200&bgcolor=ffffff&color=2D2036`;
 
@@ -17,6 +17,7 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       // 클립보드 접근 실패 시 무시
