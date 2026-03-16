@@ -62,7 +62,7 @@ const Shelf = ({ isLeft }: ShelfProps) => {
     >
       <div
         className={clsx(
-          `relative grid h-full w-full shrink-0 grid-cols-4 grid-rows-[1fr_auto_1fr_auto_1fr_auto_1fr] select-none`,
+          `relative grid h-full w-full shrink-0 grid-cols-4 grid-rows-[1fr_auto_1fr_auto_1fr_auto_1fr] select-none touch-none`,
           isEditMode
             ? 'transform-[translateZ(0px)_rotateY(0deg)_rotateX(0deg)_scale(1.0)]'
             : isLeft
@@ -71,6 +71,16 @@ const Shelf = ({ isLeft }: ShelfProps) => {
         )}
         onMouseLeave={handleMouseUp}
         onMouseUp={handleMouseUp}
+        onTouchMove={(e) => {
+          const touch = e.touches[0];
+          const el = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement | null;
+          const r = el?.dataset.r;
+          const c = el?.dataset.c;
+          if (r !== undefined && c !== undefined) {
+            handleMouseEnter({ r: Number(r), c: Number(c) });
+          }
+        }}
+        onTouchEnd={handleMouseUp}
       >
         {/* 1. 배경 빈 슬롯 */}
         <BackSlots
