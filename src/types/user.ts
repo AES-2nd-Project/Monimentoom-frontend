@@ -1,6 +1,5 @@
 export interface UserResponse {
   id: number;
-  email: string;
   nickname: string;
   mainRoomId: number | null;
 }
