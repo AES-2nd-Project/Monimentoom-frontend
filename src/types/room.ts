@@ -18,17 +18,3 @@ export interface Item extends Bounds {
   goodsId?: number;
   imageSrc?: string;
 }
-
-export interface RoomDetailResponse {
-  roomId: number;
-  name: string;
-  userProfileImageUrl: string | null;
-  nickname: string;
-  isLoggedIn: boolean;
-  isMine: boolean;
-  isLiked: boolean;
-  likeCount: number;
-  commentCount: number;
-  userCreatedAt: string;
-  comments: CommentResponse[];
-}
