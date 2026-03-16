@@ -7,11 +7,9 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const signupToken = (location.state as { signupToken?: string })?.signupToken;
 
-  const [email, setEmail] = useState('');
   const [nickname, setNickname] = useState('');
   const { kakaoSignup, isKakaoSignupPending } = useKakaoSignup();
 
-  // signupToken이 없으면 잘못된 접근
   if (!signupToken) {
     return (
       <div className='bg-card-background flex w-75 flex-col gap-4 rounded-lg p-8'>
@@ -31,10 +29,8 @@ const SignupForm = () => {
 
   const handleSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !nickname) {
-      return alert('모든 항목을 입력해주세요.');
-    }
-    kakaoSignup({ signupToken, nickname, email });
+    if (!nickname) return alert('닉네임을 입력해주세요.');
+    kakaoSignup({ signupToken, nickname });
   };
 
   return (
@@ -44,7 +40,7 @@ const SignupForm = () => {
     >
       <p>👤 회원가입</p>
       <p className='text-purple-black/50 text-sm'>
-        카카오 인증 완료! 닉네임과 이메일을 입력해주세요.
+        카카오 인증 완료! 닉네임을 입력해주세요.
       </p>
       <input
         type='text'
@@ -52,13 +48,6 @@ const SignupForm = () => {
         onChange={e => setNickname(e.target.value)}
         className='bg-purple-white h-10 rounded-lg px-4'
         placeholder='닉네임'
-      />
-      <input
-        type='email'
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        className='bg-purple-white h-10 rounded-lg px-4'
-        placeholder='이메일'
       />
       <button
         type='submit'

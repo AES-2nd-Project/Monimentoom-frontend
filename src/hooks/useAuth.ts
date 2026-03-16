@@ -22,14 +22,12 @@ const syncUserInfo = (
   token: string,
   userId: number,
   nickname: string,
-  email: string,
   dispatch: ReturnType<typeof useDispatch>
 ) => {
   localStorage.setItem('accessToken', token);
   localStorage.setItem('userId', String(userId));
   localStorage.setItem('nickname', nickname);
-  localStorage.setItem('email', email);
-  dispatch(setLoginInfo({ nickname, email, userId }));
+  dispatch(setLoginInfo({ nickname, userId }));
 };
 
 /** 카카오 로그인 페이지로 리다이렉트 (훅 불필요) */
@@ -39,10 +37,10 @@ export const redirectToKakao = () => {
 
 /** Redux에서 인증 상태만 읽기 (mutation 없음) */
 export const useAuthState = () => {
-  const { isLoggedIn, nickname, email, userId } = useSelector(
+  const { isLoggedIn, nickname, userId } = useSelector(
     (state: RootState) => state.auth
   );
-  return { isLoggedIn, nickname, email, userId };
+  return { isLoggedIn, nickname, userId };
 };
 
 /** 로그아웃 */
@@ -54,7 +52,6 @@ export const useLogout = () => {
     logoutUserApi().catch(console.error);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('nickname');
-    localStorage.removeItem('email');
     localStorage.removeItem('userId');
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
@@ -72,12 +69,10 @@ export const useKakaoLogin = () => {
   const kakaoLoginMutation = useMutation({
     mutationFn: kakaoLoginApi,
     onSuccess: data => {
-      if (data.token && data.userId && data.nickname && data.email) {
-        // 기존 유저
-        syncUserInfo(data.token, data.userId, data.nickname, data.email, dispatch);
+      if (data.token && data.userId && data.nickname) {
+        syncUserInfo(data.token, data.userId, data.nickname, dispatch);
         navigate('/');
       } else if (data.signupToken) {
-        // 신규 유저
         navigate('/signup', { state: { signupToken: data.signupToken } });
       } else {
         alert('로그인 처리 중 문제가 발생했습니다. 다시 시도해주세요.');
@@ -104,13 +99,7 @@ export const useKakaoSignup = () => {
   const kakaoSignupMutation = useMutation({
     mutationFn: kakaoSignupApi,
     onSuccess: data => {
-      syncUserInfo(
-        data.token,
-        data.userId,
-        data.nickname,
-        data.email,
-        dispatch
-      );
+      syncUserInfo(data.token, data.userId, data.nickname, dispatch);
       alert('회원가입이 완료되었습니다!');
       navigate('/');
     },
