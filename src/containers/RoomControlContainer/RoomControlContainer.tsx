@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteLike, postLike } from '../../api/like-api';
-import { getRandomRoom } from '../../api/room-api';
+import { getRandomRoom, getRoomMain } from '../../api/room-api';
 import RoomButton from '../../components/RoomButton/RoomButton';
 import type { RootState } from '../../store';
 import { toggleIsEditMode } from '../../store/shelfSlice';
+import type { RoomPositionResponse } from '../../types/position';
 
 interface RoomControlContainerProps {
   isLiked: boolean;
@@ -30,6 +31,8 @@ const RoomControlContainer = ({
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchNickname, setSearchNickname] = useState('');
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState(false);
   const [isRandomLoading, setIsRandomLoading] = useState(false);
   const [liked, setLiked] = useState(initialIsLiked);
   const [count, setCount] = useState(initialLikeCount);
@@ -46,13 +49,29 @@ const RoomControlContainer = ({
     setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
+  const handleSearchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = searchNickname.trim();
-    if (!trimmed) return;
-    setIsSearchOpen(false);
-    setSearchNickname('');
-    navigate(`/rooms/${trimmed}`);
+    if (!trimmed || isSearchLoading) return;
+    setSearchError(false);
+    setIsSearchLoading(true);
+    try {
+      const roomData: RoomPositionResponse = await getRoomMain(trimmed);
+      setIsSearchOpen(false);
+      setSearchNickname('');
+      navigate(`/rooms/${trimmed}`, { state: { roomData } });
+    } catch (error) {
+      const status = (error as { response?: { status?: number } })?.response
+        ?.status;
+      if (status === 404) {
+        setSearchError(true);
+      } else {
+        console.error('Failed to search room by nickname:', error);
+        alert('방 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      }
+    } finally {
+      setIsSearchLoading(false);
+    }
   };
 
   const handleRandomMove = async () => {
@@ -146,9 +165,7 @@ const RoomControlContainer = ({
               />
             </svg>
           )}
-          <span className='text-purple-black text-sm font-medium'>
-            {count}
-          </span>
+          <span className='text-purple-black text-sm font-medium'>{count}</span>
         </button>
 
         {/* 댓글 */}
@@ -176,30 +193,40 @@ const RoomControlContainer = ({
       {/* 오른쪽: 지정이동 / 랜덤이동 */}
       <div className='flex w-fit flex-row items-center gap-3 justify-self-end'>
         {isSearchOpen ? (
-          <form
-            onSubmit={handleSearchSubmit}
-            className='flex items-center gap-2'
-          >
-            <input
-              ref={inputRef}
-              type='text'
-              value={searchNickname}
-              onChange={e => setSearchNickname(e.target.value)}
-              onKeyDown={e => e.key === 'Escape' && setIsSearchOpen(false)}
-              onBlur={() => {
-                if (!searchNickname.trim()) setIsSearchOpen(false);
-              }}
-              placeholder='닉네임 입력'
-              className='bg-purple-white text-purple-black w-32 rounded-lg px-3 py-2 text-sm'
-            />
-            <button
-              type='submit'
-              disabled={!searchNickname.trim()}
-              className='bg-button text-purple-white rounded-lg px-3 py-2 text-sm transition-[filter] hover:brightness-110 disabled:opacity-50'
+          <div className='relative'>
+            <form
+              onSubmit={handleSearchSubmit}
+              className='flex items-center gap-2'
             >
-              이동
-            </button>
-          </form>
+              <input
+                ref={inputRef}
+                type='text'
+                value={searchNickname}
+                onChange={e => {
+                  setSearchNickname(e.target.value);
+                  setSearchError(false);
+                }}
+                onKeyDown={e => e.key === 'Escape' && setIsSearchOpen(false)}
+                onBlur={() => {
+                  if (!searchNickname.trim()) setIsSearchOpen(false);
+                }}
+                placeholder='닉네임 입력'
+                className={`bg-purple-white text-purple-black w-32 rounded-lg px-3 py-2 text-sm ring-1 outline-none ${searchError ? 'ring-red-400' : 'ring-transparent'}`}
+              />
+              <button
+                type='submit'
+                disabled={!searchNickname.trim() || isSearchLoading}
+                className='bg-button text-purple-white rounded-lg px-3 py-2 text-sm transition-[filter] hover:brightness-110 disabled:opacity-50'
+              >
+                {isSearchLoading ? '...' : '이동'}
+              </button>
+            </form>
+            <span
+              className={`absolute top-full left-0 mt-1 text-xs text-red-400 transition-opacity ${searchError ? 'opacity-100' : 'opacity-0'}`}
+            >
+              존재하지 않는 닉네임이에요
+            </span>
+          </div>
         ) : (
           <RoomButton
             onClick={handleSearchOpen}

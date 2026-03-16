@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   createPosition,
   deletePosition,
@@ -44,6 +44,7 @@ interface RoomContainerProps {
 const RoomContainer = ({ onStart }: RoomContainerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
+  const navigate = useNavigate();
   const { nickname: urlNickname } = useParams<{ nickname: string }>();
   const isHome = location.pathname === '/';
   const authNickname = useSelector((state: RootState) => state.auth.nickname);
@@ -61,6 +62,16 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
   );
 
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
+  // 지정이동에서 미리 로드한 데이터 — 재요청 없이 한 번만 소비
+  const preloadedDataRef = useRef<
+    import('../../types/position').RoomPositionResponse | null
+  >(
+    (
+      location.state as {
+        roomData?: import('../../types/position').RoomPositionResponse;
+      } | null
+    )?.roomData ?? null
+  );
   const serverPositionsRef = useRef<PositionResponse[]>([]);
   // 서버 기준 frameImageUrl/easelImageUrl — 변경 여부 비교용
   const serverFrameImageUrlRef = useRef<string | null>(null);
@@ -114,9 +125,17 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
             })
           );
         })
-        .catch(console.error);
+        .catch((error: unknown) => {
+          const status = (error as { response?: { status?: number } })?.response
+            ?.status;
+          if (!isHome && status === 404) {
+            navigate('/', { replace: true });
+          } else {
+            console.error(error);
+          }
+        });
     },
-    [dispatch]
+    [dispatch, isHome, navigate]
   );
 
   // 홈 페이지: 랜덤 방을 4초마다 순환
@@ -129,9 +148,19 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
 
   // 룸 페이지 진입 시 서버 데이터로 Redux items 초기화
   // URL 닉네임이 있으면 비로그인 게스트도 조회 가능 (타인 방 방문)
+  // 지정이동으로 진입한 경우 preloaded 데이터를 재사용해 중복 요청 방지
   useEffect(() => {
     if (isHome || !nickname) return;
-    loadRoomData(() => getRoomMain(nickname));
+    if (preloadedDataRef.current) {
+      const data = preloadedDataRef.current;
+      preloadedDataRef.current = null;
+      // navigation state 소비 후 history에서 제거 (뒤로가기/새로고침 시 재요청)
+      navigate(location.pathname, { replace: true, state: null });
+      loadRoomData(() => Promise.resolve(data));
+    } else {
+      loadRoomData(() => getRoomMain(nickname));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHome, isLoggedIn, nickname, loadRoomData]);
 
   // 편집 모드 종료 시 Redux에서 직접 items를 읽어 sync
