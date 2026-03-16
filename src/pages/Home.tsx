@@ -9,7 +9,9 @@ import type { RootState } from '../store';
 import { setIsEditMode } from '../store/shelfSlice';
 
 const Home = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const { isLoggedIn, nickname } = useSelector(
+    (state: RootState) => state.auth
+  );
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,6 +23,14 @@ const Home = () => {
       mainRef.current.getBoundingClientRect().top + window.scrollY - 200;
     window.scrollTo({ top, behavior: 'smooth' });
   }, []);
+
+  const handleStart = useCallback(() => {
+    if (isLoggedIn && nickname) {
+      navigate(`/rooms/${nickname}`);
+    } else {
+      scrollToMain();
+    }
+  }, [isLoggedIn, nickname, navigate, scrollToMain]);
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -73,7 +83,7 @@ const Home = () => {
       <Header />
       <section className={`bg-purple-black h-250 w-full`}>
         {/* 룸 이미지 섹션 (랜딩) */}
-        <RoomContainer key={location.pathname} onStart={scrollToMain} />
+        <RoomContainer key={location.pathname} onStart={handleStart} />
       </section>
 
       {/* 메인 섹션 */}
