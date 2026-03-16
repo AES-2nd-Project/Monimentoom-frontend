@@ -59,8 +59,15 @@ const RoomControlContainer = ({
       setIsSearchOpen(false);
       setSearchNickname('');
       navigate(`/rooms/${trimmed}`);
-    } catch {
-      setSearchError(true);
+    } catch (error) {
+      const status = (error as { response?: { status?: number } })?.response
+        ?.status;
+      if (status === 404) {
+        setSearchError(true);
+      } else {
+        console.error('Failed to search room by nickname:', error);
+        alert('방 검색에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+      }
     } finally {
       setIsSearchLoading(false);
     }
