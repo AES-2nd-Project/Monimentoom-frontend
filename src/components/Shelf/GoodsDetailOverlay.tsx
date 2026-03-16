@@ -23,7 +23,10 @@ const GoodsDetailOverlay = ({
   const originY = anchorRect.top + anchorRect.height / 2;
 
   // 뷰포트 기준 고정 크기 (짧은 쪽의 40%, 최소 280px)
-  const expandedSize = Math.max(Math.min(window.innerWidth, window.innerHeight) * 0.4, 280);
+  const expandedSize = Math.max(
+    Math.min(window.innerWidth, window.innerHeight) * 0.4,
+    280
+  );
 
   return (
     <AnimatePresence>
@@ -31,7 +34,7 @@ const GoodsDetailOverlay = ({
         <>
           {/* 배경 딤 */}
           <motion.div
-            className='fixed inset-0 z-[999] bg-black/60'
+            className='fixed inset-0 z-999 bg-black/60'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -41,7 +44,7 @@ const GoodsDetailOverlay = ({
 
           {/* 확대 카드 */}
           <motion.div
-            className='fixed z-[1000] flex flex-col items-center gap-3'
+            className='fixed z-1000 flex flex-col items-center gap-3'
             style={{ left: originX, top: originY }}
             initial={{
               x: '-50%',
