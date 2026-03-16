@@ -9,7 +9,7 @@ const QR_API_BASE = 'https://api.qrserver.com/v1/create-qr-code';
 
 const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
   const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const qrImageUrl = `${QR_API_BASE}?data=${encodeURIComponent(url)}&size=200x200&bgcolor=ffffff&color=2D2036`;
 
@@ -19,15 +19,7 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
       setCopied(true);
       timerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
-      // 클립보드 API가 지원되지 않는 경우 fallback
-      const textarea = document.createElement('textarea');
-      textarea.value = url;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      setCopied(true);
-      timerRef.current = setTimeout(() => setCopied(false), 2000);
+      // 클립보드 접근 실패 시 무시
     }
   };
 
