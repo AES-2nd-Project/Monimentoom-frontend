@@ -1,10 +1,12 @@
 export interface UserResponse {
   id: number;
   nickname: string;
-  mainRoomId: number | null;
+  profileImageUrl: string | null;
+  description: string | null;
 }
 
 export interface UpdateProfileProps {
-  nickname: string;
+  nickname?: string;
   profileImageUrl?: string;
+  description?: string;
 }

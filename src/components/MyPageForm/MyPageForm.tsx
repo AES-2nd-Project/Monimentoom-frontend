@@ -9,18 +9,22 @@ import { useAuthState, useProfileUpdate } from '../../hooks/useAuth';
 
 const MyPageForm = () => {
   const navigate = useNavigate();
-  const { nickname } = useAuthState();
+  const { nickname, profileImageUrl: currentProfileImageUrl } = useAuthState();
   const { updateProfile, isUpdateProfilePending } = useProfileUpdate();
 
   // 프로필 편집
   const [newNickname, setNewNickname] = useState(nickname);
-  const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>();
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>(
+    currentProfileImageUrl ?? undefined
+  );
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(
+    currentProfileImageUrl ?? undefined
+  );
   const [isUploading, setIsUploading] = useState(false);
 
-  // previewUrl이 바뀌거나 언마운트될 때 이전 blob URL 해제
+  // previewUrl이 blob URL로 바뀌거나 언마운트될 때만 해제
   useEffect(() => {
-    if (!previewUrl) return;
+    if (!previewUrl?.startsWith('blob:')) return;
     return () => {
       URL.revokeObjectURL(previewUrl);
     };
