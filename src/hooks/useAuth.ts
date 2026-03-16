@@ -16,6 +16,7 @@ import {
   setLoginInfo,
   updateUserInfo,
 } from '../store/authSlice';
+import type { UpdateProfileProps } from '../types/user';
 
 /** 로그인/회원가입 응답 데이터 → localStorage + Redux 동기화 */
 const syncUserInfo = (
@@ -37,10 +38,10 @@ export const redirectToKakao = () => {
 
 /** Redux에서 인증 상태만 읽기 (mutation 없음) */
 export const useAuthState = () => {
-  const { isLoggedIn, nickname, userId } = useSelector(
+  const { isLoggedIn, nickname, userId, profileImageUrl } = useSelector(
     (state: RootState) => state.auth
   );
-  return { isLoggedIn, nickname, userId };
+  return { isLoggedIn, nickname, userId, profileImageUrl };
 };
 
 /** 로그아웃 */
@@ -53,6 +54,7 @@ export const useLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('nickname');
     localStorage.removeItem('userId');
+    localStorage.removeItem('profileImageUrl');
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
     navigate('/');
@@ -118,26 +120,22 @@ export const useKakaoSignup = () => {
 export const useProfileUpdate = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userId = useSelector((state: RootState) => state.auth.userId);
 
   const updateProfileMutation = useMutation({
-    mutationFn: ({
-      nickname: newNickname,
-      profileImageUrl,
-    }: {
-      nickname: string;
-      profileImageUrl?: string;
-    }) => {
-      if (userId == null)
-        return Promise.reject(new Error('로그인이 필요합니다.'));
-      return updateProfileApi(userId, {
-        nickname: newNickname,
-        profileImageUrl,
-      });
-    },
+    mutationFn: (data: UpdateProfileProps) => updateProfileApi(data),
     onSuccess: data => {
       localStorage.setItem('nickname', data.nickname);
-      dispatch(updateUserInfo({ nickname: data.nickname }));
+      if (data.profileImageUrl) {
+        localStorage.setItem('profileImageUrl', data.profileImageUrl);
+      } else {
+        localStorage.removeItem('profileImageUrl');
+      }
+      dispatch(
+        updateUserInfo({
+          nickname: data.nickname,
+          profileImageUrl: data.profileImageUrl ?? null,
+        })
+      );
       alert('프로필이 업데이트되었습니다.');
       navigate('/');
     },
