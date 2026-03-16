@@ -2,7 +2,6 @@ import axios, {
   type AxiosRequestConfig,
   type AxiosRequestHeaders,
 } from 'axios';
-import { refreshAccessToken } from './auth-api';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -48,7 +47,13 @@ let refreshPromise: Promise<string> | null = null;
 const getNewAccessToken = (): Promise<string> => {
   if (refreshPromise) return refreshPromise;
 
-  refreshPromise = refreshAccessToken()
+  refreshPromise = axios
+    .post<{ token: string }>(
+      `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
+      null,
+      { withCredentials: true }
+    )
+    .then(res => res.data.token)
     .then(token => {
       localStorage.setItem('accessToken', token);
       return token;
