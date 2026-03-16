@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useRef } from 'react';
 import type { Item } from '../../types/room';
 
 interface GoodsDetailOverlayProps {
@@ -12,17 +13,16 @@ const GoodsDetailOverlay = ({
   anchorRect,
   onClose,
 }: GoodsDetailOverlayProps) => {
-  if (!anchorRect) return null;
+  // exit 애니메이션 중에도 마지막 값 유지
+  const lastRectRef = useRef<DOMRect | null>(null);
+  if (anchorRect) lastRectRef.current = anchorRect;
+  const rect = lastRectRef.current;
 
-  // 뷰포트 중앙 좌표
   const centerX = window.innerWidth / 2;
   const centerY = window.innerHeight / 2;
+  const originX = rect ? rect.left + rect.width / 2 : centerX;
+  const originY = rect ? rect.top + rect.height / 2 : centerY;
 
-  // 원래 위치 중앙
-  const originX = anchorRect.left + anchorRect.width / 2;
-  const originY = anchorRect.top + anchorRect.height / 2;
-
-  // 뷰포트 기준 고정 크기 (짧은 쪽의 40%, 최소 280px)
   const expandedSize = Math.max(
     Math.min(window.innerWidth, window.innerHeight) * 0.4,
     280
@@ -30,7 +30,7 @@ const GoodsDetailOverlay = ({
 
   return (
     <AnimatePresence>
-      {item && (
+      {item && rect && (
         <>
           {/* 배경 딤 */}
           <motion.div
@@ -46,12 +46,7 @@ const GoodsDetailOverlay = ({
           <motion.div
             className='fixed z-1000 flex flex-col items-center gap-3'
             style={{ left: originX, top: originY }}
-            initial={{
-              x: '-50%',
-              y: '-50%',
-              scale: 0.4,
-              opacity: 0,
-            }}
+            initial={{ x: '-50%', y: '-50%', scale: 0.4, opacity: 0 }}
             animate={{
               left: centerX,
               top: centerY - 30,
