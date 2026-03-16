@@ -1,7 +1,11 @@
 import clsx from 'clsx';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFramePresignedUrl, uploadToS3 } from '../../api/s3-api';
+import {
+  getFramePresignedUrl,
+  sanitizeFileName,
+  uploadToS3,
+} from '../../api/s3-api';
 import type { RootState } from '../../store';
 import { setFrameImage } from '../../store/shelfSlice';
 
@@ -26,7 +30,7 @@ const RoomFrame = () => {
     setIsUploading(true);
     try {
       const { presignedUrl, imageUrl, contentType } =
-        await getFramePresignedUrl(file.name);
+        await getFramePresignedUrl(sanitizeFileName(file.name));
       await uploadToS3(presignedUrl, file, contentType);
       dispatch(setFrameImage(imageUrl));
     } catch (err) {

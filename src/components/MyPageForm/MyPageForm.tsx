@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProfilePresignedUrl, uploadToS3 } from '../../api/s3-api';
+import {
+  getProfilePresignedUrl,
+  sanitizeFileName,
+  uploadToS3,
+} from '../../api/s3-api';
 import { useAuthState, useProfileUpdate } from '../../hooks/useAuth';
 
 const MyPageForm = () => {
@@ -32,7 +36,7 @@ const MyPageForm = () => {
     setIsUploading(true);
     try {
       const { presignedUrl, imageUrl, contentType } =
-        await getProfilePresignedUrl(file.name);
+        await getProfilePresignedUrl(sanitizeFileName(file.name));
       await uploadToS3(presignedUrl, file, contentType);
       setProfileImageUrl(imageUrl);
     } catch {

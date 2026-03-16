@@ -2,7 +2,11 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createGoods, deleteGoods, getGoods } from '../../api/goods-api';
-import { getGoodsPresignedUrl, uploadToS3 } from '../../api/s3-api';
+import {
+  getGoodsPresignedUrl,
+  sanitizeFileName,
+  uploadToS3,
+} from '../../api/s3-api';
 import type { RootState } from '../../store';
 import type { GoodsResponse } from '../../types/goods';
 import GoodsRegisterModal from './GoodsRegisterModal';
@@ -57,7 +61,7 @@ const Inventory = () => {
     setIsUploading(true);
     try {
       const { presignedUrl, imageUrl, contentType } =
-        await getGoodsPresignedUrl(file.name);
+        await getGoodsPresignedUrl(sanitizeFileName(file.name));
       const previewUrl = URL.createObjectURL(file);
       const defaultName = file.name.replace(/\.[^/.]+$/, '');
       setPendingGoods({

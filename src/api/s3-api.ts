@@ -1,6 +1,12 @@
 import type { PresignedUrlResponse } from '../types/s3';
 import axiosInstance from './axios-instance';
 
+/** 한글·공백·특수문자가 포함된 파일명을 UUID 기반으로 교체 */
+export const sanitizeFileName = (originalName: string): string => {
+  const ext = originalName.split('.').pop()?.toLowerCase() || 'jpg';
+  return `${crypto.randomUUID()}.${ext}`;
+};
+
 export type { PresignedUrlResponse };
 
 export const getGoodsPresignedUrl = async (
