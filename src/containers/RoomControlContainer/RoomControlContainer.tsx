@@ -116,7 +116,9 @@ const RoomControlContainer = ({
         {/* 좋아요 */}
         <button
           onClick={handleLikeToggle}
-          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90'
+          disabled={likeLoading}
+          aria-pressed={liked}
+          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90 disabled:opacity-50'
         >
           {liked ? (
             <svg
