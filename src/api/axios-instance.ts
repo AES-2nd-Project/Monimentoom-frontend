@@ -33,20 +33,36 @@ axiosInstance.interceptors.request.use(
 
 export default axiosInstance;
 
+let isHandlingAuthError = false;
+
 axiosInstance.interceptors.response.use(
   response => response,
   error => {
-    // 401에러 뜨면 로그아웃하고 홈으로 보내기
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    const url: string = error.config?.url ?? '';
+
+    // 로그인/회원가입/OAuth는 401을 화면에서 직접 처리
+    const isAuthFlow =
+      url.includes('/login') ||
+      url.includes('/signup') ||
+      url.includes('/oauth');
+
+    if (status === 401 && !isAuthFlow && !isHandlingAuthError) {
+      isHandlingAuthError = true;
       localStorage.removeItem('accessToken');
       localStorage.removeItem('userId');
-      import('../store').then(({ store }) => {
-        import('../store/authSlice').then(({ logout }) => {
+
+      // dispatch 완료 후 이동
+      Promise.all([import('../store'), import('../store/authSlice')])
+        .then(([{ store }, { logout }]) => {
           store.dispatch(logout());
+        })
+        .finally(() => {
+          window.location.href = '/';
+          isHandlingAuthError = false;
         });
-      });
-      window.location.href = '/';
     }
+
     return Promise.reject(error);
   }
 );
