@@ -57,9 +57,13 @@ const Comment = ({ comment, onUpdate, onDelete }: CommentProps) => {
       {/* 헤더: 프로필 + 닉네임/날짜 + 수정/삭제 버튼 */}
       <div className='flex flex-row items-center gap-4 p-2'>
         <img
-          src={comment.profileImageUrl ?? '/icon.png'}
+          src={comment.profileImageUrl || '/icon.png'}
           alt={comment.nickname}
           className='bg-primary h-10 w-10 shrink-0 rounded-full object-cover'
+          onError={e => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = '/icon.png';
+          }}
         />
         <div className='flex flex-row items-baseline gap-2'>
           <p className='text-purple-black shrink-0 text-start text-[18px] font-bold'>
