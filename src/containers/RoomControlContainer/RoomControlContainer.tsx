@@ -6,6 +6,7 @@ import { getRandomRoom, getRoomMain } from '../../api/room-api';
 import RoomButton from '../../components/RoomButton/RoomButton';
 import type { RootState } from '../../store';
 import { toggleIsEditMode } from '../../store/shelfSlice';
+import type { RoomPositionResponse } from '../../types/position';
 
 interface RoomControlContainerProps {
   isLiked: boolean;
@@ -55,10 +56,10 @@ const RoomControlContainer = ({
     setSearchError(false);
     setIsSearchLoading(true);
     try {
-      await getRoomMain(trimmed);
+      const roomData: RoomPositionResponse = await getRoomMain(trimmed);
       setIsSearchOpen(false);
       setSearchNickname('');
-      navigate(`/rooms/${trimmed}`);
+      navigate(`/rooms/${trimmed}`, { state: { roomData } });
     } catch (error) {
       const status = (error as { response?: { status?: number } })?.response
         ?.status;
