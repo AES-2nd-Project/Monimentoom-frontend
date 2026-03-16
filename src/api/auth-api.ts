@@ -1,44 +1,29 @@
 import axios from 'axios';
-import { ERROR_MESSAGES, type ErrorCode } from '../constants/error-messages';
 import axiosInstance from './axios-instance';
 
-const DEVICE_ID = 'default';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 interface TokenRefreshResponse {
   token: string;
-  refreshToken: string;
 }
 
 /**
- * 리프레시 토큰으로 새 토큰 쌍 발급
- * - 401 인터셉터에서 자동 호출됨
- * - axiosInstance 대신 plain axios 사용 (인터셉터 순환 방지)
+ * 리프레시 토큰(HttpOnly 쿠키)으로 새 액세스 토큰 발급
+ * - 인터셉터 순환 방지를 위해 plain axios 사용
+ * - withCredentials: true 로 쿠키 자동 전송
  */
-export const refreshTokens = async (
-  refreshToken: string
-): Promise<TokenRefreshResponse> => {
-  const response = await axios.post<TokenRefreshResponse>(
-    `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
-    { refreshToken, deviceId: DEVICE_ID }
+export const refreshAccessToken = async (): Promise<string> => {
+  const { data } = await axios.post<TokenRefreshResponse>(
+    `${BASE_URL}/auth/refresh`,
+    null,
+    { withCredentials: true }
   );
-  return response.data;
+  return data.token;
 };
 
 /**
- * 로그아웃 — 서버에서 리프레시 토큰 폐기
+ * 로그아웃 — 서버에서 리프레시 토큰 쿠키 삭제 + DB 폐기
  */
 export const logoutUser = async (): Promise<void> => {
-  try {
-    await axiosInstance.post(`/auth/logout?deviceId=${DEVICE_ID}`);
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      const errorCode = error.response?.data?.code as ErrorCode;
-      const errorMessage =
-        ERROR_MESSAGES[errorCode] ||
-        error.response?.data?.message ||
-        ERROR_MESSAGES.DEFAULT;
-      throw new Error(errorMessage);
-    }
-    throw new Error(ERROR_MESSAGES.DEFAULT);
-  }
+  await axiosInstance.post('/auth/logout');
 };
