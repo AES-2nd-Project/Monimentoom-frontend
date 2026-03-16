@@ -22,6 +22,7 @@ const RoomControlContainer = ({
   const navigate = useNavigate();
   const { nickname: urlNickname } = useParams<{ nickname: string }>();
   const authNickname = useSelector((state: RootState) => state.auth.nickname);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
 
@@ -116,9 +117,9 @@ const RoomControlContainer = ({
         {/* 좋아요 */}
         <button
           onClick={handleLikeToggle}
-          disabled={likeLoading}
+          disabled={!isLoggedIn || likeLoading}
           aria-pressed={liked}
-          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90 disabled:opacity-50'
+          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90 disabled:cursor-not-allowed disabled:opacity-40'
         >
           {liked ? (
             <svg
