@@ -17,6 +17,7 @@ const Inventory = () => {
   const [cards, setCards] = useState<GoodsResponse[]>([]);
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const timeoutIdsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
     new Map()
   );
@@ -30,6 +31,14 @@ const Inventory = () => {
     previewUrl: string;
     defaultName: string;
   } | null>(null);
+
+  // pendingGoods 교체 or 언마운트 시 이전 previewUrl 정리
+  useEffect(() => {
+    return () => {
+      if (pendingGoods?.previewUrl)
+        URL.revokeObjectURL(pendingGoods.previewUrl);
+    };
+  }, [pendingGoods]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -68,7 +77,8 @@ const Inventory = () => {
 
   // 2단계: 확인 → S3 업로드 → createGoods
   const handleModalConfirm = async (name: string, description: string) => {
-    if (!pendingGoods) return;
+    if (!pendingGoods || isConfirming) return;
+    setIsConfirming(true);
     try {
       await uploadToS3(
         pendingGoods.presignedUrl,
@@ -81,17 +91,17 @@ const Inventory = () => {
         imageUrl: pendingGoods.imageUrl,
       });
       setCards(prev => [...prev, newGoods]);
+      setPendingGoods(null);
     } catch (err) {
       console.error('goods 등록 실패:', err);
     } finally {
-      URL.revokeObjectURL(pendingGoods.previewUrl);
-      setPendingGoods(null);
+      setIsConfirming(false);
     }
   };
 
-  // 모달 취소 — S3 업로드 안 했으므로 그냥 닫기
+  // 모달 취소 — 확인 처리 중에는 닫기 비활성화
   const handleModalCancel = () => {
-    if (pendingGoods) URL.revokeObjectURL(pendingGoods.previewUrl);
+    if (isConfirming) return;
     setPendingGoods(null);
   };
 
@@ -162,6 +172,7 @@ const Inventory = () => {
           defaultName={pendingGoods.defaultName}
           onConfirm={handleModalConfirm}
           onCancel={handleModalCancel}
+          isConfirming={isConfirming}
         />
       )}
     </>

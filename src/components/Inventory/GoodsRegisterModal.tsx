@@ -5,6 +5,7 @@ interface GoodsRegisterModalProps {
   defaultName: string;
   onConfirm: (name: string, description: string) => void;
   onCancel: () => void;
+  isConfirming?: boolean;
 }
 
 const GoodsRegisterModal = ({
@@ -12,6 +13,7 @@ const GoodsRegisterModal = ({
   defaultName,
   onConfirm,
   onCancel,
+  isConfirming = false,
 }: GoodsRegisterModalProps) => {
   const [name, setName] = useState(defaultName);
   const [description, setDescription] = useState('');
@@ -32,7 +34,7 @@ const GoodsRegisterModal = ({
     <div
       className='fixed inset-0 z-200 flex items-center justify-center bg-black/50'
       onClick={e => {
-        if (e.target === e.currentTarget) onCancel();
+        if (e.target === e.currentTarget && !isConfirming) onCancel();
       }}
     >
       <div className='bg-card-background flex w-96 flex-col gap-6 rounded-xl p-8 shadow-xl'>
@@ -75,16 +77,17 @@ const GoodsRegisterModal = ({
             <button
               type='button'
               onClick={onCancel}
-              className='bg-point-pink text-purple-white flex-1 rounded-lg py-2 transition-[filter] hover:brightness-110 active:brightness-80'
+              disabled={isConfirming}
+              className='bg-point-pink text-purple-white flex-1 rounded-lg py-2 transition-[filter] hover:brightness-110 active:brightness-80 disabled:opacity-50'
             >
               취소
             </button>
             <button
               type='submit'
-              disabled={!name.trim()}
+              disabled={!name.trim() || isConfirming}
               className='bg-point-green text-purple-white flex-1 rounded-lg py-2 transition-[filter] hover:brightness-110 active:brightness-80 disabled:opacity-50'
             >
-              등록
+              {isConfirming ? '등록 중...' : '등록'}
             </button>
           </div>
         </form>
