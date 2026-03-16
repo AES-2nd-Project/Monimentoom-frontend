@@ -1,8 +1,6 @@
 import type { GoodsRequest, GoodsResponse } from '../types/goods';
 import axiosInstance from './axios-instance';
 
-export type { GoodsRequest, GoodsResponse };
-
 export const getGoods = async (): Promise<GoodsResponse[]> => {
   const response = await axiosInstance.get('/goods');
   return response.data;

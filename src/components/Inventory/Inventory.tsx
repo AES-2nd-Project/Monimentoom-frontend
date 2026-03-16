@@ -1,14 +1,10 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import {
-  createGoods,
-  deleteGoods,
-  getGoods,
-  type GoodsResponse,
-} from '../../api/goods-api';
+import { createGoods, deleteGoods, getGoods } from '../../api/goods-api';
 import { getGoodsPresignedUrl, uploadToS3 } from '../../api/s3-api';
 import type { RootState } from '../../store';
+import type { GoodsResponse } from '../../types/goods';
 import GoodsRegisterModal from './GoodsRegisterModal';
 import InventoryCard from './InventoryCard';
 
@@ -21,7 +17,9 @@ const Inventory = () => {
   const [cards, setCards] = useState<GoodsResponse[]>([]);
   const [removingIds, setRemovingIds] = useState<Set<number>>(new Set());
   const [isUploading, setIsUploading] = useState(false);
-  const timeoutIdsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+  const timeoutIdsRef = useRef<Map<number, ReturnType<typeof setTimeout>>>(
+    new Map()
+  );
 
   // 모달 상태: null이면 닫힘, 값이 있으면 열림
   const [pendingGoods, setPendingGoods] = useState<{
@@ -49,10 +47,18 @@ const Inventory = () => {
   const addCard = async (file: File) => {
     setIsUploading(true);
     try {
-      const { presignedUrl, imageUrl, contentType } = await getGoodsPresignedUrl(file.name);
+      const { presignedUrl, imageUrl, contentType } =
+        await getGoodsPresignedUrl(file.name);
       const previewUrl = URL.createObjectURL(file);
       const defaultName = file.name.replace(/\.[^/.]+$/, '');
-      setPendingGoods({ file, presignedUrl, imageUrl, contentType, previewUrl, defaultName });
+      setPendingGoods({
+        file,
+        presignedUrl,
+        imageUrl,
+        contentType,
+        previewUrl,
+        defaultName,
+      });
     } catch (err) {
       console.error('presigned URL 발급 실패:', err);
     } finally {
@@ -64,7 +70,11 @@ const Inventory = () => {
   const handleModalConfirm = async (name: string, description: string) => {
     if (!pendingGoods) return;
     try {
-      await uploadToS3(pendingGoods.presignedUrl, pendingGoods.file, pendingGoods.contentType);
+      await uploadToS3(
+        pendingGoods.presignedUrl,
+        pendingGoods.file,
+        pendingGoods.contentType
+      );
       const newGoods = await createGoods({
         name,
         description: description || undefined,
@@ -117,7 +127,9 @@ const Inventory = () => {
       <div
         className={clsx(
           `flex w-full flex-row flex-nowrap gap-4 overflow-x-auto transition-all duration-700 [ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`,
-          isEditMode ? `mt-6 h-60 opacity-100` : `pointer-events-none h-0 opacity-0`
+          isEditMode
+            ? `mt-6 h-60 opacity-100`
+            : `pointer-events-none h-0 opacity-0`
         )}
       >
         {cards.map(card => {

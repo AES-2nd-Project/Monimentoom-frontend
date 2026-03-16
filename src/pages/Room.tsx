@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getRoomDetail, type RoomDetailResponse } from '../api/room-api';
+import { getRoomDetail } from '../api/room-api';
 import Header from '../components/Header/Header';
 import Inventory from '../components/Inventory/Inventory';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
@@ -9,6 +9,7 @@ import RoomContainer from '../containers/RoomContainer/RoomContainer';
 import RoomControlContainer from '../containers/RoomControlContainer/RoomControlContainer';
 import type { RootState } from '../store';
 import type { CommentResponse } from '../types/comment';
+import type { RoomDetailResponse } from '../types/room';
 
 const Room = () => {
   const roomId = useSelector((state: RootState) => state.shelf.roomId);

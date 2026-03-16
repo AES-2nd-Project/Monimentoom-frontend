@@ -1,20 +1,8 @@
-import type { CommentResponse } from '../types/comment';
 import type { RoomPositionResponse } from '../types/position';
+import type { RoomDetailResponse } from '../types/room';
 import axiosInstance from './axios-instance';
 
-export interface RoomDetailResponse {
-  roomId: number;
-  name: string;
-  userProfileImageUrl: string | null;
-  nickname: string;
-  isLoggedIn: boolean;
-  isMine: boolean;
-  isLiked: boolean;
-  likeCount: number;
-  commentCount: number;
-  userCreatedAt: string;
-  comments: CommentResponse[];
-}
+export type { RoomDetailResponse };
 
 export const getRoomDetail = async (
   roomId: number

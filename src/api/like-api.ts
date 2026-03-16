@@ -1,9 +1,7 @@
+import type { LikeResponse } from '../types/like';
 import axiosInstance from './axios-instance';
 
-export interface LikeResponse {
-  likeCount: number;
-  isLiked: boolean;
-}
+export type { LikeResponse };
 
 export const postLike = async (roomId: number): Promise<LikeResponse> => {
   const response = await axiosInstance.post(`/likes/${roomId}`);
