@@ -42,6 +42,10 @@ export const getEaselPresignedUrl = async (
   return response.data;
 };
 
+export const deleteS3File = async (imageUrl: string): Promise<void> => {
+  await axiosInstance.delete('/s3/presigned-url/file', { params: { imageUrl } });
+};
+
 // S3에 직접 PUT (JWT 불필요, presigned URL 자체가 인증 포함)
 export const uploadToS3 = async (
   presignedUrl: string,
