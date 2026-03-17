@@ -37,10 +37,7 @@ const ShowcaseCarousel = () => {
       lastTime = time;
 
       if (!pausedRef.current) {
-        offsetRef.current += SPEED * delta;
-        if (offsetRef.current >= totalWidth) {
-          offsetRef.current -= totalWidth;
-        }
+        offsetRef.current = (offsetRef.current + SPEED * delta) % totalWidth;
       }
 
       if (trackRef.current) {
