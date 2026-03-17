@@ -74,7 +74,7 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
         </div>
 
         {/* QR 코드 이미지 */}
-        <div className='flex h-[232px] w-[232px] items-center justify-center rounded-lg bg-white p-4'>
+        <div className='flex h-58 w-58 items-center justify-center rounded-lg bg-white p-4'>
           {qrLoading && (
             <div className='border-secondary h-10 w-10 animate-spin rounded-full border-4 border-t-transparent' />
           )}

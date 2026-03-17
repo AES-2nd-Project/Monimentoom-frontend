@@ -40,9 +40,10 @@ const positionToItem = (pos: PositionResponse): Item => ({
 
 interface RoomContainerProps {
   onStart?: () => void;
+  onRoomLoaded?: (roomId: number) => void;
 }
 
-const RoomContainer = ({ onStart }: RoomContainerProps) => {
+const RoomContainer = ({ onStart, onRoomLoaded }: RoomContainerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -129,6 +130,7 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
                 .map(p => positionToItem(p)),
             })
           );
+          onRoomLoaded?.(roomData.roomId);
         })
         .catch((error: unknown) => {
           const status = (error as { response?: { status?: number } })?.response

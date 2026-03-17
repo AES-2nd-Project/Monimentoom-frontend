@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import { getRoomDetail } from '../api/room-api';
 import Header from '../components/Header/Header';
 import Inventory from '../components/Inventory/Inventory';
@@ -7,30 +6,39 @@ import ProfileCard from '../components/ProfileCard/ProfileCard';
 import CommentContainer from '../containers/CommentContainer/CommentContainer';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
 import RoomControlContainer from '../containers/RoomControlContainer/RoomControlContainer';
-import type { RootState } from '../store';
 import type { CommentResponse } from '../types/comment';
 import type { RoomDetailResponse } from '../types/room';
 
 const Room = () => {
-  const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const [roomDetail, setRoomDetail] = useState<RoomDetailResponse | null>(null);
   const [comments, setComments] = useState<CommentResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (roomId == null) return;
+  const handleRoomLoaded = (roomId: number) => {
+    setIsLoading(true);
+    setRoomDetail(null);
     getRoomDetail(roomId)
       .then(data => {
         setRoomDetail(data);
         setComments(data.comments ?? []);
       })
-      .catch(console.error);
-  }, [roomId]);
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  };
 
   return (
-    <div className='mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
+    <div className='room-page-root mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
       <Header />
+
+      {/* 로딩 오버레이 */}
+      {isLoading && (
+        <div className='fixed inset-0 z-40 flex items-center justify-center bg-black/40 pt-20'>
+          <div className='border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent' />
+        </div>
+      )}
+
       <section className='bg-purple-black w-full'>
-        <RoomContainer />
+        <RoomContainer onRoomLoaded={handleRoomLoaded} />
       </section>
 
       <main className='mx-auto flex w-full max-w-7xl flex-col flex-wrap px-4 md:px-12'>
