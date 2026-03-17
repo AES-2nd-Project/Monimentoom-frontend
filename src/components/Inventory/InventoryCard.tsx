@@ -168,8 +168,9 @@ const InventoryCard = ({
   return (
     <div
       ref={cardRef}
-      className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing`}
+      className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing [touch-action:none] [-webkit-touch-callout:none] select-none`}
       draggable
+      onContextMenu={e => e.preventDefault()}
       onDragStart={e => {
         e.dataTransfer.setData(
           'inventory-goods',
