@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { deleteComment, updateComment } from '../../api/comment-api';
 import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
@@ -11,6 +12,7 @@ interface CommentProps {
 }
 
 const Comment = ({ comment, onUpdate, onDelete }: CommentProps) => {
+  const navigate = useNavigate();
   const myNickname = useSelector((state: RootState) => state.auth.nickname);
   const isMine = myNickname === comment.nickname;
   const displayDate = comment.createdAt?.slice(0, 16) ?? '';
@@ -56,19 +58,28 @@ const Comment = ({ comment, onUpdate, onDelete }: CommentProps) => {
     <div className='flex w-full flex-col gap-4'>
       {/* 헤더: 프로필 + 닉네임/날짜 + 수정/삭제 버튼 */}
       <div className='flex flex-row items-center gap-4 p-2'>
-        <img
-          src={comment.profileImageUrl || '/icon.png'}
-          alt={comment.nickname}
-          className='bg-primary h-10 w-10 shrink-0 rounded-full object-cover'
-          onError={e => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = '/icon.png';
-          }}
-        />
+        <button
+          onClick={() => navigate(`/rooms/${comment.nickname}`)}
+          className='hover:opacity-75 shrink-0 transition-opacity'
+          aria-label={`${comment.nickname}의 방으로 이동`}
+        >
+          <img
+            src={comment.profileImageUrl || '/icon.png'}
+            alt={comment.nickname}
+            className='bg-primary h-10 w-10 rounded-full object-cover'
+            onError={e => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/icon.png';
+            }}
+          />
+        </button>
         <div className='flex flex-row items-baseline gap-2'>
-          <p className='text-purple-black max-w-40 truncate text-start text-[18px] font-bold'>
+          <button
+            onClick={() => navigate(`/rooms/${comment.nickname}`)}
+            className='text-purple-black max-w-40 truncate text-start text-[18px] font-bold hover:underline'
+          >
             {comment.nickname}
-          </p>
+          </button>
           <p className='text-purple-black/50 text-sm'>{displayDate}</p>
         </div>
 
