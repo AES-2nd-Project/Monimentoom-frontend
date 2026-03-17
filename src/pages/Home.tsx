@@ -82,7 +82,7 @@ const Home = () => {
       }
     >
       <Header />
-      <section className={`bg-purple-black h-250 w-full`}>
+      <section className={`bg-purple-black w-full`}>
         {/* 룸 이미지 섹션 (랜딩) */}
         <RoomContainer key={location.pathname} onStart={handleStart} />
       </section>

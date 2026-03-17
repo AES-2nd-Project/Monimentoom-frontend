@@ -29,7 +29,7 @@ const Room = () => {
   return (
     <div className='mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
       <Header />
-      <section className='bg-purple-black h-250 w-full'>
+      <section className='bg-purple-black w-full'>
         <RoomContainer />
       </section>
 

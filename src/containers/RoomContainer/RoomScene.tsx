@@ -1,8 +1,12 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import Shelf from '../../components/Shelf/Shelf';
 import RoomEasel from './RoomEasel';
 import RoomFrame from './RoomFrame';
+
+const ROOM_NATURAL_WIDTH = 1280; // min-w-7xl = 80rem = 1280px
+const ROOM_NATURAL_HEIGHT = 1000; // h-250 = 62.5rem = 1000px
 
 interface RoomSceneProps {
   isHome: boolean;
@@ -10,11 +14,34 @@ interface RoomSceneProps {
 }
 
 const RoomScene = ({ isHome, onStart }: RoomSceneProps) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
+      setScale(Math.min(1, width / ROOM_NATURAL_WIDTH));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
+    <div
+      ref={wrapperRef}
+      className='w-full overflow-hidden'
+      style={{ height: ROOM_NATURAL_HEIGHT * scale }}
+    >
     <div
       className={clsx(
         `relative z-0 flex h-250 w-full min-w-7xl shrink-0 items-center justify-center overflow-hidden`
       )}
+      style={{
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+      }}
     >
       {/* 홈 화면 랜딩 오버레이 */}
       {isHome && (
@@ -103,6 +130,7 @@ const RoomScene = ({ isHome, onStart }: RoomSceneProps) => {
         <Shelf isLeft={true} />
         <Shelf isLeft={false} />
       </main>
+    </div>
     </div>
   );
 };
