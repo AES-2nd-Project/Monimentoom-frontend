@@ -88,9 +88,12 @@ const Home = () => {
       </section>
 
       {/* 메인 섹션 */}
-      <main ref={mainRef} className={`mx-auto mt-15 w-full max-w-7xl px-4 md:px-12`}>
+      <main
+        ref={mainRef}
+        className={`mx-auto mt-15 w-full max-w-7xl px-4 md:px-12`}
+      >
         <div className='flex flex-col items-center gap-8 md:flex-row md:items-start'>
-          <div className='w-full shrink-0 md:w-auto'>
+          <div className='flex w-full shrink-0 justify-center md:w-auto md:justify-start'>
             {isLoggedIn ? <ProfileCard /> : <LoginForm />}
           </div>
           <div className='w-full min-w-0'>
