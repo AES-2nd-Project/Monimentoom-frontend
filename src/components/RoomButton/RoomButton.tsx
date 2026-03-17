@@ -13,7 +13,7 @@ const RoomButton = ({ onClick, color, label, visibility }: RoomButtonProps) => {
       type='button'
       onClick={onClick}
       className={clsx(
-        'cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-95',
+        'shrink-0 whitespace-nowrap cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-95',
         !visibility && 'invisible',
         color === 'button' &&
           'bg-button text-purple-white hover:brightness-110',

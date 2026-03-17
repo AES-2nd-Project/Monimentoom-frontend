@@ -90,9 +90,12 @@ const ShelfItem = ({
       setIsDragOver(true);
     };
     const onTouchDrop = (e: Event) => {
-      const { goodsId, imageUrl } = (
-        e as CustomEvent<{ goodsId: number; imageUrl: string }>
-      ).detail;
+      const detail = (e as CustomEvent<{ goodsId: number; imageUrl: string }>).detail;
+      if (!detail) {
+        clearThisSlot();
+        return;
+      }
+      const { goodsId, imageUrl } = detail;
       if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
         setItemImage(item.id, goodsId, imageUrl);
       }

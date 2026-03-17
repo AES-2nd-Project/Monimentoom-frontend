@@ -112,9 +112,11 @@ const RoomControlContainer = ({
   };
 
   return (
-    <div className='grid w-full grid-cols-3 items-center px-25'>
-      {/* 왼쪽: 편집/저장 */}
-      <div className='flex justify-start'>
+    <div className='w-full px-4 md:px-25'>
+    <div className='flex flex-col items-center gap-3 md:grid md:grid-cols-3 md:items-center md:gap-0'>
+
+      {/* 왼쪽: 편집/저장 — mobile: 중앙, desktop: 좌측 */}
+      <div className='flex justify-center md:justify-start'>
         {isMine &&
           (isEditMode ? (
             <RoomButton
@@ -222,8 +224,8 @@ const RoomControlContainer = ({
         />
       )}
 
-      {/* 오른쪽: 지정이동 / 랜덤이동 */}
-      <div className='flex w-fit flex-row items-center gap-3 justify-self-end'>
+      {/* 오른쪽: 지정이동 / 랜덤이동 — mobile: 중앙, desktop: 우측 */}
+      <div className='flex shrink-0 flex-row items-center gap-3 justify-center md:justify-self-end'>
         {isSearchOpen ? (
           <div className='relative'>
             <form
@@ -274,6 +276,7 @@ const RoomControlContainer = ({
           visibility={true}
         />
       </div>
+    </div>
     </div>
   );
 };

@@ -27,7 +27,7 @@ const Room = () => {
   }, [roomId]);
 
   return (
-    <div className='mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
+    <div className='room-page-root mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
       <Header />
       <section className='bg-purple-black h-250 w-full'>
         <RoomContainer />
@@ -40,7 +40,7 @@ const Room = () => {
           commentCount={comments.length}
         />
         <Inventory />
-        <div className='flex h-auto w-full flex-row items-start gap-12 pt-6'>
+        <div className='flex h-auto w-full flex-col items-center gap-12 pt-6 md:flex-row md:items-start'>
           <ProfileCard
             ownerNickname={roomDetail?.nickname}
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
