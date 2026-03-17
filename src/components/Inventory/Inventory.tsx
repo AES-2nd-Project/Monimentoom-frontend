@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createGoods, deleteGoods, getGoods } from '../../api/goods-api';
 import {
   getGoodsPresignedUrl,
   sanitizeFileName,
   uploadToS3,
 } from '../../api/s3-api';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
+import { clearShelfItemsByGoodsId } from '../../store/shelfSlice';
 import type { GoodsResponse } from '../../types/goods';
 import GoodsRegisterModal from './GoodsRegisterModal';
 import InventoryCard from './InventoryCard';
@@ -15,6 +16,7 @@ import InventoryCard from './InventoryCard';
 const REMOVE_DURATION = 300;
 
 const Inventory = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
@@ -122,6 +124,7 @@ const Inventory = () => {
       try {
         await deleteGoods(id);
         setCards(prev => prev.filter(c => c.id !== id));
+        dispatch(clearShelfItemsByGoodsId(id));
       } catch (err) {
         console.error('goods 삭제 실패:', err);
       } finally {

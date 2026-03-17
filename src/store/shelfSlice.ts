@@ -85,6 +85,15 @@ const shelfSlice = createSlice({
         );
       }
     },
+    // 굿즈 삭제 시 해당 goodsId를 가진 선반 슬롯 전체 제거
+    clearShelfItemsByGoodsId: (state, action: PayloadAction<number>) => {
+      state.leftItems = state.leftItems.filter(
+        i => i.goodsId !== action.payload
+      );
+      state.rightItems = state.rightItems.filter(
+        i => i.goodsId !== action.payload
+      );
+    },
     // 방 ID 설정
     setRoomId: (state, action: PayloadAction<number | null>) => {
       state.roomId = action.payload;
@@ -122,6 +131,7 @@ export const {
   setShelfItems,
   addShelfItem,
   removeShelfItem,
+  clearShelfItemsByGoodsId,
   updateShelfItemImage,
   updateShelfItemPositionId,
   setRoomId,
