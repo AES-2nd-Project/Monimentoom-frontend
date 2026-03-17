@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Footer from './components/Footer/Footer';
 import ScrollToTop from './components/ScrollToTop/ScrollToTop';
 import Home from './pages/Home';
 import KakaoCallback from './pages/KakaoCallback';
@@ -37,6 +38,7 @@ function App() {
               }
             />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </QueryClientProvider>
     </div>

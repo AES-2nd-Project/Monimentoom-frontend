@@ -96,7 +96,6 @@ const Home = () => {
           <ShowcaseCarousel />
         </div>
       </main>
-      <div className='h-[2000px]'></div>
     </div>
   );
 };
