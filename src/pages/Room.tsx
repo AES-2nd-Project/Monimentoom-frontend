@@ -27,7 +27,7 @@ const Room = () => {
   }, [roomId]);
 
   return (
-    <div className='room-page-root mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
+    <div className='mx-auto my-0 box-border flex w-full flex-col items-center justify-center gap-6 pt-20'>
       <Header />
       <section className='bg-purple-black h-250 w-full'>
         <RoomContainer />
