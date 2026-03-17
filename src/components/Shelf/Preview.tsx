@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import type { Bounds, Coordinate } from '../../types/room';
@@ -24,41 +24,26 @@ const Preview = ({
 }: PreviewProps) => {
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const [isDragOver, setIsDragOver] = useState(false);
-  const previewRef = useRef<HTMLDivElement>(null);
 
   const isConfirmed = !dragStart && selection && !isPreviewOverlapping;
 
-  // 모바일 터치 드롭 이벤트 지원
+  // 모바일: 인벤토리 카드 탭 시 확정된 영역에 바로 배치
   useEffect(() => {
     if (!isConfirmed) return;
-    const el = previewRef.current;
-    if (!el) return;
 
-    const onTouchDragOver = () => setIsDragOver(true);
-    const onTouchDrop = (e: Event) => {
+    const onTapPlace = (e: Event) => {
       const detail = (e as CustomEvent<{ goodsId: number; imageUrl: string }>)
         .detail;
-      if (!detail) {
-        setIsDragOver(false);
-        return;
-      }
+      if (!detail) return;
       const { goodsId, imageUrl } = detail;
       if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
         onDropImage(goodsId, imageUrl);
       }
-      setIsDragOver(false);
     };
-    const onTouchEnd = () => setIsDragOver(false);
 
-    el.addEventListener('goods-touch-dragover', onTouchDragOver);
-    el.addEventListener('goods-touch-drop', onTouchDrop);
-    document.addEventListener('touchend', onTouchEnd);
-    document.addEventListener('touchcancel', onTouchEnd);
+    document.addEventListener('goods-tap-place', onTapPlace);
     return () => {
-      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
-      el.removeEventListener('goods-touch-drop', onTouchDrop);
-      document.removeEventListener('touchend', onTouchEnd);
-      document.removeEventListener('touchcancel', onTouchEnd);
+      document.removeEventListener('goods-tap-place', onTapPlace);
     };
   }, [isConfirmed, onDropImage]);
 
@@ -66,7 +51,6 @@ const Preview = ({
     <>
       {isEditMode && preview && (
         <div
-          ref={previewRef}
           style={getItemGridCoord(preview)}
           className={clsx(
             `relative z-30 mx-2 flex items-center justify-center rounded-lg border-2 shadow-md transition-all`,

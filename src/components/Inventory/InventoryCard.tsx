@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface FilledCardProps {
   goodsId: number;
@@ -29,169 +29,6 @@ const InventoryCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // 터치 드래그 중 최신 데이터를 클로저 없이 참조하기 위한 ref
-  const dragDataRef = useRef({ goodsId, imageUrl: imageSrc });
-  useEffect(() => {
-    dragDataRef.current = { goodsId, imageUrl: imageSrc };
-  }, [goodsId, imageSrc]);
-
-  // 터치 드래그: 스크롤과 드래그 구분 후 슬롯에 커스텀 이벤트 디스패치
-  const touchStartXRef = useRef<number | null>(null);
-  const touchStartYRef = useRef<number | null>(null);
-  const touchStartTimeRef = useRef<number | null>(null);
-  const isDraggingRef = useRef(false);
-  const isHorizontalScrollRef = useRef(false); // 가로 스크롤로 판정된 제스처
-  // 자동 스크롤용 ref
-  const lastTouchRef = useRef<{ clientX: number; clientY: number } | null>(null);
-  const scrollRafRef = useRef<number | null>(null);
-
-  const stopAutoScroll = () => {
-    if (scrollRafRef.current) {
-      cancelAnimationFrame(scrollRafRef.current);
-      scrollRafRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    if (!imageSrc) return; // 빈 카드엔 적용 안 함
-    const el = cardRef.current;
-    if (!el) return;
-
-    const DRAG_DISTANCE_THRESHOLD = 10; // px - 이 거리 이상 움직여야 드래그로 판단
-    const DRAG_TIME_THRESHOLD = 150; // ms - 이 시간 이내에 짧게 움직이면 스크롤 허용
-    const SCROLL_EDGE_ZONE = 60; // 화면 가장자리에서 자동 스크롤이 시작되는 영역 (px)
-    const SCROLL_MAX_SPEED = 12; // 자동 스크롤 최대 속도 (px/frame)
-
-    // 화면 가장자리 근접 시 자동 스크롤 + dragover 이벤트 재전송
-    const startAutoScroll = (clientY: number) => {
-      stopAutoScroll();
-      let speed = 0;
-      if (clientY < SCROLL_EDGE_ZONE) {
-        speed = -SCROLL_MAX_SPEED * (1 - clientY / SCROLL_EDGE_ZONE);
-      } else if (clientY > window.innerHeight - SCROLL_EDGE_ZONE) {
-        speed =
-          SCROLL_MAX_SPEED *
-          ((clientY - (window.innerHeight - SCROLL_EDGE_ZONE)) /
-            SCROLL_EDGE_ZONE);
-      }
-      if (speed === 0) return;
-
-      const tick = () => {
-        window.scrollBy(0, speed);
-        // 스크롤 후 현재 손가락 위치의 엘리먼트에 dragover 이벤트 전송
-        if (lastTouchRef.current) {
-          const t = document.elementFromPoint(
-            lastTouchRef.current.clientX,
-            lastTouchRef.current.clientY
-          );
-          t?.dispatchEvent(
-            new CustomEvent('goods-touch-dragover', { bubbles: true })
-          );
-        }
-        scrollRafRef.current = requestAnimationFrame(tick);
-      };
-      scrollRafRef.current = requestAnimationFrame(tick);
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      touchStartXRef.current = touch.clientX;
-      touchStartYRef.current = touch.clientY;
-      touchStartTimeRef.current = Date.now();
-      isDraggingRef.current = false;
-      isHorizontalScrollRef.current = false;
-      lastTouchRef.current = null;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      // 핀치 줌 등 멀티터치는 간섭하지 않음
-      if (e.touches.length > 1) return;
-      // 가로 스크롤로 판정된 제스처는 간섭하지 않음
-      if (isHorizontalScrollRef.current) return;
-
-      const touch = e.touches[0];
-      const startX = touchStartXRef.current;
-      const startY = touchStartYRef.current;
-      const startTime = touchStartTimeRef.current;
-      if (startX == null || startY == null || startTime == null) return;
-
-      const dx = Math.abs(touch.clientX - startX);
-      const dy = Math.abs(touch.clientY - startY);
-      const distance = Math.hypot(dx, dy);
-      const elapsed = Date.now() - startTime;
-
-      if (!isDraggingRef.current) {
-        // 거리/시간 임계치 미달이면 방향 미확정 → 대기
-        if (distance < DRAG_DISTANCE_THRESHOLD && elapsed < DRAG_TIME_THRESHOLD)
-          return;
-        // 가로 이동이 세로보다 크면 → 인벤토리 가로 스크롤로 처리
-        if (dx > dy) {
-          isHorizontalScrollRef.current = true;
-          return;
-        }
-        isDraggingRef.current = true;
-      }
-
-      // 드래그 확정 후 스크롤 차단 + 슬롯 하이라이트 이벤트
-      e.preventDefault();
-      lastTouchRef.current = { clientX: touch.clientX, clientY: touch.clientY };
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      target?.dispatchEvent(
-        new CustomEvent('goods-touch-dragover', { bubbles: true })
-      );
-      // 화면 가장자리 자동 스크롤
-      startAutoScroll(touch.clientY);
-    };
-
-    const onTouchEnd = (e: TouchEvent) => {
-      stopAutoScroll();
-      lastTouchRef.current = null;
-      if (!isDraggingRef.current) {
-        touchStartXRef.current = null;
-        touchStartYRef.current = null;
-        touchStartTimeRef.current = null;
-        isHorizontalScrollRef.current = false;
-        return;
-      }
-      const touch = e.changedTouches[0];
-      const target = document.elementFromPoint(touch.clientX, touch.clientY);
-      target?.dispatchEvent(
-        new CustomEvent('goods-touch-drop', {
-          bubbles: true,
-          detail: dragDataRef.current,
-        })
-      );
-      isDraggingRef.current = false;
-      isHorizontalScrollRef.current = false;
-      touchStartXRef.current = null;
-      touchStartYRef.current = null;
-      touchStartTimeRef.current = null;
-    };
-
-    const onTouchCancel = () => {
-      // 터치 강제 취소 시 드래그 상태 초기화 (drop 이벤트 미발생)
-      stopAutoScroll();
-      lastTouchRef.current = null;
-      isDraggingRef.current = false;
-      isHorizontalScrollRef.current = false;
-      touchStartXRef.current = null;
-      touchStartYRef.current = null;
-      touchStartTimeRef.current = null;
-    };
-
-    el.addEventListener('touchstart', onTouchStart);
-    el.addEventListener('touchmove', onTouchMove, { passive: false });
-    el.addEventListener('touchend', onTouchEnd);
-    el.addEventListener('touchcancel', onTouchCancel);
-    return () => {
-      stopAutoScroll();
-      el.removeEventListener('touchstart', onTouchStart);
-      el.removeEventListener('touchmove', onTouchMove);
-      el.removeEventListener('touchend', onTouchEnd);
-      el.removeEventListener('touchcancel', onTouchCancel);
-    };
-  }, [imageSrc]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -234,7 +71,7 @@ const InventoryCard = ({
   return (
     <div
       ref={cardRef}
-      className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing [-webkit-touch-callout:none] select-none`}
+      className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg select-none [-webkit-touch-callout:none] active:cursor-grabbing`}
       draggable
       onContextMenu={e => e.preventDefault()}
       onDragStart={e => {
@@ -246,6 +83,13 @@ const InventoryCard = ({
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() =>
+        document.dispatchEvent(
+          new CustomEvent('goods-tap-place', {
+            detail: { goodsId, imageUrl: imageSrc },
+          })
+        )
+      }
     >
       <img
         src={imageSrc}
