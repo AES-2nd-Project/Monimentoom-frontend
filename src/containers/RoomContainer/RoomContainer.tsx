@@ -18,7 +18,6 @@ import {
   setIsEditMode,
   setRoomId as setRoomIdAction,
   setShelfItems,
-  toggleIsEditMode,
   updateShelfItemPositionId,
 } from '../../store/shelfSlice';
 import type { PositionResponse, WallSide } from '../../types/position';
