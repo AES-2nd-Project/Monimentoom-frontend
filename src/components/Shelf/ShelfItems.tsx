@@ -1,11 +1,44 @@
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import type { Item } from '../../types/room';
 import GoodsDetailOverlay from './GoodsDetailOverlay';
 import { getItemGridCoord } from './shelfUtils';
+
+// 현재 터치 드래그 오버 중인 슬롯 전역 추적
+let currentTouchDragoverItemId: number | null = null;
+const touchDragHoverClearMap = new Map<number, () => void>();
+
+// document touchend 리스너를 슬롯 수만큼 중복 등록하지 않도록 공유 관리
+const touchEndHandlers = new Set<() => void>();
+let isDocumentTouchEndAttached = false;
+
+const handleDocumentTouchEnd = () => {
+  touchEndHandlers.forEach(handler => {
+    try {
+      handler();
+    } catch {
+      /* 개별 슬롯 에러가 다른 슬롯에 영향 주지 않도록 */
+    }
+  });
+};
+
+const ensureDocumentTouchEnd = () => {
+  if (isDocumentTouchEndAttached) return;
+  document.addEventListener('touchend', handleDocumentTouchEnd);
+  document.addEventListener('touchcancel', handleDocumentTouchEnd); // 터치 강제 취소 시에도 하이라이트 해제
+  isDocumentTouchEndAttached = true;
+};
+
+const cleanupDocumentTouchEndIfEmpty = () => {
+  if (isDocumentTouchEndAttached && touchEndHandlers.size === 0) {
+    document.removeEventListener('touchend', handleDocumentTouchEnd);
+    document.removeEventListener('touchcancel', handleDocumentTouchEnd);
+    isDocumentTouchEndAttached = false;
+  }
+};
 
 interface ShelfItemsProps {
   items: Item[];
@@ -29,6 +62,60 @@ const ShelfItem = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
+  const slotRef = useRef<HTMLDivElement>(null);
+
+  // 훅은 항상 최상단에서 호출 (Rules of Hooks)
+  // 이미지가 있는 슬롯엔 적용 안 함 — effect 내부에서 조기 return
+  useEffect(() => {
+    if (item.imageSrc) return;
+    const el = slotRef.current;
+    if (!el) return;
+
+    const clearThisSlot = () => {
+      setIsDragOver(false);
+      if (currentTouchDragoverItemId === item.id)
+        currentTouchDragoverItemId = null;
+    };
+    touchDragHoverClearMap.set(item.id, clearThisSlot);
+
+    const onTouchDragOver = () => {
+      // 이전 슬롯이 다르면 해제
+      if (
+        currentTouchDragoverItemId !== null &&
+        currentTouchDragoverItemId !== item.id
+      ) {
+        touchDragHoverClearMap.get(currentTouchDragoverItemId)?.();
+      }
+      currentTouchDragoverItemId = item.id;
+      setIsDragOver(true);
+    };
+    const onTouchDrop = (e: Event) => {
+      const { goodsId, imageUrl } = (
+        e as CustomEvent<{ goodsId: number; imageUrl: string }>
+      ).detail;
+      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+        setItemImage(item.id, goodsId, imageUrl);
+      }
+      clearThisSlot();
+    };
+    const onTouchEnd = () => clearThisSlot();
+
+    el.addEventListener('goods-touch-dragover', onTouchDragOver);
+    el.addEventListener('goods-touch-drop', onTouchDrop);
+    touchEndHandlers.add(onTouchEnd);
+    ensureDocumentTouchEnd();
+    return () => {
+      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
+      el.removeEventListener('goods-touch-drop', onTouchDrop);
+      touchEndHandlers.delete(onTouchEnd);
+      cleanupDocumentTouchEndIfEmpty();
+      if (touchDragHoverClearMap.get(item.id) === clearThisSlot) {
+        touchDragHoverClearMap.delete(item.id);
+      }
+      if (currentTouchDragoverItemId === item.id)
+        currentTouchDragoverItemId = null;
+    };
+  }, [item.id, item.imageSrc, setItemImage]);
 
   if (item.imageSrc) {
     return (
@@ -71,6 +158,7 @@ const ShelfItem = ({
 
   return (
     <div
+      ref={slotRef}
       style={getItemGridCoord(item)}
       className={clsx(
         'z-20 mx-2 flex items-center justify-center rounded-lg border-2 border-dashed transition-colors',
