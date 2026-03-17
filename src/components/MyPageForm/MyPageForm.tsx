@@ -9,11 +9,12 @@ import { useAuthState, useProfileUpdate } from '../../hooks/useAuth';
 
 const MyPageForm = () => {
   const navigate = useNavigate();
-  const { nickname, profileImageUrl: currentProfileImageUrl } = useAuthState();
+  const { nickname, profileImageUrl: currentProfileImageUrl, description: currentDescription } = useAuthState();
   const { updateProfile, isUpdateProfilePending } = useProfileUpdate();
 
   // 프로필 편집
   const [newNickname, setNewNickname] = useState(nickname);
+  const [newDescription, setNewDescription] = useState(currentDescription ?? '');
   const [profileImageUrl, setProfileImageUrl] = useState<string | undefined>(
     currentProfileImageUrl ?? undefined
   );
@@ -59,6 +60,7 @@ const MyPageForm = () => {
     updateProfile({
       nickname: newNickname,
       profileImageUrl,
+      description: newDescription || undefined,
     });
   };
 
@@ -103,6 +105,16 @@ const MyPageForm = () => {
         onChange={e => setNewNickname(e.target.value)}
         className='bg-purple-white h-10 rounded-lg px-4'
         placeholder='닉네임'
+      />
+
+      {/* 한줄 소개 */}
+      <input
+        type='text'
+        value={newDescription}
+        onChange={e => setNewDescription(e.target.value)}
+        maxLength={255}
+        className='bg-purple-white h-10 rounded-lg px-4'
+        placeholder='한줄 소개'
       />
 
       <button

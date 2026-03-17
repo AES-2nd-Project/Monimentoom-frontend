@@ -4,6 +4,7 @@ export interface RoomDetailResponse {
   roomId: number;
   name: string;
   userProfileImageUrl: string | null;
+  userDescription: string | null;
   nickname: string;
   isLoggedIn: boolean;
   isMine: boolean;

@@ -24,7 +24,9 @@ export const getRandomRoom = async (): Promise<RoomPositionResponse> => {
 };
 
 export const getShowcaseItems = async (size = 20): Promise<ShowcaseItem[]> => {
-  const response = await axiosInstance.get('/rooms/showcase', { params: { size } });
+  const response = await axiosInstance.get('/rooms/showcase', {
+    params: { size },
+  });
   return response.data;
 };
 
