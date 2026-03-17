@@ -15,6 +15,7 @@ import type { AppDispatch, RootState } from '../../store';
 import {
   setEaselImage,
   setFrameImage,
+  setIsEditMode,
   setRoomId as setRoomIdAction,
   setShelfItems,
   toggleIsEditMode,
@@ -295,7 +296,7 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
           easelImageUrlRef.current
         ).catch(console.error);
       }
-      dispatch(toggleIsEditMode());
+      dispatch(setIsEditMode(false));
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
