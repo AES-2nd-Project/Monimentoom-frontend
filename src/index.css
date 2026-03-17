@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+/* 룸의 고정 크기 컨텐츠가 viewport를 넘어도 페이지 전체가 축소되지 않도록 방지 */
+html,
+body {
+  overflow-x: hidden;
+}
+
 @theme {
   /* 전역 색상 설정 */
   --color-primary: #391790;

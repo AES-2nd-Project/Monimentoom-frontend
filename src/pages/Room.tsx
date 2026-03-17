@@ -40,7 +40,7 @@ const Room = () => {
           commentCount={comments.length}
         />
         <Inventory />
-        <div className='flex h-auto w-full flex-row items-start gap-12 pt-6'>
+        <div className='flex h-auto w-full flex-col items-center gap-12 pt-6 md:flex-row md:items-start'>
           <ProfileCard
             ownerNickname={roomDetail?.nickname}
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
