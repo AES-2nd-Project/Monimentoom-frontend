@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../store';
 import {
@@ -88,12 +88,12 @@ const useShelfSelection = (wallSide: WallSide) => {
     dispatch(removeShelfItem({ wallSide, id }));
   };
 
-  // 이미지 없는 아이템에 드롭
-  const setItemImage = (id: number, goodsId: number, imageUrl: string) => {
+  // 이미지 없는 아이템에 드롭 (useCallback으로 안정적 참조 보장)
+  const setItemImage = useCallback((id: number, goodsId: number, imageUrl: string) => {
     dispatch(
       updateShelfItemImage({ wallSide, id, goodsId, imageSrc: imageUrl })
     );
-  };
+  }, [dispatch, wallSide]);
 
   const isCovered = (coord: Coordinate) =>
     items.some(

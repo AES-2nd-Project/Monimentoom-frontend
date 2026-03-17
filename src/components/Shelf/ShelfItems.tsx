@@ -11,6 +11,35 @@ import { getItemGridCoord } from './shelfUtils';
 let currentTouchDragoverItemId: number | null = null;
 const touchDragHoverClearMap = new Map<number, () => void>();
 
+// document touchend 리스너를 슬롯 수만큼 중복 등록하지 않도록 공유 관리
+const touchEndHandlers = new Set<() => void>();
+let isDocumentTouchEndAttached = false;
+
+const handleDocumentTouchEnd = () => {
+  touchEndHandlers.forEach(handler => {
+    try {
+      handler();
+    } catch {
+      /* 개별 슬롯 에러가 다른 슬롯에 영향 주지 않도록 */
+    }
+  });
+};
+
+const ensureDocumentTouchEnd = () => {
+  if (isDocumentTouchEndAttached) return;
+  document.addEventListener('touchend', handleDocumentTouchEnd);
+  document.addEventListener('touchcancel', handleDocumentTouchEnd); // 터치 강제 취소 시에도 하이라이트 해제
+  isDocumentTouchEndAttached = true;
+};
+
+const cleanupDocumentTouchEndIfEmpty = () => {
+  if (isDocumentTouchEndAttached && touchEndHandlers.size === 0) {
+    document.removeEventListener('touchend', handleDocumentTouchEnd);
+    document.removeEventListener('touchcancel', handleDocumentTouchEnd);
+    isDocumentTouchEndAttached = false;
+  }
+};
+
 interface ShelfItemsProps {
   items: Item[];
   setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
@@ -34,6 +63,59 @@ const ShelfItem = ({
   const [isHovered, setIsHovered] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
   const slotRef = useRef<HTMLDivElement>(null);
+
+  // 훅은 항상 최상단에서 호출 (Rules of Hooks)
+  // 이미지가 있는 슬롯엔 적용 안 함 — effect 내부에서 조기 return
+  useEffect(() => {
+    if (item.imageSrc) return;
+    const el = slotRef.current;
+    if (!el) return;
+
+    const clearThisSlot = () => {
+      setIsDragOver(false);
+      if (currentTouchDragoverItemId === item.id)
+        currentTouchDragoverItemId = null;
+    };
+    touchDragHoverClearMap.set(item.id, clearThisSlot);
+
+    const onTouchDragOver = () => {
+      // 이전 슬롯이 다르면 해제
+      if (
+        currentTouchDragoverItemId !== null &&
+        currentTouchDragoverItemId !== item.id
+      ) {
+        touchDragHoverClearMap.get(currentTouchDragoverItemId)?.();
+      }
+      currentTouchDragoverItemId = item.id;
+      setIsDragOver(true);
+    };
+    const onTouchDrop = (e: Event) => {
+      const { goodsId, imageUrl } = (
+        e as CustomEvent<{ goodsId: number; imageUrl: string }>
+      ).detail;
+      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+        setItemImage(item.id, goodsId, imageUrl);
+      }
+      clearThisSlot();
+    };
+    const onTouchEnd = () => clearThisSlot();
+
+    el.addEventListener('goods-touch-dragover', onTouchDragOver);
+    el.addEventListener('goods-touch-drop', onTouchDrop);
+    touchEndHandlers.add(onTouchEnd);
+    ensureDocumentTouchEnd();
+    return () => {
+      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
+      el.removeEventListener('goods-touch-drop', onTouchDrop);
+      touchEndHandlers.delete(onTouchEnd);
+      cleanupDocumentTouchEndIfEmpty();
+      if (touchDragHoverClearMap.get(item.id) === clearThisSlot) {
+        touchDragHoverClearMap.delete(item.id);
+      }
+      if (currentTouchDragoverItemId === item.id)
+        currentTouchDragoverItemId = null;
+    };
+  }, [item.id, item.imageSrc, setItemImage]);
 
   if (item.imageSrc) {
     return (
@@ -73,50 +155,6 @@ const ShelfItem = ({
       </div>
     );
   }
-
-  // 터치 드래그로 드롭되는 커스텀 이벤트 수신
-  useEffect(() => {
-    const el = slotRef.current;
-    if (!el) return;
-
-    const clearThisSlot = () => {
-      setIsDragOver(false);
-      if (currentTouchDragoverItemId === item.id) currentTouchDragoverItemId = null;
-    };
-    touchDragHoverClearMap.set(item.id, clearThisSlot);
-
-    const onTouchDragOver = () => {
-      // 이전 슬롯이 다르면 해제
-      if (currentTouchDragoverItemId !== null && currentTouchDragoverItemId !== item.id) {
-        touchDragHoverClearMap.get(currentTouchDragoverItemId)?.();
-      }
-      currentTouchDragoverItemId = item.id;
-      setIsDragOver(true);
-    };
-    const onTouchDrop = (e: Event) => {
-      const { goodsId, imageUrl } = (e as CustomEvent<{ goodsId: number; imageUrl: string }>).detail;
-      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
-        setItemImage(item.id, goodsId, imageUrl);
-      }
-      clearThisSlot();
-    };
-    // 손가락을 뗐지만 드롭이 슬롯 밖이면 dragover 상태 해제
-    const onTouchEnd = () => clearThisSlot();
-
-    el.addEventListener('goods-touch-dragover', onTouchDragOver);
-    el.addEventListener('goods-touch-drop', onTouchDrop);
-    document.addEventListener('touchend', onTouchEnd);
-    return () => {
-      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
-      el.removeEventListener('goods-touch-drop', onTouchDrop);
-      document.removeEventListener('touchend', onTouchEnd);
-      // 언마운트 시 전역 맵에서 제거
-      if (touchDragHoverClearMap.get(item.id) === clearThisSlot) {
-        touchDragHoverClearMap.delete(item.id);
-      }
-      if (currentTouchDragoverItemId === item.id) currentTouchDragoverItemId = null;
-    };
-  }, [item.id, setItemImage]);
 
   return (
     <div
