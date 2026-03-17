@@ -43,7 +43,7 @@ const ProfileCard = ({
   const showLogout = !hasOwnerInfo;
 
   return (
-    <div className='bg-card-background flex min-h-75 w-75 flex-col gap-8 rounded-lg p-8'>
+    <div className='bg-card-background flex min-h-75 w-75 shrink-0 flex-col gap-8 rounded-lg p-8'>
       <div className='flex flex-row items-center justify-start gap-4 bg-transparent'>
         <img
           src={displayImage}

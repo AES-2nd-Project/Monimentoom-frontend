@@ -33,7 +33,7 @@ const Room = () => {
         <RoomContainer />
       </section>
 
-      <main className='mx-auto flex max-w-7xl min-w-[70vw] flex-col flex-wrap'>
+      <main className='mx-auto flex w-full max-w-7xl flex-col flex-wrap px-4 md:px-12'>
         <RoomControlContainer
           isLiked={roomDetail?.isLiked ?? false}
           likeCount={roomDetail?.likeCount ?? 0}

@@ -4,7 +4,7 @@ const LoginForm = () => {
 
   return (
     <div
-      className={`bg-card-background flex w-75 flex-col items-start gap-4 rounded-lg p-8`}
+      className={`bg-card-background flex w-full flex-col items-start gap-4 rounded-lg p-8 md:w-75`}
     >
       <p>👥 Login</p>
       <p className='text-purple-black/50 text-sm'>
