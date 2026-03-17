@@ -10,6 +10,8 @@ export interface KakaoLoginResponse {
 export interface KakaoSignupRequest {
   signupToken: string;
   nickname: string;
+  profileImageUrl?: string | null;
+  description?: string | null;
 }
 
 export interface KakaoSignupResponse {
