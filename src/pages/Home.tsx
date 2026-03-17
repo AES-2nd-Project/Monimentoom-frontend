@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header/Header';
 import LoginForm from '../components/LoginForm/LoginForm';
 import ProfileCard from '../components/ProfileCard/ProfileCard';
+import ShowcaseCarousel from '../components/ShowcaseCarousel/ShowcaseCarousel';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
 import type { RootState } from '../store';
 import { setIsEditMode } from '../store/shelfSlice';
@@ -88,7 +89,12 @@ const Home = () => {
 
       {/* 메인 섹션 */}
       <main ref={mainRef} className={`mx-auto mt-15 max-w-7xl min-w-[70vw]`}>
-        {isLoggedIn ? <ProfileCard /> : <LoginForm />}
+        <div className='flex items-start gap-8'>
+          <div className='shrink-0'>
+            {isLoggedIn ? <ProfileCard /> : <LoginForm />}
+          </div>
+          <ShowcaseCarousel />
+        </div>
       </main>
       <div className='h-[2000px]'></div>
     </div>

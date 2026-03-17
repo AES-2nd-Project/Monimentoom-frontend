@@ -14,6 +14,12 @@ export interface RoomDetailResponse {
   comments: CommentResponse[];
 }
 
+export interface ShowcaseItem {
+  imageUrl: string;
+  goodsName: string;
+  ownerNickname: string;
+}
+
 export type Direction = 'Left' | 'Right';
 
 export interface Coordinate {
