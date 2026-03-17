@@ -8,10 +8,14 @@ import type { CommentResponse } from '../../types/comment';
 interface CommentContainerProps {
   comments: CommentResponse[];
   setComments: React.Dispatch<React.SetStateAction<CommentResponse[]>>;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
-const CommentContainer = ({ comments, setComments, inputRef }: CommentContainerProps) => {
+const CommentContainer = ({
+  comments,
+  setComments,
+  inputRef,
+}: CommentContainerProps) => {
   const internalRef = useRef<HTMLInputElement>(null);
   const resolvedRef = inputRef ?? internalRef;
   const roomId = useSelector((state: RootState) => state.shelf.roomId);

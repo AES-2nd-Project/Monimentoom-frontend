@@ -49,7 +49,10 @@ const Room = () => {
           commentCount={comments.length}
           onCommentClick={() => {
             commentInputRef.current?.focus();
-            commentInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            commentInputRef.current?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+            });
           }}
         />
         <Inventory />
@@ -59,7 +62,11 @@ const Room = () => {
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
             ownerDescription={roomDetail?.userDescription}
           />
-          <CommentContainer comments={comments} setComments={setComments} inputRef={commentInputRef} />
+          <CommentContainer
+            comments={comments}
+            setComments={setComments}
+            inputRef={commentInputRef}
+          />
         </div>
       </main>
     </div>
