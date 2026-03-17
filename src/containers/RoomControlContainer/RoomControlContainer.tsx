@@ -13,12 +13,14 @@ interface RoomControlContainerProps {
   isLiked: boolean;
   likeCount: number;
   commentCount: number;
+  onCommentClick?: () => void;
 }
 
 const RoomControlContainer = ({
   isLiked: initialIsLiked,
   likeCount: initialLikeCount,
   commentCount,
+  onCommentClick,
 }: RoomControlContainerProps) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -173,7 +175,14 @@ const RoomControlContainer = ({
         </button>
 
         {/* 댓글 */}
-        <div className='flex items-center gap-1.5'>
+        <button
+          onClick={() => {
+            onCommentClick?.();
+          }}
+          disabled={!isLoggedIn}
+          className='flex cursor-pointer items-center gap-1.5 transition-transform active:scale-90 disabled:cursor-not-allowed disabled:opacity-40'
+          aria-label='댓글 입력'
+        >
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
@@ -191,7 +200,7 @@ const RoomControlContainer = ({
           <span className='text-purple-black text-sm font-medium'>
             {commentCount}
           </span>
-        </div>
+        </button>
 
         {/* 공유 */}
         <button

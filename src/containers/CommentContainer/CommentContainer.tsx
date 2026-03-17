@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { createComment } from '../../api/comment-api';
 import Comment from '../../components/Comment/Comment';
@@ -8,9 +8,12 @@ import type { CommentResponse } from '../../types/comment';
 interface CommentContainerProps {
   comments: CommentResponse[];
   setComments: React.Dispatch<React.SetStateAction<CommentResponse[]>>;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }
 
-const CommentContainer = ({ comments, setComments }: CommentContainerProps) => {
+const CommentContainer = ({ comments, setComments, inputRef }: CommentContainerProps) => {
+  const internalRef = useRef<HTMLInputElement>(null);
+  const resolvedRef = inputRef ?? internalRef;
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
@@ -43,6 +46,7 @@ const CommentContainer = ({ comments, setComments }: CommentContainerProps) => {
       {isLoggedIn && (
         <form onSubmit={handleSubmit} className='flex w-full gap-3'>
           <input
+            ref={resolvedRef}
             type='text'
             value={content}
             onChange={e => setContent(e.target.value)}

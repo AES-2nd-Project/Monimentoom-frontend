@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { getRoomDetail } from '../api/room-api';
 import Header from '../components/Header/Header';
 import Inventory from '../components/Inventory/Inventory';
@@ -13,6 +13,7 @@ const Room = () => {
   const [roomDetail, setRoomDetail] = useState<RoomDetailResponse | null>(null);
   const [comments, setComments] = useState<CommentResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const commentInputRef = useRef<HTMLInputElement>(null);
 
   const handleRoomLoaded = (roomId: number) => {
     setIsLoading(true);
@@ -46,6 +47,10 @@ const Room = () => {
           isLiked={roomDetail?.isLiked ?? false}
           likeCount={roomDetail?.likeCount ?? 0}
           commentCount={comments.length}
+          onCommentClick={() => {
+            commentInputRef.current?.focus();
+            commentInputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
         />
         <Inventory />
         <div className='flex h-auto w-full flex-col items-center gap-12 pt-6 md:flex-row md:items-start'>
@@ -54,7 +59,7 @@ const Room = () => {
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
             ownerDescription={roomDetail?.userDescription}
           />
-          <CommentContainer comments={comments} setComments={setComments} />
+          <CommentContainer comments={comments} setComments={setComments} inputRef={commentInputRef} />
         </div>
       </main>
     </div>
