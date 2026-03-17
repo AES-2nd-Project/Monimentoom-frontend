@@ -8,7 +8,6 @@ export const getRoomDetail = async (
   roomId: number
 ): Promise<RoomDetailResponse> => {
   const response = await axiosInstance.get(`/rooms/${roomId}/detail`);
-  console.log(response.data);
   return response.data;
 };
 
