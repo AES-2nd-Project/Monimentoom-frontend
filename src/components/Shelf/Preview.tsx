@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
 import type { Bounds, Coordinate } from '../../types/room';
@@ -24,13 +24,49 @@ const Preview = ({
 }: PreviewProps) => {
   const isEditMode = useSelector((state: RootState) => state.shelf.isEditMode);
   const [isDragOver, setIsDragOver] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const isConfirmed = !dragStart && selection && !isPreviewOverlapping;
+
+  // 모바일 터치 드롭 이벤트 지원
+  useEffect(() => {
+    if (!isConfirmed) return;
+    const el = previewRef.current;
+    if (!el) return;
+
+    const onTouchDragOver = () => setIsDragOver(true);
+    const onTouchDrop = (e: Event) => {
+      const detail = (e as CustomEvent<{ goodsId: number; imageUrl: string }>)
+        .detail;
+      if (!detail) {
+        setIsDragOver(false);
+        return;
+      }
+      const { goodsId, imageUrl } = detail;
+      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+        onDropImage(goodsId, imageUrl);
+      }
+      setIsDragOver(false);
+    };
+    const onTouchEnd = () => setIsDragOver(false);
+
+    el.addEventListener('goods-touch-dragover', onTouchDragOver);
+    el.addEventListener('goods-touch-drop', onTouchDrop);
+    document.addEventListener('touchend', onTouchEnd);
+    document.addEventListener('touchcancel', onTouchEnd);
+    return () => {
+      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
+      el.removeEventListener('goods-touch-drop', onTouchDrop);
+      document.removeEventListener('touchend', onTouchEnd);
+      document.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [isConfirmed, onDropImage]);
 
   return (
     <>
       {isEditMode && preview && (
         <div
+          ref={previewRef}
           style={getItemGridCoord(preview)}
           className={clsx(
             `relative z-30 mx-2 flex items-center justify-center rounded-lg border-2 shadow-md transition-all`,

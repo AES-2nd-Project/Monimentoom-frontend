@@ -41,6 +41,16 @@ const InventoryCard = ({
   const touchStartYRef = useRef<number | null>(null);
   const touchStartTimeRef = useRef<number | null>(null);
   const isDraggingRef = useRef(false);
+  // 자동 스크롤용 ref
+  const lastTouchRef = useRef<{ clientX: number; clientY: number } | null>(null);
+  const scrollRafRef = useRef<number | null>(null);
+
+  const stopAutoScroll = () => {
+    if (scrollRafRef.current) {
+      cancelAnimationFrame(scrollRafRef.current);
+      scrollRafRef.current = null;
+    }
+  };
 
   useEffect(() => {
     if (!imageSrc) return; // 빈 카드엔 적용 안 함
@@ -49,6 +59,39 @@ const InventoryCard = ({
 
     const DRAG_DISTANCE_THRESHOLD = 10; // px - 이 거리 이상 움직여야 드래그로 판단
     const DRAG_TIME_THRESHOLD = 150; // ms - 이 시간 이내에 짧게 움직이면 스크롤 허용
+    const SCROLL_EDGE_ZONE = 60; // 화면 가장자리에서 자동 스크롤이 시작되는 영역 (px)
+    const SCROLL_MAX_SPEED = 12; // 자동 스크롤 최대 속도 (px/frame)
+
+    // 화면 가장자리 근접 시 자동 스크롤 + dragover 이벤트 재전송
+    const startAutoScroll = (clientY: number) => {
+      stopAutoScroll();
+      let speed = 0;
+      if (clientY < SCROLL_EDGE_ZONE) {
+        speed = -SCROLL_MAX_SPEED * (1 - clientY / SCROLL_EDGE_ZONE);
+      } else if (clientY > window.innerHeight - SCROLL_EDGE_ZONE) {
+        speed =
+          SCROLL_MAX_SPEED *
+          ((clientY - (window.innerHeight - SCROLL_EDGE_ZONE)) /
+            SCROLL_EDGE_ZONE);
+      }
+      if (speed === 0) return;
+
+      const tick = () => {
+        window.scrollBy(0, speed);
+        // 스크롤 후 현재 손가락 위치의 엘리먼트에 dragover 이벤트 전송
+        if (lastTouchRef.current) {
+          const t = document.elementFromPoint(
+            lastTouchRef.current.clientX,
+            lastTouchRef.current.clientY
+          );
+          t?.dispatchEvent(
+            new CustomEvent('goods-touch-dragover', { bubbles: true })
+          );
+        }
+        scrollRafRef.current = requestAnimationFrame(tick);
+      };
+      scrollRafRef.current = requestAnimationFrame(tick);
+    };
 
     const onTouchStart = (e: TouchEvent) => {
       const touch = e.touches[0];
@@ -56,6 +99,7 @@ const InventoryCard = ({
       touchStartYRef.current = touch.clientY;
       touchStartTimeRef.current = Date.now();
       isDraggingRef.current = false;
+      lastTouchRef.current = null;
     };
 
     const onTouchMove = (e: TouchEvent) => {
@@ -83,13 +127,18 @@ const InventoryCard = ({
 
       // 드래그 확정 후 스크롤 차단 + 슬롯 하이라이트 이벤트
       e.preventDefault();
+      lastTouchRef.current = { clientX: touch.clientX, clientY: touch.clientY };
       const target = document.elementFromPoint(touch.clientX, touch.clientY);
       target?.dispatchEvent(
         new CustomEvent('goods-touch-dragover', { bubbles: true })
       );
+      // 화면 가장자리 자동 스크롤
+      startAutoScroll(touch.clientY);
     };
 
     const onTouchEnd = (e: TouchEvent) => {
+      stopAutoScroll();
+      lastTouchRef.current = null;
       if (!isDraggingRef.current) {
         touchStartXRef.current = null;
         touchStartYRef.current = null;
@@ -112,6 +161,8 @@ const InventoryCard = ({
 
     const onTouchCancel = () => {
       // 터치 강제 취소 시 드래그 상태 초기화 (drop 이벤트 미발생)
+      stopAutoScroll();
+      lastTouchRef.current = null;
       isDraggingRef.current = false;
       touchStartXRef.current = null;
       touchStartYRef.current = null;
@@ -123,6 +174,7 @@ const InventoryCard = ({
     el.addEventListener('touchend', onTouchEnd);
     el.addEventListener('touchcancel', onTouchCancel);
     return () => {
+      stopAutoScroll();
       el.removeEventListener('touchstart', onTouchStart);
       el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
