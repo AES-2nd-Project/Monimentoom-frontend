@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface FilledCardProps {
   goodsId: number;
@@ -22,6 +22,47 @@ type InventoryCardProps = FilledCardProps | EmptyCardProps;
 const InventoryCard = ({ goodsId, imageSrc, onRemove, onAdd, isUploading }: InventoryCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // 터치 드래그 중 최신 데이터를 클로저 없이 참조하기 위한 ref
+  const dragDataRef = useRef({ goodsId, imageUrl: imageSrc });
+  useEffect(() => {
+    dragDataRef.current = { goodsId, imageUrl: imageSrc };
+  }, [goodsId, imageSrc]);
+
+  // 터치 드래그: passive: false 로 스크롤 방지 + 슬롯에 커스텀 이벤트 디스패치
+  useEffect(() => {
+    if (!imageSrc) return; // 빈 카드엔 적용 안 함
+    const el = cardRef.current;
+    if (!el) return;
+
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault(); // 드래그 중 스크롤 방지
+      const touch = e.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      target?.dispatchEvent(
+        new CustomEvent('goods-touch-dragover', { bubbles: true })
+      );
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      const touch = e.changedTouches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      target?.dispatchEvent(
+        new CustomEvent('goods-touch-drop', {
+          bubbles: true,
+          detail: dragDataRef.current,
+        })
+      );
+    };
+
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+    return () => {
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [imageSrc]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,6 +102,7 @@ const InventoryCard = ({ goodsId, imageSrc, onRemove, onAdd, isUploading }: Inve
   // 채워진 카드
   return (
     <div
+      ref={cardRef}
       className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg active:cursor-grabbing`}
       draggable
       onDragStart={e => {

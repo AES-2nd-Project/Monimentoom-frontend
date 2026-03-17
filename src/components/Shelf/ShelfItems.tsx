@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../store';
@@ -29,6 +29,7 @@ const ShelfItem = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const itemRef = useRef<HTMLDivElement>(null);
+  const slotRef = useRef<HTMLDivElement>(null);
 
   if (item.imageSrc) {
     return (
@@ -69,8 +70,35 @@ const ShelfItem = ({
     );
   }
 
+  // 터치 드래그로 드롭되는 커스텀 이벤트 수신
+  useEffect(() => {
+    const el = slotRef.current;
+    if (!el) return;
+
+    const onTouchDragOver = () => setIsDragOver(true);
+    const onTouchDrop = (e: Event) => {
+      const { goodsId, imageUrl } = (e as CustomEvent<{ goodsId: number; imageUrl: string }>).detail;
+      if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
+        setItemImage(item.id, goodsId, imageUrl);
+      }
+      setIsDragOver(false);
+    };
+    // 손가락을 뗐지만 드롭이 슬롯 밖이면 dragover 상태 해제
+    const onTouchEnd = () => setIsDragOver(false);
+
+    el.addEventListener('goods-touch-dragover', onTouchDragOver);
+    el.addEventListener('goods-touch-drop', onTouchDrop);
+    document.addEventListener('touchend', onTouchEnd);
+    return () => {
+      el.removeEventListener('goods-touch-dragover', onTouchDragOver);
+      el.removeEventListener('goods-touch-drop', onTouchDrop);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [item.id, setItemImage]);
+
   return (
     <div
+      ref={slotRef}
       style={getItemGridCoord(item)}
       className={clsx(
         'z-20 mx-2 flex items-center justify-center rounded-lg border-2 border-dashed transition-colors',
