@@ -143,11 +143,11 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
     [dispatch, isHome, navigate]
   );
 
-  // 홈 페이지: 랜덤 방을 4초마다 순환
+  // 홈 페이지: 랜덤 방을 2초마다 순환
   useEffect(() => {
     if (!isHome) return;
     loadRoomData(getRandomRoom);
-    const intervalId = setInterval(() => loadRoomData(getRandomRoom), 4000);
+    const intervalId = setInterval(() => loadRoomData(getRandomRoom), 2000);
     return () => clearInterval(intervalId);
   }, [isHome, loadRoomData]);
 
