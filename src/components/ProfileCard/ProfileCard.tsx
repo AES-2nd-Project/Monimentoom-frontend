@@ -23,18 +23,23 @@ const ProfileCard = ({
   const { logout } = useLogout();
   const [expanded, setExpanded] = useState(false);
 
-  // props가 없으면 내 정보 사용 (홈 페이지에서 조회되는 프로필)
-  const displayNickname = ownerNickname ?? myNickname ?? '게스트';
-  const displayImage = ownerProfileImageUrl ?? myProfileImageUrl ?? '/icon.png';
-  const displayDescription = ownerDescription ?? myDescription ?? null;
-  const isTruncated =
-    !!displayDescription && displayDescription.length > MAX_LENGTH;
-  // Room 페이지처럼 owner props가 내려온 경우엔 로그아웃 미노출
-  // 홈 페이지처럼 props 없이 쓸 때만 노출
+  // owner props가 하나라도 있으면 Room 페이지로 판단
   const hasOwnerInfo =
     ownerNickname !== undefined ||
     ownerProfileImageUrl !== undefined ||
     ownerDescription !== undefined;
+
+  // Room 페이지: 방 주인 데이터만 사용 (null이어도 내 정보로 폴백 안 함)
+  // 홈 페이지: 내 정보 사용
+  const displayNickname = hasOwnerInfo
+    ? (ownerNickname ?? '게스트')
+    : (myNickname ?? '게스트');
+  const displayImage = hasOwnerInfo
+    ? (ownerProfileImageUrl ?? '/icon.png')
+    : (myProfileImageUrl ?? '/icon.png');
+  const displayDescription = hasOwnerInfo ? ownerDescription : myDescription;
+  const isTruncated =
+    !!displayDescription && displayDescription.length > MAX_LENGTH;
   const showLogout = !hasOwnerInfo;
 
   return (
