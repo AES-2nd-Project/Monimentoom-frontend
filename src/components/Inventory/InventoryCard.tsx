@@ -42,7 +42,7 @@ const InventoryCard = ({
     return (
       <div
         className={clsx(
-          `border-border/40 bg-card-background flex h-full w-60 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed transition-colors`,
+          `border-border/40 bg-card-background flex h-full w-36 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed transition-colors md:w-60`,
           isUploading
             ? `cursor-wait opacity-60`
             : `hover:border-border cursor-pointer`
@@ -71,7 +71,7 @@ const InventoryCard = ({
   return (
     <div
       ref={cardRef}
-      className={`bg-card-background relative h-full w-60 shrink-0 cursor-grab overflow-hidden rounded-lg select-none [-webkit-touch-callout:none] active:cursor-grabbing`}
+      className={`bg-card-background relative h-full w-36 shrink-0 cursor-grab overflow-hidden rounded-lg select-none [-webkit-touch-callout:none] active:cursor-grabbing md:w-60`}
       draggable
       onContextMenu={e => e.preventDefault()}
       onDragStart={e => {

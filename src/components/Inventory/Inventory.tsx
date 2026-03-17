@@ -142,7 +142,7 @@ const Inventory = () => {
         className={clsx(
           `flex w-full flex-row flex-nowrap gap-4 overflow-x-auto transition-all duration-700 [ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`,
           isEditMode
-            ? `mt-6 h-60 opacity-100`
+            ? `mt-6 h-36 opacity-100 md:h-60`
             : `pointer-events-none h-0 opacity-0`
         )}
       >
@@ -151,9 +151,9 @@ const Inventory = () => {
           return (
             <div
               key={card.id}
-              className='shrink-0 overflow-hidden transition-[width,opacity] ease-in-out'
+              className='w-36 shrink-0 overflow-hidden transition-[width,opacity] ease-in-out md:w-60'
               style={{
-                width: isRemoving ? 0 : '15rem',
+                width: isRemoving ? 0 : undefined,
                 opacity: isRemoving ? 0 : 1,
                 transitionDuration: `${REMOVE_DURATION}ms`,
               }}
