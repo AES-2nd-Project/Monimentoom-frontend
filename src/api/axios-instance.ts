@@ -67,10 +67,7 @@ const getNewAccessToken = (): Promise<string> => {
 
 /** localStorage + Redux 전부 초기화 후 홈으로 이동 */
 const forceLogout = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('nickname');
-  localStorage.removeItem('profileImageUrl');
+  import('../hooks/useAuth').then(({ clearAuthStorage }) => clearAuthStorage());
 
   Promise.all([import('../store'), import('../store/authSlice')])
     .then(([{ store }, { logout }]) => {

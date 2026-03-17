@@ -23,7 +23,7 @@ const syncUserInfo = (
   nickname: string,
   dispatch: ReturnType<typeof useDispatch>,
   profileImageUrl?: string | null,
-  description?: string | null,
+  description?: string | null
 ) => {
   localStorage.setItem('accessToken', token);
   localStorage.setItem('userId', String(userId));
@@ -39,7 +39,21 @@ const syncUserInfo = (
     localStorage.removeItem('description');
   }
   dispatch(setLoginInfo({ nickname, userId }));
-  dispatch(updateUserInfo({ profileImageUrl: profileImageUrl ?? null, description: description ?? null }));
+  dispatch(
+    updateUserInfo({
+      profileImageUrl: profileImageUrl ?? null,
+      description: description ?? null,
+    })
+  );
+};
+
+/** 인증 관련 localStorage 전체 정리 (forceLogout/useLogout 공통 사용) */
+export const clearAuthStorage = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('userId');
+  localStorage.removeItem('nickname');
+  localStorage.removeItem('profileImageUrl');
+  localStorage.removeItem('description');
 };
 
 /** 카카오 로그인 페이지로 리다이렉트 (훅 불필요) */
@@ -49,9 +63,8 @@ export const redirectToKakao = () => {
 
 /** Redux에서 인증 상태만 읽기 (mutation 없음) */
 export const useAuthState = () => {
-  const { isLoggedIn, nickname, userId, profileImageUrl, description } = useSelector(
-    (state: RootState) => state.auth
-  );
+  const { isLoggedIn, nickname, userId, profileImageUrl, description } =
+    useSelector((state: RootState) => state.auth);
   return { isLoggedIn, nickname, userId, profileImageUrl, description };
 };
 
@@ -62,11 +75,7 @@ export const useLogout = () => {
 
   const logout = () => {
     logoutUserApi().catch(console.error);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('nickname');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('profileImageUrl');
-    localStorage.removeItem('description');
+    clearAuthStorage();
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
     navigate('/');
@@ -84,7 +93,14 @@ export const useKakaoLogin = () => {
     mutationFn: kakaoLoginApi,
     onSuccess: data => {
       if (data.token && data.userId && data.nickname) {
-        syncUserInfo(data.token, data.userId, data.nickname, dispatch, data.profileImageUrl, data.description);
+        syncUserInfo(
+          data.token,
+          data.userId,
+          data.nickname,
+          dispatch,
+          data.profileImageUrl,
+          data.description
+        );
         navigate('/');
       } else if (data.signupToken) {
         navigate('/signup', { state: { signupToken: data.signupToken } });
@@ -113,7 +129,14 @@ export const useKakaoSignup = () => {
   const kakaoSignupMutation = useMutation({
     mutationFn: kakaoSignupApi,
     onSuccess: data => {
-      syncUserInfo(data.token, data.userId, data.nickname, dispatch, data.profileImageUrl, data.description);
+      syncUserInfo(
+        data.token,
+        data.userId,
+        data.nickname,
+        dispatch,
+        data.profileImageUrl,
+        data.description
+      );
       alert('회원가입이 완료되었습니다!');
       navigate('/');
     },
