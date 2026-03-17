@@ -41,6 +41,7 @@ const InventoryCard = ({
   const touchStartYRef = useRef<number | null>(null);
   const touchStartTimeRef = useRef<number | null>(null);
   const isDraggingRef = useRef(false);
+  const isHorizontalScrollRef = useRef(false); // 가로 스크롤로 판정된 제스처
   // 자동 스크롤용 ref
   const lastTouchRef = useRef<{ clientX: number; clientY: number } | null>(null);
   const scrollRafRef = useRef<number | null>(null);
@@ -99,12 +100,15 @@ const InventoryCard = ({
       touchStartYRef.current = touch.clientY;
       touchStartTimeRef.current = Date.now();
       isDraggingRef.current = false;
+      isHorizontalScrollRef.current = false;
       lastTouchRef.current = null;
     };
 
     const onTouchMove = (e: TouchEvent) => {
       // 핀치 줌 등 멀티터치는 간섭하지 않음
       if (e.touches.length > 1) return;
+      // 가로 스크롤로 판정된 제스처는 간섭하지 않음
+      if (isHorizontalScrollRef.current) return;
 
       const touch = e.touches[0];
       const startX = touchStartXRef.current;
@@ -112,16 +116,20 @@ const InventoryCard = ({
       const startTime = touchStartTimeRef.current;
       if (startX == null || startY == null || startTime == null) return;
 
-      const distance = Math.hypot(
-        touch.clientX - startX,
-        touch.clientY - startY
-      );
+      const dx = Math.abs(touch.clientX - startX);
+      const dy = Math.abs(touch.clientY - startY);
+      const distance = Math.hypot(dx, dy);
       const elapsed = Date.now() - startTime;
 
       if (!isDraggingRef.current) {
-        // 거리/시간 임계치 미달이면 스크롤 허용
+        // 거리/시간 임계치 미달이면 방향 미확정 → 대기
         if (distance < DRAG_DISTANCE_THRESHOLD && elapsed < DRAG_TIME_THRESHOLD)
           return;
+        // 가로 이동이 세로보다 크면 → 인벤토리 가로 스크롤로 처리
+        if (dx > dy) {
+          isHorizontalScrollRef.current = true;
+          return;
+        }
         isDraggingRef.current = true;
       }
 
@@ -143,6 +151,7 @@ const InventoryCard = ({
         touchStartXRef.current = null;
         touchStartYRef.current = null;
         touchStartTimeRef.current = null;
+        isHorizontalScrollRef.current = false;
         return;
       }
       const touch = e.changedTouches[0];
@@ -154,6 +163,7 @@ const InventoryCard = ({
         })
       );
       isDraggingRef.current = false;
+      isHorizontalScrollRef.current = false;
       touchStartXRef.current = null;
       touchStartYRef.current = null;
       touchStartTimeRef.current = null;
@@ -164,6 +174,7 @@ const InventoryCard = ({
       stopAutoScroll();
       lastTouchRef.current = null;
       isDraggingRef.current = false;
+      isHorizontalScrollRef.current = false;
       touchStartXRef.current = null;
       touchStartYRef.current = null;
       touchStartTimeRef.current = null;
