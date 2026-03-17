@@ -146,7 +146,9 @@ const Inventory = () => {
             : `pointer-events-none h-0 opacity-0`
         )}
       >
-        {cards.map(card => {
+        <InventoryCard onAdd={addCard} isUploading={isUploading} />
+
+        {[...cards].reverse().map(card => {
           const isRemoving = removingIds.has(card.id);
           return (
             <div
@@ -166,8 +168,6 @@ const Inventory = () => {
             </div>
           );
         })}
-
-        <InventoryCard onAdd={addCard} isUploading={isUploading} />
       </div>
 
       {pendingGoods && (
