@@ -106,13 +106,15 @@ const shelfSlice = createSlice({
     setEaselImage: (state, action: PayloadAction<string | null>) => {
       state.easelImageUrl = action.payload;
     },
-    // createPosition 성공 후 positionId 반영 — 중복 POST 방지의 핵심
+    // createPosition 성공 후 positionId + 이름/설명 반영
     updateShelfItemPositionId: (
       state,
       action: PayloadAction<{
         wallSide: WallSide;
         localId: number;
         positionId: number;
+        goodsName?: string;
+        goodsDescription?: string;
       }>
     ) => {
       const list =
@@ -120,6 +122,10 @@ const shelfSlice = createSlice({
       const item = list.find(i => i.id === action.payload.localId);
       if (item) {
         item.positionId = action.payload.positionId;
+        if (action.payload.goodsName !== undefined)
+          item.goodsName = action.payload.goodsName;
+        if (action.payload.goodsDescription !== undefined)
+          item.goodsDescription = action.payload.goodsDescription;
       }
     },
   },

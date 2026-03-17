@@ -247,12 +247,14 @@ const RoomContainer = ({ onStart, onRoomLoaded }: RoomContainerProps) => {
                 created,
               ];
               currentPositionIds.add(created.id);
-              // Redux items에 positionId 반영 → 다음 sync에서 중복 POST 방지
+              // Redux items에 positionId + 이름/설명 반영
               dispatch(
                 updateShelfItemPositionId({
                   wallSide,
                   localId: item.id,
                   positionId: created.id,
+                  goodsName: created.goodsName,
+                  goodsDescription: created.goodsDescription,
                 })
               );
             })
