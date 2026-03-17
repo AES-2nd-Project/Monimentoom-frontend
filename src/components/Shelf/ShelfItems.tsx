@@ -7,6 +7,10 @@ import type { Item } from '../../types/room';
 import GoodsDetailOverlay from './GoodsDetailOverlay';
 import { getItemGridCoord } from './shelfUtils';
 
+// 현재 터치 드래그 오버 중인 슬롯 전역 추적
+let currentTouchDragoverItemId: number | null = null;
+const touchDragHoverClearMap = new Map<number, () => void>();
+
 interface ShelfItemsProps {
   items: Item[];
   setItemImage: (id: number, goodsId: number, imageUrl: string) => void;
@@ -75,16 +79,29 @@ const ShelfItem = ({
     const el = slotRef.current;
     if (!el) return;
 
-    const onTouchDragOver = () => setIsDragOver(true);
+    const clearThisSlot = () => {
+      setIsDragOver(false);
+      if (currentTouchDragoverItemId === item.id) currentTouchDragoverItemId = null;
+    };
+    touchDragHoverClearMap.set(item.id, clearThisSlot);
+
+    const onTouchDragOver = () => {
+      // 이전 슬롯이 다르면 해제
+      if (currentTouchDragoverItemId !== null && currentTouchDragoverItemId !== item.id) {
+        touchDragHoverClearMap.get(currentTouchDragoverItemId)?.();
+      }
+      currentTouchDragoverItemId = item.id;
+      setIsDragOver(true);
+    };
     const onTouchDrop = (e: Event) => {
       const { goodsId, imageUrl } = (e as CustomEvent<{ goodsId: number; imageUrl: string }>).detail;
       if (typeof goodsId === 'number' && typeof imageUrl === 'string') {
         setItemImage(item.id, goodsId, imageUrl);
       }
-      setIsDragOver(false);
+      clearThisSlot();
     };
     // 손가락을 뗐지만 드롭이 슬롯 밖이면 dragover 상태 해제
-    const onTouchEnd = () => setIsDragOver(false);
+    const onTouchEnd = () => clearThisSlot();
 
     el.addEventListener('goods-touch-dragover', onTouchDragOver);
     el.addEventListener('goods-touch-drop', onTouchDrop);
@@ -93,6 +110,11 @@ const ShelfItem = ({
       el.removeEventListener('goods-touch-dragover', onTouchDragOver);
       el.removeEventListener('goods-touch-drop', onTouchDrop);
       document.removeEventListener('touchend', onTouchEnd);
+      // 언마운트 시 전역 맵에서 제거
+      if (touchDragHoverClearMap.get(item.id) === clearThisSlot) {
+        touchDragHoverClearMap.delete(item.id);
+      }
+      if (currentTouchDragoverItemId === item.id) currentTouchDragoverItemId = null;
     };
   }, [item.id, setItemImage]);
 
