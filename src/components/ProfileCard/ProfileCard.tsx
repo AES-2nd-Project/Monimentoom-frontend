@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuthState, useLogout } from '../../hooks/useAuth';
 
 interface ProfileCardProps {
@@ -8,6 +9,8 @@ interface ProfileCardProps {
   isMine?: boolean;
 }
 
+const MAX_LENGTH = 50;
+
 const ProfileCard = ({
   ownerNickname,
   ownerProfileImageUrl,
@@ -17,11 +20,13 @@ const ProfileCard = ({
   const { nickname: myNickname, profileImageUrl: myProfileImageUrl, description: myDescription } =
     useAuthState();
   const { logout } = useLogout();
+  const [expanded, setExpanded] = useState(false);
 
   // props가 없으면 내 정보 사용 (홈 페이지에서 조회되는 프로필)
   const displayNickname = ownerNickname ?? myNickname ?? '게스트';
   const displayImage = ownerProfileImageUrl ?? myProfileImageUrl ?? '/icon.png';
   const displayDescription = ownerDescription ?? myDescription ?? null;
+  const isTruncated = !!displayDescription && displayDescription.length > MAX_LENGTH;
   // 방 주인 정보가 내려온 경우(Room 페이지)엔 isMine === true일 때만 로그아웃 노출
   // 홈 페이지처럼 props 없이 쓸 때는 항상 노출
   const hasOwnerInfo =
@@ -43,9 +48,22 @@ const ProfileCard = ({
       </div>
 
       {displayDescription && (
-        <p className='text-purple-black/60 line-clamp-2 text-sm'>
-          {displayDescription}
-        </p>
+        <div className='text-purple-black/60 text-sm'>
+          <p>
+            {isTruncated && !expanded
+              ? `${displayDescription.slice(0, MAX_LENGTH)}…`
+              : displayDescription}
+          </p>
+          {isTruncated && (
+            <button
+              type='button'
+              onClick={() => setExpanded(prev => !prev)}
+              className='text-purple-black/40 hover:text-purple-black/70 mt-1 cursor-pointer text-xs transition-colors'
+            >
+              {expanded ? '접기' : '더보기'}
+            </button>
+          )}
+        </div>
       )}
 
       {showLogout && (
