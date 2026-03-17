@@ -75,7 +75,7 @@ const Header = () => {
       transition={{ duration: 0.4 }}
       className='fixed top-0 left-0 z-50 flex h-20 w-full items-center'
     >
-      <div className={`mx-auto flex w-full max-w-7xl items-center px-12`}>
+      <div className={`mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center gap-1 px-4 md:flex-row md:gap-0 md:px-12`}>
         <AnimatePresence mode='wait'>
           {!isHome && (
             <motion.div
@@ -84,17 +84,18 @@ const Header = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
+              className='flex items-center md:mr-auto'
             >
               <Link to={'/'}>
-                <img src={logo} className={`h-20 w-auto`} />
+                <img src={logo} className={`h-9 w-auto md:h-20`} />
               </Link>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <motion.nav layout className='flex flex-1 justify-center'>
+        <motion.nav layout className='flex md:flex-1 justify-center'>
           <ul
-            className={`text-purple-white flex shrink-0 justify-between gap-40`}
+            className={`text-purple-white flex shrink-0 justify-between gap-8 text-sm md:gap-40 md:text-base`}
           >
             <li
               onClick={handleRoomClick}

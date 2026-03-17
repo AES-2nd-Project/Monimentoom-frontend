@@ -52,7 +52,7 @@ const InventoryCard = ({
         <input
           ref={inputRef}
           type='file'
-          accept='image/*'
+          accept='image/*,image/svg+xml'
           className={`hidden`}
           onChange={handleFileChange}
         />
