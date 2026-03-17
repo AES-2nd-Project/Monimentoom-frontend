@@ -21,12 +21,25 @@ const syncUserInfo = (
   token: string,
   userId: number,
   nickname: string,
-  dispatch: ReturnType<typeof useDispatch>
+  dispatch: ReturnType<typeof useDispatch>,
+  profileImageUrl?: string | null,
+  description?: string | null,
 ) => {
   localStorage.setItem('accessToken', token);
   localStorage.setItem('userId', String(userId));
   localStorage.setItem('nickname', nickname);
+  if (profileImageUrl) {
+    localStorage.setItem('profileImageUrl', profileImageUrl);
+  } else {
+    localStorage.removeItem('profileImageUrl');
+  }
+  if (description) {
+    localStorage.setItem('description', description);
+  } else {
+    localStorage.removeItem('description');
+  }
   dispatch(setLoginInfo({ nickname, userId }));
+  dispatch(updateUserInfo({ profileImageUrl: profileImageUrl ?? null, description: description ?? null }));
 };
 
 /** 카카오 로그인 페이지로 리다이렉트 (훅 불필요) */
@@ -36,10 +49,10 @@ export const redirectToKakao = () => {
 
 /** Redux에서 인증 상태만 읽기 (mutation 없음) */
 export const useAuthState = () => {
-  const { isLoggedIn, nickname, userId, profileImageUrl } = useSelector(
+  const { isLoggedIn, nickname, userId, profileImageUrl, description } = useSelector(
     (state: RootState) => state.auth
   );
-  return { isLoggedIn, nickname, userId, profileImageUrl };
+  return { isLoggedIn, nickname, userId, profileImageUrl, description };
 };
 
 /** 로그아웃 */
@@ -53,6 +66,7 @@ export const useLogout = () => {
     localStorage.removeItem('nickname');
     localStorage.removeItem('userId');
     localStorage.removeItem('profileImageUrl');
+    localStorage.removeItem('description');
     dispatch(logoutAction());
     alert('로그아웃 되었습니다.');
     navigate('/');
@@ -70,7 +84,7 @@ export const useKakaoLogin = () => {
     mutationFn: kakaoLoginApi,
     onSuccess: data => {
       if (data.token && data.userId && data.nickname) {
-        syncUserInfo(data.token, data.userId, data.nickname, dispatch);
+        syncUserInfo(data.token, data.userId, data.nickname, dispatch, data.profileImageUrl, data.description);
         navigate('/');
       } else if (data.signupToken) {
         navigate('/signup', { state: { signupToken: data.signupToken } });
@@ -99,7 +113,7 @@ export const useKakaoSignup = () => {
   const kakaoSignupMutation = useMutation({
     mutationFn: kakaoSignupApi,
     onSuccess: data => {
-      syncUserInfo(data.token, data.userId, data.nickname, dispatch);
+      syncUserInfo(data.token, data.userId, data.nickname, dispatch, data.profileImageUrl, data.description);
       alert('회원가입이 완료되었습니다!');
       navigate('/');
     },
@@ -128,10 +142,16 @@ export const useProfileUpdate = () => {
       } else {
         localStorage.removeItem('profileImageUrl');
       }
+      if (data.description) {
+        localStorage.setItem('description', data.description);
+      } else {
+        localStorage.removeItem('description');
+      }
       dispatch(
         updateUserInfo({
           nickname: data.nickname,
           profileImageUrl: data.profileImageUrl ?? null,
+          description: data.description ?? null,
         })
       );
       alert('프로필이 업데이트되었습니다.');

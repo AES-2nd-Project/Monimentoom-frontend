@@ -5,6 +5,7 @@ interface AuthState {
   nickname: string;
   userId: number | null;
   profileImageUrl: string | null;
+  description: string | null;
 }
 
 const authSlice = createSlice({
@@ -14,6 +15,7 @@ const authSlice = createSlice({
     nickname: localStorage.getItem('nickname') || '',
     userId: Number(localStorage.getItem('userId')) || null,
     profileImageUrl: localStorage.getItem('profileImageUrl') || null,
+    description: localStorage.getItem('description') || null,
   } as AuthState,
   reducers: {
     setLoginInfo: (
@@ -29,6 +31,7 @@ const authSlice = createSlice({
       action: PayloadAction<{
         nickname?: string;
         profileImageUrl?: string | null;
+        description?: string | null;
       }>
     ) => {
       if (action.payload.nickname !== undefined) {
@@ -37,12 +40,16 @@ const authSlice = createSlice({
       if (action.payload.profileImageUrl !== undefined) {
         state.profileImageUrl = action.payload.profileImageUrl;
       }
+      if (action.payload.description !== undefined) {
+        state.description = action.payload.description;
+      }
     },
     logout: state => {
       state.isLoggedIn = false;
       state.nickname = '';
       state.userId = null;
       state.profileImageUrl = null;
+      state.description = null;
     },
   },
 });

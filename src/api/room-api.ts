@@ -8,6 +8,7 @@ export const getRoomDetail = async (
   roomId: number
 ): Promise<RoomDetailResponse> => {
   const response = await axiosInstance.get(`/rooms/${roomId}/detail`);
+  console.log(response.data);
   return response.data;
 };
 
@@ -24,7 +25,9 @@ export const getRandomRoom = async (): Promise<RoomPositionResponse> => {
 };
 
 export const getShowcaseItems = async (size = 20): Promise<ShowcaseItem[]> => {
-  const response = await axiosInstance.get('/rooms/showcase', { params: { size } });
+  const response = await axiosInstance.get('/rooms/showcase', {
+    params: { size },
+  });
   return response.data;
 };
 
