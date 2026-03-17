@@ -17,6 +17,7 @@ import {
   setFrameImage,
   setRoomId as setRoomIdAction,
   setShelfItems,
+  toggleIsEditMode,
   updateShelfItemPositionId,
 } from '../../store/shelfSlice';
 import type { PositionResponse, WallSide } from '../../types/position';
@@ -82,12 +83,16 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
   const rightItemsRef = useRef<Item[]>(rightItems);
   const frameImageUrlRef = useRef<string | null>(frameImageUrl);
   const easelImageUrlRef = useRef<string | null>(easelImageUrl);
+  const isEditModeRef = useRef(isEditMode);
+  const roomIdRef = useRef(roomId);
   useEffect(() => {
     leftItemsRef.current = leftItems;
     rightItemsRef.current = rightItems;
     frameImageUrlRef.current = frameImageUrl;
     easelImageUrlRef.current = easelImageUrl;
-  }, [leftItems, rightItems, frameImageUrl, easelImageUrl]);
+    isEditModeRef.current = isEditMode;
+    roomIdRef.current = roomId;
+  }, [leftItems, rightItems, frameImageUrl, easelImageUrl, isEditMode, roomId]);
 
   const loadRoomData = useCallback(
     (
@@ -265,6 +270,35 @@ const RoomContainer = ({ onStart }: RoomContainerProps) => {
     },
     [roomId, dispatch]
   );
+
+  // syncPositions 최신 참조 유지 (unmount 클린업에서 사용)
+  const syncPositionsRef = useRef(syncPositions);
+  useEffect(() => {
+    syncPositionsRef.current = syncPositions;
+  }, [syncPositions]);
+
+  // 언마운트(다른 페이지/방으로 이동) 시 편집모드 강제 저장 종료
+  useEffect(() => {
+    return () => {
+      if (!isEditModeRef.current) return;
+      syncPositionsRef.current('LEFT', leftItemsRef.current);
+      syncPositionsRef.current('RIGHT', rightItemsRef.current);
+      const currentRoomId = roomIdRef.current;
+      if (
+        currentRoomId &&
+        (frameImageUrlRef.current !== serverFrameImageUrlRef.current ||
+          easelImageUrlRef.current !== serverEaselImageUrlRef.current)
+      ) {
+        updateRoomImages(
+          currentRoomId,
+          frameImageUrlRef.current,
+          easelImageUrlRef.current
+        ).catch(console.error);
+      }
+      dispatch(toggleIsEditMode());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 편집 모드 true → false 전환 감지 (편집 모드 종료 시점)
   const prevEditMode = useRef(isEditMode);
