@@ -16,7 +16,9 @@ const Header = () => {
   const handleLoginClick = useNavigateToLogin();
 
   const handleRoomClick = async () => {
-    if (!isLoggedIn || !nickname) {
+    // Redux nickname이 아직 없을 때 localStorage를 fallback으로 사용
+    const resolvedNickname = nickname || localStorage.getItem('nickname');
+    if (!isLoggedIn || !resolvedNickname) {
       // 게스트: 랜덤 유저의 방 방문
       try {
         const data = await getRandomRoom();
@@ -30,7 +32,7 @@ const Header = () => {
       }
       return;
     }
-    const roomPath = `/rooms/${nickname}`;
+    const roomPath = `/rooms/${resolvedNickname}`;
     if (location.pathname === roomPath) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {

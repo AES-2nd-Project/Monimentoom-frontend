@@ -9,6 +9,7 @@ const QR_API_BASE = 'https://api.qrserver.com/v1/create-qr-code';
 
 const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
   const [copied, setCopied] = useState(false);
+  const [qrLoading, setQrLoading] = useState(true);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const qrImageUrl = `${QR_API_BASE}?data=${encodeURIComponent(url)}&size=200x200&bgcolor=ffffff&color=2D2036`;
@@ -73,13 +74,18 @@ const ShareQRModal = ({ url, onClose }: ShareQRModalProps) => {
         </div>
 
         {/* QR 코드 이미지 */}
-        <div className='rounded-lg bg-white p-4'>
+        <div className='flex h-[232px] w-[232px] items-center justify-center rounded-lg bg-white p-4'>
+          {qrLoading && (
+            <div className='border-secondary h-10 w-10 animate-spin rounded-full border-4 border-t-transparent' />
+          )}
           <img
             src={qrImageUrl}
             alt='방 공유 QR 코드'
             width={200}
             height={200}
-            className='block'
+            className={qrLoading ? 'hidden' : 'block'}
+            onLoad={() => setQrLoading(false)}
+            onError={() => setQrLoading(false)}
           />
         </div>
 
