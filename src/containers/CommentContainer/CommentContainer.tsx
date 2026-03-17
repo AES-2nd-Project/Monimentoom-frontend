@@ -1,28 +1,60 @@
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { createComment } from '../../api/comment-api';
+import { createComment, getCommentsScroll } from '../../api/comment-api';
 import Comment from '../../components/Comment/Comment';
 import type { RootState } from '../../store';
 import type { CommentResponse } from '../../types/comment';
 
 interface CommentContainerProps {
-  comments: CommentResponse[];
-  setComments: React.Dispatch<React.SetStateAction<CommentResponse[]>>;
   inputRef?: React.RefObject<HTMLInputElement | null>;
 }
 
-const CommentContainer = ({
-  comments,
-  setComments,
-  inputRef,
-}: CommentContainerProps) => {
+const CommentContainer = ({ inputRef }: CommentContainerProps) => {
   const internalRef = useRef<HTMLInputElement>(null);
   const resolvedRef = inputRef ?? internalRef;
   const roomId = useSelector((state: RootState) => state.shelf.roomId);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
+  const [comments, setComments] = useState<CommentResponse[]>([]);
+  const [nextCursorId, setNextCursorId] = useState<number | null>(null);
+  const [hasNext, setHasNext] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 방 바뀔 때마다 초기 댓글 로드
+  const loadInitial = useCallback(() => {
+    if (roomId == null) return;
+    getCommentsScroll(roomId, null, 10)
+      .then(page => {
+        setComments(page.comments);
+        setNextCursorId(page.nextCursorId);
+        setHasNext(page.hasNext);
+      })
+      .catch(console.error);
+  }, [roomId]);
+
+  useEffect(() => {
+    setComments([]);
+    setNextCursorId(null);
+    setHasNext(false);
+    loadInitial();
+  }, [loadInitial]);
+
+  const handleLoadMore = async () => {
+    if (!hasNext || roomId == null) return;
+    setIsLoadingMore(true);
+    try {
+      const page = await getCommentsScroll(roomId, nextCursorId, 10);
+      setComments(prev => [...prev, ...page.comments]);
+      setNextCursorId(page.nextCursorId);
+      setHasNext(page.hasNext);
+    } catch (err) {
+      console.error('댓글 더보기 실패:', err);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  };
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,18 +106,33 @@ const CommentContainer = ({
           아직 댓글이 없습니다.
         </p>
       ) : (
-        comments.map(comment => (
-          <Comment
-            key={comment.id}
-            comment={comment}
-            onUpdate={updated =>
-              setComments(prev =>
-                prev.map(c => (c.id === updated.id ? updated : c))
-              )
-            }
-            onDelete={id => setComments(prev => prev.filter(c => c.id !== id))}
-          />
-        ))
+        <>
+          {comments.map(comment => (
+            <Comment
+              key={comment.id}
+              comment={comment}
+              onUpdate={updated =>
+                setComments(prev =>
+                  prev.map(c => (c.id === updated.id ? updated : c))
+                )
+              }
+              onDelete={id =>
+                setComments(prev => prev.filter(c => c.id !== id))
+              }
+            />
+          ))}
+
+          {/* 더보기 버튼 */}
+          {hasNext && (
+            <button
+              onClick={handleLoadMore}
+              disabled={isLoadingMore}
+              className='text-purple-black/60 hover:text-purple-black w-full py-2 text-sm transition-colors disabled:opacity-50'
+            >
+              {isLoadingMore ? '불러오는 중...' : '댓글 더보기'}
+            </button>
+          )}
+        </>
       )}
     </div>
   );

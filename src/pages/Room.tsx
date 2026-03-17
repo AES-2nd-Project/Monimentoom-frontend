@@ -6,12 +6,10 @@ import ProfileCard from '../components/ProfileCard/ProfileCard';
 import CommentContainer from '../containers/CommentContainer/CommentContainer';
 import RoomContainer from '../containers/RoomContainer/RoomContainer';
 import RoomControlContainer from '../containers/RoomControlContainer/RoomControlContainer';
-import type { CommentResponse } from '../types/comment';
 import type { RoomDetailResponse } from '../types/room';
 
 const Room = () => {
   const [roomDetail, setRoomDetail] = useState<RoomDetailResponse | null>(null);
-  const [comments, setComments] = useState<CommentResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const commentInputRef = useRef<HTMLInputElement>(null);
 
@@ -21,7 +19,6 @@ const Room = () => {
     getRoomDetail(roomId)
       .then(data => {
         setRoomDetail(data);
-        setComments(data.comments ?? []);
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
@@ -46,7 +43,7 @@ const Room = () => {
         <RoomControlContainer
           isLiked={roomDetail?.isLiked ?? false}
           likeCount={roomDetail?.likeCount ?? 0}
-          commentCount={comments.length}
+          commentCount={roomDetail?.commentCount ?? 0}
           onCommentClick={() => {
             commentInputRef.current?.focus();
             commentInputRef.current?.scrollIntoView({
@@ -62,11 +59,7 @@ const Room = () => {
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
             ownerDescription={roomDetail?.userDescription}
           />
-          <CommentContainer
-            comments={comments}
-            setComments={setComments}
-            inputRef={commentInputRef}
-          />
+          <CommentContainer inputRef={commentInputRef} />
         </div>
       </main>
     </div>

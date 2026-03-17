@@ -6,6 +6,12 @@ export interface CommentResponse {
   content: string;
 }
 
+export interface CommentPageResponse {
+  comments: CommentResponse[];
+  nextCursorId: number | null;
+  hasNext: boolean;
+}
+
 export interface CommentCreateRequest {
   roomId: number;
   content: string;
