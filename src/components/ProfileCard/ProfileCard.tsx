@@ -34,7 +34,9 @@ const ProfileCard = ({
   // 방 주인 정보가 내려온 경우(Room 페이지)엔 isMine === true일 때만 로그아웃 노출
   // 홈 페이지처럼 props 없이 쓸 때는 항상 노출
   const hasOwnerInfo =
-    ownerNickname !== undefined || ownerProfileImageUrl !== undefined;
+    ownerNickname !== undefined ||
+    ownerProfileImageUrl !== undefined ||
+    ownerDescription !== undefined;
   const showLogout = hasOwnerInfo ? isMine === true : true;
 
   return (
