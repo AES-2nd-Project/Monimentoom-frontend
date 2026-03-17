@@ -59,6 +59,9 @@ const InventoryCard = ({
     };
 
     const onTouchMove = (e: TouchEvent) => {
+      // 핀치 줌 등 멀티터치는 간섭하지 않음
+      if (e.touches.length > 1) return;
+
       const touch = e.touches[0];
       const startX = touchStartXRef.current;
       const startY = touchStartYRef.current;
