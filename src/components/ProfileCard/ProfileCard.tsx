@@ -53,7 +53,7 @@ const ProfileCard = ({
             e.currentTarget.src = '/icon.png';
           }}
         />
-        <p className='w-20 shrink-0 text-start text-xl font-bold'>
+        <p className='min-w-0 flex-1 truncate text-start text-xl font-bold'>
           {displayNickname}
         </p>
       </div>

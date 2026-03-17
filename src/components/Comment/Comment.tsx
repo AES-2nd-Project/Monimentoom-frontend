@@ -66,7 +66,7 @@ const Comment = ({ comment, onUpdate, onDelete }: CommentProps) => {
           }}
         />
         <div className='flex flex-row items-baseline gap-2'>
-          <p className='text-purple-black shrink-0 text-start text-[18px] font-bold'>
+          <p className='text-purple-black max-w-40 truncate text-start text-[18px] font-bold'>
             {comment.nickname}
           </p>
           <p className='text-purple-black/50 text-sm'>{displayDate}</p>
