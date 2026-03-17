@@ -45,7 +45,6 @@ const Room = () => {
             ownerNickname={roomDetail?.nickname}
             ownerProfileImageUrl={roomDetail?.userProfileImageUrl}
             ownerDescription={roomDetail?.userDescription}
-            isMine={roomDetail?.isMine}
           />
           <CommentContainer comments={comments} setComments={setComments} />
         </div>

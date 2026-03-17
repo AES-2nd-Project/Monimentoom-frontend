@@ -6,7 +6,6 @@ interface ProfileCardProps {
   ownerNickname?: string;
   ownerProfileImageUrl?: string | null;
   ownerDescription?: string | null;
-  isMine?: boolean;
 }
 
 const MAX_LENGTH = 50;
@@ -15,7 +14,6 @@ const ProfileCard = ({
   ownerNickname,
   ownerProfileImageUrl,
   ownerDescription,
-  isMine,
 }: ProfileCardProps) => {
   const {
     nickname: myNickname,
@@ -31,16 +29,16 @@ const ProfileCard = ({
   const displayDescription = ownerDescription ?? myDescription ?? null;
   const isTruncated =
     !!displayDescription && displayDescription.length > MAX_LENGTH;
-  // 방 주인 정보가 내려온 경우(Room 페이지)엔 isMine === true일 때만 로그아웃 노출
-  // 홈 페이지처럼 props 없이 쓸 때는 항상 노출
+  // Room 페이지처럼 owner props가 내려온 경우엔 로그아웃 미노출
+  // 홈 페이지처럼 props 없이 쓸 때만 노출
   const hasOwnerInfo =
     ownerNickname !== undefined ||
     ownerProfileImageUrl !== undefined ||
     ownerDescription !== undefined;
-  const showLogout = hasOwnerInfo ? isMine === true : true;
+  const showLogout = !hasOwnerInfo;
 
   return (
-    <div className='bg-card-background flex h-75 w-75 flex-col gap-8 rounded-lg p-8'>
+    <div className='bg-card-background flex min-h-75 w-75 flex-col gap-8 rounded-lg p-8'>
       <div className='flex flex-row items-center justify-start gap-4 bg-transparent'>
         <img
           src={displayImage}
@@ -50,13 +48,13 @@ const ProfileCard = ({
             e.currentTarget.src = '/icon.png';
           }}
         />
-        <p className='w-20 shrink-0 text-start font-medium'>
+        <p className='w-20 shrink-0 text-start text-xl font-bold'>
           {displayNickname}
         </p>
       </div>
 
       {displayDescription ? (
-        <div className='text-purple-black/60 text-sm'>
+        <div className='text-purple-black/70 text-sm'>
           <p>
             {isTruncated && !expanded
               ? `${displayDescription.slice(0, MAX_LENGTH)}…`
