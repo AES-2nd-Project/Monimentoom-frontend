@@ -67,7 +67,7 @@ const ShowcaseCarousel = () => {
 
   if (items.length === 0) return null;
 
-  // 아이템을 2번 복제해 이음새 없는 루프 보장
+  // 아이템을 복제해 이음새 없는 루프 보장
   const displayItems = [...items, ...items];
 
   return (
