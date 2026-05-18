@@ -51,7 +51,12 @@ const getNewAccessToken = (): Promise<string> => {
     .post<{ token: string }>(
       `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
       null,
-      { withCredentials: true }
+      {
+        withCredentials: true,
+        headers: {
+          'X-Refresh-Request': 'true',
+        },
+      }
     )
     .then(res => res.data.token)
     .then(token => {

@@ -1,0 +1,221 @@
+2026-03-05 | shin1488 | init commit
+2026-03-05 | shin1488 | refactor : 프로젝트 초기 설정
+2026-03-05 | shin1488 | refactor : 프로젝트 이름 변경
+2026-03-06 | shin1488 | feat : 메인 페이지 와이어프레임 작성
+2026-03-06 | shin1488 | feat : 홈 여부에 따라 dim 효과 및 로고 표시 여부 설정
+2026-03-07 | shin1488 | refactor : 필요 없는 props 삭제
+2026-03-07 | shin1488 | docs : PR 템플릿 추가
+2026-03-07 | shin1488 | Merge pull request #1 from AES-2nd-Project/develop
+2026-03-07 | shin1488 | feat : RoomButton 컴포넌트 작성
+2026-03-07 | shin1488 | feat : RoomButton에 시각적 효과 추가(호버, 클릭)
+2026-03-07 | shin1488 | feat : Room 페이지 요소들 컨테이너로 분리 및 CommentContainer, Comment 작성
+2026-03-07 | shin1488 | Merge pull request #2 from AES-2nd-Project/develop
+2026-03-07 | shin1488 | feat : vercel.json 작성
+2026-03-08 | shin1488 | feat : shelf grid 배치 완료
+2026-03-08 | shin1488 | feat : shelf grid 아이템 테두리 및 호버 상호작용 추가
+2026-03-08 | shin1488 | feat : Shelf 드래그 기능, divider 표시 기능 추가
+2026-03-08 | shin1488 | feat : 코멘트 컴포넌트 css 수정
+2026-03-08 | shin1488 | fix : comment 컨테이너 flex 요소 수정
+2026-03-09 | shin1488 | refactor : ShelfTest 커스텀 훅 분리
+2026-03-09 | shin1488 | refactor : 중복된 grid 좌표 계산 부분 함수화 및 적용
+2026-03-09 | shin1488 | refactor : 공통으로 사용하는 타입들의 위치 변경
+2026-03-09 | shin1488 | refactor : 배경 슬롯 분리
+2026-03-09 | shin1488 | refactor : divider 컴포넌트로 분리
+2026-03-09 | shin1488 | refactor : 아이템 컴포넌트로 분리
+2026-03-09 | shin1488 | refactor : 드래그 시 미리보기 부분 컴포넌트화
+2026-03-09 | shin1488 | refactor : shelf 공용 함수 utils 분리 및 기존에 사용하던 props 제거
+2026-03-09 | shin1488 | refactor : shelf 배경과 본체 분리
+2026-03-09 | shin1488 | refactor : classname 사용 시 코드 스타일 통일
+2026-03-09 | shin1488 | feat : 측면 shelf 에셋 추가 및 grid 배치 완료
+2026-03-09 | shin1488 | refactor : shrink 상태일 때 divider 삐져나가는 것 조정
+2026-03-09 | shin1488 | refactor : shrink 상태일 때 마우스 상호작용 및 렌더링 비활성화
+2026-03-09 | shin1488 | refactor : shrink 및 shrink 상태가 아닐 때 preview 및 backslots 레이어 상호작용 수정
+2026-03-09 | shin1488 | feat : redux-toolkit으로 isShrinked 상태 전역화
+2026-03-09 | shin1488 | refactor : Shelf 컴포넌트 삭제 및 ShelfTest 컴포넌트 정식 도입
+2026-03-09 | 신영찬 | refactor : RootState 임포트 설정 변경
+2026-03-09 | 신영찬 | refactor : tailwind 오타 수정
+2026-03-09 | 신영찬 | refactor : 콘솔 로그 삭제
+2026-03-09 | 신영찬 | refactor : setItems 함수형 업데이트 적용
+2026-03-09 | 신영찬 | refactor : RootState 임포트 설정 변경
+2026-03-09 | 신영찬 | Merge pull request #3 from AES-2nd-Project/develop
+2026-03-09 | shin1488 | refactor : shelf 좌우 구분 및 자식 컴포넌트의 shrink 상태 redux와 연결
+2026-03-09 | shin1488 | refactor : 선반 좌측 이미지 추가 및 관련 로직 수정
+2026-03-09 | shin1488 | refactor : 중복 css 단일화
+2026-03-09 | shin1488 | Merge branch 'feat/RoomPageWireFrame' into develop
+2026-03-09 | 신영찬 | Merge pull request #4 from AES-2nd-Project/develop
+2026-03-10 | shin1488 | feat : 벽지 임시 완성
+2026-03-10 | shin1488 | feat : 벽지 에셋 및 액자 추가
+2026-03-10 | shin1488 | refactor : isHome의 여부로 표시되는 로고 관련 코드 수정
+2026-03-10 | shin1488 | refactor : 사용하지 않는 임포트 삭제
+2026-03-10 | 신영찬 | Merge pull request #5 from AES-2nd-Project/develop
+2026-03-10 | shin1488 | feat : axios 기본 설정 및 로그인 폼 수정
+2026-03-10 | shin1488 | fix : jwt 토큰 헤더에서 받아오도록 수정
+2026-03-10 | shin1488 | feat : isLoggedIn 상태 redux 편입 및 관련 reducer 작성, 관련 로직 작성
+2026-03-12 | shin1488 | feat : 헤더 와이어프레임 완성
+2026-03-12 | shin1488 | feat : 메뉴 목록 수정 및 호버 색상 적용
+2026-03-12 | shin1488 | refactor : 로그인 및 로그아웃 로직 커스텀 훅으로 분리 및 적용
+2026-03-12 | shin1488 | feat : 헤더의 로그인 버튼 눌렀을 때의 로직 작성
+2026-03-12 | shin1488 | feat : 로그인 로직 수정
+2026-03-12 | shin1488 | refactor : 로그인 폼 커스텀 훅 사용하도록 변경
+2026-03-12 | shin1488 | feat : 로그아웃 버튼 로직 추가 및 nickname 상태 redux 편입
+2026-03-12 | shin1488 | refactor : 파편화 되어 있던 로컬스토리지 저장 로직 단일화
+2026-03-12 | shin1488 | fix : queryclient App 밖으로 수정
+2026-03-12 | shin1488 | refactor : reducer의 순수 함수 속성을 만족시키기 위하여 sideeffect가 발생할 수 있는 부분을 useAuth로 이관
+2026-03-12 | shin1488 | fix : window.history로 관리하던 히스토리 로직 useNavigate로 수정
+2026-03-12 | 신영찬 | Merge pull request #6 from AES-2nd-Project/develop
+2026-03-12 | shin1488 | feat : 헤더 Room 클릭 로직 작성 및 framer-motion 애니메이션 적용
+2026-03-12 | shin1488 | feat : 페이지 이동 시 브라우저 스크롤 초기화 및 room 클릭 시 로직 수정
+2026-03-12 | shin1488 | feat : 인벤토리 와이어프레임 제작
+2026-03-12 | shin1488 | feat : 헤더 스크롤 동작 수정
+2026-03-12 | shin1488 | fix : isShrinked isEditmode로 수정 후 오동작하던 현상 수정
+2026-03-12 | shin1488 | delete : 콘솔 로그 삭제
+2026-03-12 | shin1488 | feat : 인벤토리 이미지 추가 기능 작성
+2026-03-12 | shin1488 | feat : 인벤토리에서 선반에 drag&drop으로 등록하는 기능 추가
+2026-03-13 | shin1488 | feat : 인벤토리에 등록 시 로컬스토리지 저장에서 s3로 변경 및 api 연동
+2026-03-13 | shin1488 | feat : room 페이지 조회 시 데이터 fetch 로직과 편집 행동 시 서버에 반영하는 로직 작성
+2026-03-13 | shin1488 | fix : inventory에서 사용하던 settimeout의 클린업 함수 작성
+2026-03-13 | shin1488 | fix : inventory에서 사용하던 settimeout의 클린업 함수 작성
+2026-03-13 | shin1488 | refactor : 코파일럿 의견 반영하여 doublequote를 singlequote로 통일
+2026-03-13 | 신영찬 | Merge pull request #7 from AES-2nd-Project/develop
+2026-03-13 | shin1488 | fix : 룸 페이지 이탈 후 복귀 시 이미지 표시되지 않던 문제 수정
+2026-03-13 | shin1488 | fix : copilot 의견 반영하여 S3응답 체크, 외부 아이템 방어 등 버그 수정
+2026-03-13 | 신영찬 | Merge pull request #8 from AES-2nd-Project/develop
+2026-03-13 | shin1488 | refactor : items의 상태를 redux로 편입
+2026-03-13 | shin1488 | fix : copilot 의견 반영, 주석 오타 및 불필요한 로직 수정
+2026-03-13 | 신영찬 | Merge pull request #9 from AES-2nd-Project/develop
+2026-03-13 | shin1488 | feat : 선반에 등록된 아이템 삭제 로직 추가
+2026-03-13 | shin1488 | feat : 편집 상태에 따른 편집 버튼 모양 변경
+2026-03-13 | shin1488 | feat : 코멘트 레이아웃 수정
+2026-03-13 | shin1488 | feat : 회원가입 폼 및 페이지 작성
+2026-03-13 | shin1488 | fix : copilot 의견 반영하여 회원가입 후 로직, shelfitem의 isEditMode 한단계 끌어올림
+2026-03-13 | 신영찬 | Merge pull request #10 from AES-2nd-Project/develop
+2026-03-13 | shin1488 | feat : 책장 및 창문 에셋 추가 및 룸 컨테이너에 배치
+2026-03-13 | shin1488 | fix : room컨테이너 요소들 위치 고정 되지 않는 부분 수정
+2026-03-13 | shin1488 | refactor : RoomContainer 로직과 레이아웃 분리
+2026-03-13 | shin1488 | feat : 이젤 캔버스 부분 이미지 추가
+2026-03-13 | shin1488 | feat : 액자에 원하는 이미지 넣을 수 있도록 기능 작성
+2026-03-13 | 신영찬 | Merge pull request #11 from AES-2nd-Project/develop
+2026-03-14 | shin1488 | feat : 마이페이지 초안 작성 및 타인 방 방문 시 이미지 표시 되지 않던 문제 수정
+2026-03-14 | shin1488 | fix : 마이페이지 관련 수정
+2026-03-14 | shin1488 | feat : 코파일럿 의견 반영 - mypage previewurl 메모리 누수 관련 수정, useAuth 비밀번호 검증 시 토큰 재발급 로직 관련 추가, ProtectedRoute를 사용하여 게스트일 때 mypage 방문 접근 제한
+2026-03-14 | 신영찬 | Merge pull request #12 from AES-2nd-Project/develop
+2026-03-14 | shin1488 | feat : CommentContainer & Comment 컴포넌트 api 연동, 댓글 기능 구현
+2026-03-15 | shin1488 | feat : 카카오 로그인 연동 초안 작성
+2026-03-15 | shin1488 | feat : 방 랜덤 방문 로직 작성 및 헤더의 room 클릭 시 로직 변경
+2026-03-15 | shin1488 | fix : 토큰을 매번 보내 유저 정보를 api에 의존해야 했던 구조를 개선, 응답 dto를 수정하여 유저 정보 관리할 수 있도록 변경
+2026-03-15 | shin1488 | feat : 홈 페이지의 룸 컨테이너 랜딩페이지화 및 애니메이션과 버튼 추가, 스냅 스크롤 구현
+2026-03-15 | shin1488 | refactor : useAuth 호출 시 mutation이 세 번 생성되던 현상 최적화, 헤더의 isHome 사용 부분 effect 두 번 발생하던 현상 최적화
+2026-03-15 | shin1488 | delete : 필요 없어진 api 삭제
+2026-03-15 | shin1488 | feat : copilot 의견 반영 - 게스트 방 조회 가능, env 누락시 에러 메세지 명시, 로그인 실패 시 어느 분기에도 걸리지 않을 경우 홈 이동, 콜백시 에러 쿼리가 있다면 홈 이동
+2026-03-15 | 신영찬 | Merge pull request #13 from AES-2nd-Project/develop
+2026-03-15 | shin1488 | feat : isNewUser deprecate시키고 signupToken으로 신규 유저 구분, strictmode로 api 중복 호출되던 문제 수정
+2026-03-15 | 신영찬 | Merge pull request #14 from AES-2nd-Project/develop
+2026-03-15 | shin1488 | feat : 이젤 이미지 업로드 기능 추가 및 액자도 동일 로직으로 개선
+2026-03-15 | 신영찬 | Merge pull request #15 from AES-2nd-Project/develop
+2026-03-15 | shin1488 | fix : comments로 접근하던 댓글 api roomdetail에서 사용하도록 수정
+2026-03-15 | shin1488 | feat : 방 페이지의 프로필 카드 방 주인의 것으로 수정, 댓글 마운트되고 상태 업데이트 되지 않는 부분 수정, 댓글 레이아웃 수정
+2026-03-15 | shin1488 | feat : 내 방일 때만 편집 버튼 보이게 수정
+2026-03-15 | shin1488 | feat : 댓글 디자인 수정에 따른 레이아웃 변경
+2026-03-15 | shin1488 | feat : 지급받은 토큰이 만료되어 401 에러 발생 시 로그아웃 후 홈으로 리다이렉트 로직 추가
+2026-03-15 | shin1488 | feat : 댓글 수정/삭제 기능 추가
+2026-03-16 | shin1488 | feat : 방에 배치된 굿즈 삭제 요청 시 alert 띄우는 로직 작성
+2026-03-16 | shin1488 | feat : 굿즈 추가 시 이름/설명 작성을 위한 모달 추가
+2026-03-16 | shin1488 | feat : RoomControlContainer 지정 이동, 랜덤 이동 구현
+2026-03-16 | shin1488 | feat : 좋아요 기능 구현 및 버튼 스타일 변경
+2026-03-16 | shin1488 | delete : types/rooms 필요 없는 부분 삭제
+2026-03-16 | shin1488 | fix : copilot 의견 반영, 로그인/회원가입 401 에러는 별도로 핸들링
+2026-03-16 | shin1488 | fix : comment 상태를 room으로 올려서 실시간 반영이 가능하도록 수정
+2026-03-16 | shin1488 | fix : 좋아요 버튼 로딩 중 클릭 차단되게 수정
+2026-03-16 | shin1488 | refactor : api에 선언되었던 응답/요청 타입들 types로 이관 및 관련 임포트 수정
+2026-03-16 | shin1488 | fix : copilot 의견 반영, roomdetail 로딩 전 isMine이 undefined인 순간 로그아웃 버튼 깜빡이지 않도록 수정
+2026-03-16 | shin1488 | fix : copilot 의견 반영, 굿즈 추가 시 관련 방어 로직 작성 및 클린업 함수 추가
+2026-03-16 | shin1488 | feat : 게스트 상태일 때 좋아요 버튼 비활성화
+2026-03-16 | 신영찬 | Merge pull request #16 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | delete : 테이블 컬럼 최신화에 따른 user의 email 삭제
+2026-03-16 | shin1488 | Merge branch 'main' into develop
+2026-03-16 | 신영찬 | Merge pull request #17 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | feat : 선반 영역 드래그 터치로도 가능하도록 변경
+2026-03-16 | 신영찬 | Merge pull request #18 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | fix : s3 이미지 업로드시 파일명 원인으로 발생되는 문제를 uuid로 교체하여 해결
+2026-03-16 | shin1488 | feat : 로그인 상태일 때 시작 버튼 클릭하면 룸으로 연결
+2026-03-16 | shin1488 | fix : 마이 페이지에서 프로필 사진 변경 오동작하던 현상 수정
+2026-03-16 | shin1488 | refactor : 코파일럿 의견 반영, 타입 변경
+2026-03-16 | shin1488 | refactor : 코파일럿 의견 반영, 유저 정보 업데이트 시 방어 로직 작성
+2026-03-16 | 신영찬 | Merge pull request #19 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | feat : 아이콘 제작, 파비콘 및 프로필 기본 이미지에 사용
+2026-03-16 | shin1488 | feat : 백엔드가 쿠키로 내려주는 리프레시 토큰에 맞춰 코드 변경
+2026-03-16 | shin1488 | refactor : 중복 임포트로 순환 의존되는 문제 해결
+2026-03-16 | 신영찬 | Merge pull request #20 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | add : 아이콘 추가
+2026-03-16 | shin1488 | fix : 아이콘 경로 수정
+2026-03-16 | shin1488 | feat : 홈 페이지의 룸 컨테이너 4초마다 랜덤 방 표시하는 기능 추가
+2026-03-16 | shin1488 | feat : 선반의 굿즈 클릭했을 때 화면 중앙에 이름과 설명 띄워주는 기능 추가
+2026-03-16 | shin1488 | refactor : tailwind 추천에 맞게 z 인덱스 수정
+2026-03-16 | shin1488 | refactor : copilot 의견 반영, 굿즈 디테일 오버레이 닫기 애니메이션 버그 수정
+2026-03-16 | shin1488 | fix : 선반에 아이템이 없을 때 클릭해도 디테일 오버레이가 나오던 버그 수정
+2026-03-16 | 신영찬 | Merge pull request #21 from AES-2nd-Project/develop
+2026-03-16 | shin1488 | feat : 지정이동 시 존재하지 않는 닉네임을 입력해도 링크를 이동하던 현상 수정
+2026-03-16 | shin1488 | feat : 댓글 프로필 이미지 표시되도록 수정
+2026-03-16 | shin1488 | feat : 지정이동 버튼 에러 핸들링 세분화
+2026-03-16 | shin1488 | fix : 댓글 프로필 이미지 표시되지 않을 수도 있었던 부분 수정
+2026-03-16 | shin1488 | fix : 지정이동 중복 요청 제거 및 404 에러 처리 개선
+2026-03-16 | 신영찬 | Merge pull request #22 from AES-2nd-Project/develop
+2026-03-16 | imyuri | feat: 공유버튼 클릭시 방으로 연결되는 큐알코드 생성 기능
+2026-03-16 | imyuri | feat: svg 삭제
+2026-03-16 | shin1488 | feat : 홈 페이지 쇼케이스 (굿즈 전시 스크롤) 추가
+2026-03-16 | shin1488 | fix : useRef 초기값 누락 부분 수정
+2026-03-16 | shin1488 | fix : 쿼리스트링 외부 노출 부분 수정
+2026-03-16 | shin1488 | fix : copliot 의견 반영, 공유 연속 클릭 시 이전 타이머 취소
+2026-03-16 | 신영찬 | Merge pull request #23 from AES-2nd-Project/feat/qr
+2026-03-17 | shin1488 | fix : 쇼케이스 너비 비정상 작동할 수 있는 부분 수정
+2026-03-17 | shin1488 | fix : 쿼리 스트링 문자열에서 파라미터로 변환
+2026-03-17 | 신영찬 | Merge pull request #24 from AES-2nd-Project/develop
+2026-03-17 | shin1488 | feat : 마이페이지 및 룸페이지의 한줄 소개 관련 기능 추가
+2026-03-17 | shin1488 | feat : 프로필 카드 고정 높이 설정 및 한줄 소개 최대 글자수 초과시 로직 추가
+2026-03-17 | shin1488 | feat : 소개 없을 시 메세지 추가
+2026-03-17 | shin1488 | feat : 백엔드 회원가입 요청 dto 변경에 따른 타입 변경
+2026-03-17 | shin1488 | delete : 콘솔 로그 제거
+2026-03-17 | shin1488 | feat : 로그아웃 시 로컬스토리지 비우는 로직 함수화 및 관련 부분 수정
+2026-03-17 | 신영찬 | Merge pull request #25 from AES-2nd-Project/develop
+2026-03-17 | shin1488 | fix : 로그아웃 버튼이 노출될 수도 있는 버그 수정
+2026-03-17 | shin1488 | Merge branch 'develop'
+2026-03-17 | shin1488 | hotfix : 프로필 카드 높이 변경
+2026-03-17 | shin1488 | hotfix : 프로필 카드 높이 변경
+2026-03-17 | shin1488 | hotfix : 프로필 카드 레이아웃 수정
+2026-03-17 | shin1488 | hotfix : 다른 사람 방에서 기존 프로필이 표시되던 문제 수정
+2026-03-17 | shin1488 | feat : 푸터 작성 및 모든 페이지에 적용
+2026-03-17 | 신영찬 | Merge pull request #26 from AES-2nd-Project/develop
+2026-03-17 | shin1488 | hotfix : strictmode 제거
+2026-03-17 | shin1488 | feat : 모바일 환경 인벤토리 -> 선반 드래그 기능 개선
+2026-03-17 | shin1488 | fix : 드래그 버그 수정
+2026-03-17 | shin1488 | fix : 드래그 버그 수정
+2026-03-17 | shin1488 | fix : 드래그 버그 수정
+2026-03-17 | 신영찬 | Merge pull request #27 from AES-2nd-Project/develop
+2026-03-17 | shin1488 | feat : 모바일 대응 레이아웃 수정
+2026-03-17 | shin1488 | fix : 모바일 인벤토리 터치 이벤트 수정
+2026-03-17 | shin1488 | fix : 모바일 이벤트 관련 버그 수정, 레이아웃 수정
+2026-03-17 | 신영찬 | Merge pull request #28 from AES-2nd-Project/develop
+2026-03-17 | shin1488 | hotfix : 레이아웃 수정
+2026-03-17 | shin1488 | hotfix : 레이아웃 수정
+2026-03-17 | shin1488 | hotfix : 모바일 터치 이벤트 수정
+2026-03-17 | shin1488 | hotfix : 모바일 터치 이벤트 수정
+2026-03-17 | shin1488 | hotfix : 모바일 터치 이벤트 수정
+2026-03-17 | shin1488 | hotfix : 모바일 터치 이벤트 수정
+2026-03-17 | shin1488 | fix : 모바일 터치 관련 로직 전부 삭제, 선반 영역 지정 후 터치 시 등록으로 변경
+2026-03-17 | shin1488 | feat : roomscene 스케일 조정하여 반응형 디자인 적용
+2026-03-17 | shin1488 | feat : RoomScene scale 적용하여 반응형 디자인 적용
+2026-03-17 | shin1488 | fix : 편집모드 열린 상태에서 다른 방 이동 시 편집모드 종료되지 않던 현상 수정
+2026-03-17 | shin1488 | fix : 헤더 모바일 레이아웃 적용, 굿즈 svg 확장자 추가 허용
+2026-03-17 | shin1488 | feat : 인벤토리 카드 반응형 디자연 적용
+2026-03-17 | shin1488 | fix : 편집모드 열린 상태에서 다른 방 이동 시 편집모드 종료되지 않던 현상 수정
+2026-03-17 | shin1488 | fix : 편집모드 열린 상태에서 다른 방 이동 시 편집모드 종료되지 않던 현상 수정
+2026-03-17 | shin1488 | fix : 닉네임 길어졌을 때 UI 깨지는 현상 방지하도록 설정
+2026-03-17 | shin1488 | hotfix : 모바일 레이아웃 홈 페이지에서 프로필 카드 중앙에 오도록 수정
+2026-03-17 | shin1488 | fix : 메인 페이지 랜덤 룸 표시 2초로 변경
+2026-03-17 | shin1488 | fix : 헤더 room 클릭 시 로직 수정, 공유하기 qr 로딩 중일 때 스피너 추가
+2026-03-17 | shin1488 | fix : 방 정보 가져오는 로직 개선하여 오류를 미연에 방지하는 로직 추가 및 로딩 중 스피너 표시 추가
+2026-03-17 | shin1488 | feat : 댓글 버튼 누를 시 input에 포커스 가도록 변경
+2026-03-17 | shin1488 | fix : 사용자 경험을 고려해 인벤토리 추가 카드는 맨 왼쪽, 최신 굿즈일수록 왼쪽 -> 오른쪽에 정렬되도록 수정
+2026-03-17 | shin1488 | hotfix : 타입 불일치 문제 해결
+2026-03-17 | shin1488 | fix : 굿즈 삭제 시 선반에 해제되지 않던 문제 수정
+2026-03-17 | shin1488 | feat : 댓글 프로필 클릭 시 해당 유저의 방으로 이동하는 기능 추가
